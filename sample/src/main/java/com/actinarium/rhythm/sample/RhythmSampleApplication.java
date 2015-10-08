@@ -1,7 +1,8 @@
 package com.actinarium.rhythm.sample;
 
 import android.app.Application;
-import com.actinarium.rhythm.RhythmService;
+import com.actinarium.rhythm.RhythmManager;
+import com.actinarium.rhythm.Rhythmic;
 
 /**
  * <p></p>
@@ -9,11 +10,18 @@ import com.actinarium.rhythm.RhythmService;
  * @author Paul Danyliuk
  * @version $Id$
  */
-public class RhythmSampleApplication extends Application {
+public class RhythmSampleApplication extends Application implements Rhythmic {
+
+    private RhythmManager mRhythmManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        RhythmService.showNotification(this, 0, 0);
+        mRhythmManager = new RhythmManager(this, 0).displayNotification(0);
+    }
+
+    @Override
+    public RhythmManager getRhythmManager() {
+        return mRhythmManager;
     }
 }

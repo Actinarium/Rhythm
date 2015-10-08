@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.actinarium.rhythm" >
+          package="com.actinarium.rhythm">
 
     <application>
 
         <service
-            android:name=".RhythmService"
-            android:exported="false" >
+                android:name=".RhythmNotificationService"
+                android:exported="false">
         </service>
 
     </application>
