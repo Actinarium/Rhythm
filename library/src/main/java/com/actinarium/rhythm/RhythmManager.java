@@ -22,7 +22,7 @@ public final class RhythmManager {
     private boolean mIsShowingNotification;
     private int mNotificationId;
 
-    private List<RhythmControl> mControls = new ArrayList<>();
+    private List<RhythmGroup> mControls = new ArrayList<>();
 
     /**
      * Create a Rhythm manager
@@ -41,8 +41,8 @@ public final class RhythmManager {
      * @param title A convenient title for this control, used to identify it in the notification
      * @return A new control instance, managed by this manager
      */
-    public RhythmControl newControl(String title) {
-        final RhythmControl control = new RhythmControl(title);
+    public RhythmGroup newControl(String title) {
+        final RhythmGroup control = new RhythmGroup(title);
         mControls.add(control);
 
         // Update the notification if it's already displayed
@@ -58,7 +58,7 @@ public final class RhythmManager {
      * @param index index, which was assigned to the required control upon adding
      * @return requested Rhythm control
      */
-    public RhythmControl getControl(int index) {
+    public RhythmGroup getControl(int index) {
         return mControls.get(index);
     }
 
@@ -95,7 +95,7 @@ public final class RhythmManager {
     public interface Host {
 
         /**
-         * Get the {@link RhythmManager} of this application to access any {@link RhythmControl} and the rest of Rhythm
+         * Get the {@link RhythmManager} of this application to access any {@link RhythmGroup} and the rest of Rhythm
          * API
          *
          * @return Rhythm manager associated with this application

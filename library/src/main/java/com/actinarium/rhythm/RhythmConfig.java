@@ -5,13 +5,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import com.actinarium.rhythm.RhythmDrawable.GridLines;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A configuration is a set of rules, which grid lines, keylines etc to draw in all {@link RhythmDrawable}s attached to
- * the {@link RhythmControl} where this config is used at the moment.
+ * the {@link RhythmGroup} where this config is used at the moment.
  *
  * @author Paul Danyliuk
  */
@@ -45,12 +46,12 @@ public class RhythmConfig {
     }
 
     /**
-     * A shorthand for {@link RhythmControl#addConfig(RhythmConfig)}
+     * A shorthand for {@link RhythmGroup#addConfig(RhythmConfig)}
      *
      * @param control Rhythm control to add this config to
      * @return this for chaining (e.g. for adding this config to other controls as well)
      */
-    public RhythmConfig addToControl(RhythmControl control) {
+    public RhythmConfig addToControl(RhythmGroup control) {
         control.addConfig(this);
         return this;
     }
@@ -64,15 +65,14 @@ public class RhythmConfig {
      *
      * @param title       Config title
      * @param scaleFactor px to dp ratio, obtained through {@link DisplayMetrics#density}
-     * @param color       Color of the grid, in the usual #AARRGGBB format
      * @return Rhythm config with pre-configured grid line layers
      */
     @SuppressLint("RtlHardcoded")
-    public static RhythmConfig make8DipGrid(String title, float scaleFactor, int color) {
+    public static RhythmConfig make8DipGrid(String title, float scaleFactor) {
         final int step = (int) (scaleFactor * 8);
         return new RhythmConfig(title)
-                .addLayer(new RhythmDrawable.GridLines(Gravity.TOP, step, color))
-                .addLayer(new RhythmDrawable.GridLines(Gravity.LEFT, step, color));
+                .addLayer(new GridLines(Gravity.TOP, step))
+                .addLayer(new GridLines(Gravity.LEFT, step));
     }
 
     /**
@@ -80,27 +80,24 @@ public class RhythmConfig {
      *
      * @param title       Config title
      * @param scaleFactor px to dp ratio, obtained through {@link DisplayMetrics#density}
-     * @param color       Color of the baseline grid, in the usual #AARRGGBB format
      * @return Rhythm config with pre-configured grid line layer
      */
-    public static RhythmConfig makeBaselineGrid(String title, float scaleFactor, int color) {
+    public static RhythmConfig makeBaselineGrid(String title, float scaleFactor) {
         return new RhythmConfig(title)
-                .addLayer(new RhythmDrawable.GridLines(Gravity.TOP, (int) (scaleFactor * 4), color));
+                .addLayer(new GridLines(Gravity.TOP, (int) (scaleFactor * 4)).setColor(GridLines.DEFAULT_BASELINE_COLOR));
     }
 
     /**
      * Make a square 8dp grid combined with differently colored baselines between horizontal grid lines. You can add
      * layers atop this config
      *
-     * @param title         Config title
-     * @param scaleFactor   px to dp ratio, obtained through {@link DisplayMetrics#density}
-     * @param gridColor     Color of the 8dp grid, in the usual #AARRGGBB format
-     * @param baselineColor Color of additional baselines, in the usual #AARRGGBB format
+     * @param title       Config title
+     * @param scaleFactor px to dp ratio, obtained through {@link DisplayMetrics#density}
      * @return Rhythm config with pre-configured grid line layers
      */
-    public static RhythmConfig make8DipAndBaselineGrid(String title, float scaleFactor, int gridColor, int baselineColor) {
+    public static RhythmConfig make8DipAndBaselineGrid(String title, float scaleFactor) {
         final int step = (int) (scaleFactor * 8);
-        return make8DipGrid(title, scaleFactor, gridColor)
-                .addLayer(new RhythmDrawable.GridLines(Gravity.TOP, step, baselineColor).setOffset(step / 2));
+        return make8DipGrid(title, scaleFactor)
+                .addLayer(new GridLines(Gravity.TOP, step).setOffset(step / 2).setColor(GridLines.DEFAULT_BASELINE_COLOR));
     }
 }

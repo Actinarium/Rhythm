@@ -1,3 +1,8 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Rhythm</string>
+
+    <string name="notif_control">Control: <xliff:g id="control_title" example="Card overlay">%s</xliff:g></string>
+    <string name="notif_config">Config: <xliff:g id="config_title" example="Grid and keylines">%s</xliff:g></string>
+    <string name="notif_error_title">Couldn’t connect to Rhythm</string>
+    <string name="notif_error_text">Check if your Application implements RhythmManager.Host</string>
 </resources>

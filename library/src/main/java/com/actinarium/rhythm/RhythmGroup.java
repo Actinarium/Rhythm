@@ -9,11 +9,13 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ *
+ *
  * An entity that controls all linked grid overlays &mdash; namely tells them what overlay configuration to draw.
  *
  * @author Paul Danyliuk
  */
-public final class RhythmControl {
+public final class RhythmGroup {
 
     public static int OVERLAY_DISABLED = -1;
     private static final int ESTIMATED_DRAWABLES_PER_CONTROL = 4;
@@ -26,23 +28,23 @@ public final class RhythmControl {
     int mCurrentConfigIndex = OVERLAY_DISABLED;
 
     /**
-     * Create a new Rhythm control
+     * Create a new Rhythm group
      *
-     * @param title A convenient title for this control, used to identify it in the notification
+     * @param title A convenient title for this group, used to identify it in the notification
      */
-    RhythmControl(@Nullable String title) {
+    RhythmGroup(@Nullable String title) {
         mTitle = title;
         mDrawables = new ArrayList<>(ESTIMATED_DRAWABLES_PER_CONTROL);
         mRhythmConfigs = new ArrayList<>(ESTIMATED_MAX_CONFIGS_PER_CONTROL);
     }
 
     /**
-     * Add Rhythm config to this control
+     * Add Rhythm config to this group
      *
      * @param config The Rhythm config to add
      * @return this for chaining
      */
-    public RhythmControl addConfig(RhythmConfig config) {
+    public RhythmGroup addConfig(RhythmConfig config) {
         mRhythmConfigs.add(config);
         if (mCurrentConfigIndex == OVERLAY_DISABLED) {
             selectConfig(mRhythmConfigs.size() - 1);

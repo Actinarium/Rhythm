@@ -78,6 +78,9 @@ public final class RhythmDrawable extends Drawable {
      */
     public static class GridLines implements RhythmDrawableLayer {
 
+        public static final int DEFAULT_GRID_COLOR = 0x60EF43A7;
+        public static final int DEFAULT_BASELINE_COLOR = 0x8043A7EF;
+
         protected boolean mIsVertical;
         protected int mStep;
         protected int mThickness = 1;
@@ -101,9 +104,8 @@ public final class RhythmDrawable extends Drawable {
          *                determines whether the grid is horizontal ({@link Gravity#TOP} or {@link Gravity#BOTTOM}) or
          *                vertical ({@link Gravity#LEFT} or {@link Gravity#RIGHT})
          * @param step    Grid step, in pixels
-         * @param color   Grid line color, in #AARRGGBB format as usual
          */
-        public GridLines(@GridGravityConstraint int gravity, int step, int color) {
+        public GridLines(@GridGravityConstraint int gravity, int step) {
             mStep = step;
             mGravity = gravity;
             // If gravity pulls the grid left or right (horizontal pull), then we're talking about vertical lines
@@ -111,7 +113,18 @@ public final class RhythmDrawable extends Drawable {
 
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mPaint.setStyle(Paint.Style.FILL);
+            mPaint.setColor(DEFAULT_GRID_COLOR);
+        }
+
+        /**
+         * Set grid line color
+         *
+         * @param color Grid line color, in #AARRGGBB format as usual
+         * @return this for chaining
+         */
+        public GridLines setColor(int color) {
             mPaint.setColor(color);
+            return this;
         }
 
         /**
@@ -199,6 +212,7 @@ public final class RhythmDrawable extends Drawable {
             } else {
                 // Then we're drawing vertical lines
                 // Same with vertical lines
+                @SuppressLint("RtlHardcoded")
                 int curX = mGravity == Gravity.LEFT
                         ? left + mOffset
                         : left + width % mStep + mOffset - mThickness;
