@@ -5,7 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import com.actinarium.rhythm.RhythmDrawable.GridLines;
+import com.actinarium.rhythm.layers.GridLinesLayer;
+import com.actinarium.rhythm.layers.RhythmDrawableLayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,19 +17,19 @@ import java.util.List;
  *
  * @author Paul Danyliuk
  */
-public class RhythmConfig {
+public class RhythmPattern {
 
     protected static final int ESTIMATED_AVG_CAPACITY = 6;
 
     protected String mTitle;
-    protected List<RhythmDrawable.RhythmDrawableLayer> mLayers;
+    protected List<RhythmDrawableLayer> mLayers;
 
     /**
      * Create a new config
      *
      * @param title A convenient title for this config, used to identify it in the notification
      */
-    public RhythmConfig(@Nullable String title) {
+    public RhythmPattern(@Nullable String title) {
         mTitle = title;
         mLayers = new ArrayList<>(ESTIMATED_AVG_CAPACITY);
     }
@@ -40,20 +41,25 @@ public class RhythmConfig {
      * @param layer A Rhythm drawable layer implementation
      * @return this for chaining
      */
-    public RhythmConfig addLayer(@NonNull RhythmDrawable.RhythmDrawableLayer layer) {
+    public RhythmPattern addLayer(@NonNull RhythmDrawableLayer layer) {
         mLayers.add(layer);
         return this;
     }
 
     /**
-     * A shorthand for {@link RhythmGroup#addConfig(RhythmConfig)}
+     * A shorthand for {@link RhythmGroup#addPattern(RhythmPattern)}
      *
      * @param control Rhythm control to add this config to
      * @return this for chaining (e.g. for adding this config to other controls as well)
      */
-    public RhythmConfig addToControl(RhythmGroup control) {
-        control.addConfig(this);
+    public RhythmPattern addToControl(RhythmGroup control) {
+        control.addPattern(this);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return mTitle != null ? mTitle : "Untitled pattern";
     }
 
     /*
@@ -68,11 +74,11 @@ public class RhythmConfig {
      * @return Rhythm config with pre-configured grid line layers
      */
     @SuppressLint("RtlHardcoded")
-    public static RhythmConfig make8DipGrid(String title, float scaleFactor) {
+    public static RhythmPattern make8DipGrid(String title, float scaleFactor) {
         final int step = (int) (scaleFactor * 8);
-        return new RhythmConfig(title)
-                .addLayer(new GridLines(Gravity.TOP, step))
-                .addLayer(new GridLines(Gravity.LEFT, step));
+        return new RhythmPattern(title)
+                .addLayer(new GridLinesLayer(Gravity.TOP, step))
+                .addLayer(new GridLinesLayer(Gravity.LEFT, step));
     }
 
     /**
@@ -82,9 +88,9 @@ public class RhythmConfig {
      * @param scaleFactor px to dp ratio, obtained through {@link DisplayMetrics#density}
      * @return Rhythm config with pre-configured grid line layer
      */
-    public static RhythmConfig makeBaselineGrid(String title, float scaleFactor) {
-        return new RhythmConfig(title)
-                .addLayer(new GridLines(Gravity.TOP, (int) (scaleFactor * 4)).setColor(GridLines.DEFAULT_BASELINE_COLOR));
+    public static RhythmPattern makeBaselineGrid(String title, float scaleFactor) {
+        return new RhythmPattern(title)
+                .addLayer(new GridLinesLayer(Gravity.TOP, (int) (scaleFactor * 4)).color(GridLinesLayer.DEFAULT_BASELINE_COLOR));
     }
 
     /**
@@ -95,9 +101,9 @@ public class RhythmConfig {
      * @param scaleFactor px to dp ratio, obtained through {@link DisplayMetrics#density}
      * @return Rhythm config with pre-configured grid line layers
      */
-    public static RhythmConfig make8DipAndBaselineGrid(String title, float scaleFactor) {
+    public static RhythmPattern make8DipAndBaselineGrid(String title, float scaleFactor) {
         final int step = (int) (scaleFactor * 8);
         return make8DipGrid(title, scaleFactor)
-                .addLayer(new GridLines(Gravity.TOP, step).setOffset(step / 2).setColor(GridLines.DEFAULT_BASELINE_COLOR));
+                .addLayer(new GridLinesLayer(Gravity.TOP, step).offset(step / 2).color(GridLinesLayer.DEFAULT_BASELINE_COLOR));
     }
 }

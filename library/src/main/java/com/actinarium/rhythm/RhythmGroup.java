@@ -1,125 +1,155 @@
 package com.actinarium.rhythm;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
- *
- * An entity that controls all linked grid overlays &mdash; namely tells them what overlay configuration to draw.
+ * <p>Groups all views and drawables that should display the same {@link RhythmPattern} at the moment. A Rhythm group
+ * can have multiple Rhythm patterns set up and allow all associated drawables cycle through them.</p><p>Normally, the
+ * group should be attached to {@link RhythmControl} (for that you don't instantiate RhythmGroup directly but use {@link
+ * RhythmControl#makeGroup(String)}), but "orphaned" groups will work too.</p>
  *
  * @author Paul Danyliuk
  */
 public final class RhythmGroup {
 
-    public static int OVERLAY_DISABLED = -1;
-    private static final int ESTIMATED_DRAWABLES_PER_CONTROL = 4;
-    private static final int ESTIMATED_MAX_CONFIGS_PER_CONTROL = 4;
+    public static int NO_PATTERN = -1;
 
-    Context mContext;
-    String mTitle;
-    List<WeakReference<RhythmDrawable>> mDrawables;
-    List<RhythmConfig> mRhythmConfigs;
-    int mCurrentConfigIndex = OVERLAY_DISABLED;
+    private static final int ESTIMATED_PATTERNS_PER_GROUP = 4;
+
+    private String mTitle;
+
+    // Assigned by RhythmControl upon instantiation via {@link RhythmControl#makeGroup(String)}; make no sense otherwise
+    int mIndex;
+    RhythmControl mControl;
+
+    private List<WeakReference<RhythmDrawable>> mDrawables;
+    private List<RhythmPattern> mPatterns;
+    private int mCurrentPatternIndex = NO_PATTERN;
 
     /**
-     * Create a new Rhythm group
+     * Create a new Rhythm group. <b>Heads up:</b> create a group by directly using this constructor only if you
+     * specifically don't want it attached to a {@link RhythmControl} (i.e. don't want it to appear in the Quick Control
+     * notification). Instead, you should use {@link RhythmControl#makeGroup(String)}
      *
-     * @param title A convenient title for this group, used to identify it in the notification
+     * @param title A convenient title for this group, used to identify it in the notification. If you are calling this
+     *              directly (i.e. without attaching to Rhythm control), just leave it <code>null</code>.
      */
-    RhythmGroup(@Nullable String title) {
+    public RhythmGroup(@Nullable String title) {
         mTitle = title;
-        mDrawables = new ArrayList<>(ESTIMATED_DRAWABLES_PER_CONTROL);
-        mRhythmConfigs = new ArrayList<>(ESTIMATED_MAX_CONFIGS_PER_CONTROL);
+        mDrawables = new LinkedList<>();
+        mPatterns = new ArrayList<>(ESTIMATED_PATTERNS_PER_GROUP);
     }
 
     /**
-     * Add Rhythm config to this group
+     * Add Rhythm pattern to this group
      *
-     * @param config The Rhythm config to add
+     * @param pattern The Rhythm pattern to add
      * @return this for chaining
      */
-    public RhythmGroup addConfig(RhythmConfig config) {
-        mRhythmConfigs.add(config);
-        if (mCurrentConfigIndex == OVERLAY_DISABLED) {
-            selectConfig(mRhythmConfigs.size() - 1);
+    public RhythmGroup addPattern(RhythmPattern pattern) {
+        mPatterns.add(pattern);
+        if (mCurrentPatternIndex == NO_PATTERN) {
+            selectPattern(0);
         }
-
         return this;
     }
 
     /**
-     * Make a default Rhythm drawable registered in this control. This drawable then may be used as a background or view
-     * overlay or such.
+     * Make a new Rhythm drawable that will draw the group's active {@link RhythmPattern} and can be used as an overlay
+     * or a background of a view. You should always make separate drawables for using them in different places, as
+     * reusing the same instance may lead to unexpected results. All drawables are controlled by this group and will
+     * redraw themselves when another pattern is selected.
      *
-     * @return A new {@link RhythmDrawable} attached to this control.
+     * @return A new {@link RhythmDrawable} attached to this group.
      */
     public RhythmDrawable makeDrawable() {
         RhythmDrawable drawable = new RhythmDrawable();
-        drawable.setConfig(getCurrentConfig());
+        drawable.setPattern(getCurrentPattern());
         mDrawables.add(new WeakReference<>(drawable));
         return drawable;
     }
 
-    public List<RhythmConfig> getRhythmConfigs() {
-        return mRhythmConfigs;
-    }
-
     /**
-     * @return Index of currently selected config, or {@link #OVERLAY_DISABLED}
+     * @return Index of currently selected pattern, or {@link #NO_PATTERN}
+     * @see #getCurrentPattern()
+     * @see #getPatternCount()
      */
-    public int getCurrentConfigIndex() {
-        return mCurrentConfigIndex;
+    public int getCurrentPatternIndex() {
+        return mCurrentPatternIndex;
     }
 
     /**
-     * @return Currently selected config, or null if overlay is disabled
+     * @return Number of patterns associated with this group
+     * @see #getCurrentPatternIndex()
      */
-    public RhythmConfig getCurrentConfig() {
-        return mCurrentConfigIndex != OVERLAY_DISABLED ? mRhythmConfigs.get(mCurrentConfigIndex) : null;
+    public int getPatternCount() {
+        return mPatterns.size();
     }
 
     /**
-     * Select config by index. Provide {@link #OVERLAY_DISABLED} to hide overlays.
+     * @return Currently selected pattern, or null if overlay is disabled
+     * @see #getCurrentPatternIndex()
+     */
+    public RhythmPattern getCurrentPattern() {
+        return mCurrentPatternIndex != NO_PATTERN ? mPatterns.get(mCurrentPatternIndex) : null;
+    }
+
+    /**
+     * Select pattern by index. Provide {@link #NO_PATTERN} to hide pattern.
      *
-     * @param index Config index, or {@link #OVERLAY_DISABLED}
+     * @param index Pattern index, or {@link #NO_PATTERN}
+     * @see #selectNextPattern()
+     * @see #getPatternCount()
      */
-    public void selectConfig(int index) {
-        if (index == OVERLAY_DISABLED || (index >= 0 && index < mRhythmConfigs.size())) {
-            mCurrentConfigIndex = index;
-            updateConfig();
+    public void selectPattern(int index) {
+        if (index == NO_PATTERN || (index >= 0 && index < mPatterns.size())) {
+            if (mCurrentPatternIndex != index) {
+                mCurrentPatternIndex = index;
+                doSetPattern();
+            }
         } else {
-            throw new IndexOutOfBoundsException("The index is neither OVERLAY_DISABLED nor valid.");
+            throw new IndexOutOfBoundsException("The index is neither NO_PATTERN nor valid.");
         }
     }
 
     /**
-     * Convenience method to cycle through configs. Used by Quick Control notification, although can be invoked anywhere
-     * in your code.
+     * Convenience method to cycle through patterns. Meant primarily for use in Quick Control notification, but can be
+     * invoked programmatically.
+     *
+     * @see #selectPattern(int)
      */
-    public void selectNextConfig() {
-        if (mCurrentConfigIndex == OVERLAY_DISABLED) {
-            mCurrentConfigIndex = 0;
+    public void selectNextPattern() {
+        if (mCurrentPatternIndex == NO_PATTERN) {
+            mCurrentPatternIndex = 0;
         } else {
-            mCurrentConfigIndex = ++mCurrentConfigIndex % mRhythmConfigs.size();
-            // After the last config comes disabled overlay
-            if (mCurrentConfigIndex == 0) {
-                mCurrentConfigIndex = OVERLAY_DISABLED;
+            mCurrentPatternIndex = ++mCurrentPatternIndex % mPatterns.size();
+            // After the last pattern comes disabled overlay
+            if (mCurrentPatternIndex == 0) {
+                mCurrentPatternIndex = NO_PATTERN;
             }
         }
-        updateConfig();
+        doSetPattern();
+    }
+
+    @Override
+    public String toString() {
+        return mTitle != null ? mTitle : "Group #" + mIndex;
     }
 
     /**
-     * Propagates current config to all linked {@link RhythmDrawable}s, removing dead references on the way
+     * Propagates current pattern to all linked {@link RhythmDrawable}s, removing dead references on the way. Also
+     * updates the notification to reflect current pattern's name
      */
-    protected void updateConfig() {
-        final RhythmConfig config = getCurrentConfig();
+    private void doSetPattern() {
+        final RhythmPattern pattern = getCurrentPattern();
+
+        // Using iterator here because we need to remove elements halfway
         Iterator<WeakReference<RhythmDrawable>> iterator = mDrawables.iterator();
         while (iterator.hasNext()) {
             final RhythmDrawable item = iterator.next().get();
@@ -127,8 +157,13 @@ public final class RhythmGroup {
                 // Clean up dead references
                 iterator.remove();
             } else {
-                item.setConfig(config);
+                item.setPattern(pattern);
             }
+        }
+
+        // If this group is attached to control, request Quick Control notification update
+        if (mControl != null) {
+            mControl.requestNotificationUpdate();
         }
     }
 

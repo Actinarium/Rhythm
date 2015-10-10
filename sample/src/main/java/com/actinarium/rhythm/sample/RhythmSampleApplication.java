@@ -1,11 +1,12 @@
 package com.actinarium.rhythm.sample;
 
 import android.app.Application;
+import android.graphics.Color;
 import android.view.Gravity;
-import com.actinarium.rhythm.RhythmConfig;
+import com.actinarium.rhythm.RhythmPattern;
 import com.actinarium.rhythm.RhythmGroup;
-import com.actinarium.rhythm.RhythmDrawable;
-import com.actinarium.rhythm.RhythmManager;
+import com.actinarium.rhythm.RhythmControl;
+import com.actinarium.rhythm.layers.GridLinesLayer;
 
 /**
  * <p></p>
@@ -13,36 +14,36 @@ import com.actinarium.rhythm.RhythmManager;
  * @author Paul Danyliuk
  * @version $Id$
  */
-public class RhythmSampleApplication extends Application implements RhythmManager.Host {
+public class RhythmSampleApplication extends Application implements RhythmControl.Host {
 
-    private RhythmManager mRhythmManager;
+    private RhythmControl mRhythmControl;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        mRhythmManager = new RhythmManager(this);
+        mRhythmControl = new RhythmControl(this);
         final float density = getResources().getDisplayMetrics().density;
 
-        mRhythmManager.newControl("Main control")
-                .addConfig(RhythmConfig.make8DipGrid("8dp grid", density))
-                .addConfig(RhythmConfig.makeBaselineGrid("Baseline grid", density))
-                .addConfig(RhythmConfig.make8DipAndBaselineGrid("Baseline grid", density));
+        mRhythmControl.makeGroup("Activity background")
+                .addPattern(RhythmPattern.make8DipGrid("8dp grid", density))
+                .addPattern(RhythmPattern.makeBaselineGrid("Baseline grid", density))
+                .addPattern(RhythmPattern.make8DipAndBaselineGrid("Both 8dp and baseline", density));
 
-        final RhythmGroup secondaryControl = mRhythmManager.newControl("Secondary control");
+        final RhythmGroup secondaryControl = mRhythmControl.makeGroup("Card overlays");
         final int gridStep8dp = (int) (8 * density);
-        new RhythmConfig("Test config")
-                .addLayer(new RhythmDrawable.GridLines(Gravity.LEFT, gridStep8dp).setMargins(true, 0, 0, 60, 0))
-                .addLayer(new RhythmDrawable.GridLines(Gravity.RIGHT, gridStep8dp).setMargins(true, 60, 0, 0, 0))
-                .addLayer(new RhythmDrawable.GridLines(Gravity.TOP, gridStep8dp).setMargins(true, 0, 0, 0, 60))
-                .addLayer(new RhythmDrawable.GridLines(Gravity.BOTTOM, gridStep8dp).setMargins(true, 0, 60, 0, 0))
+        new RhythmPattern("Test config")
+                .addLayer(new GridLinesLayer(Gravity.LEFT, gridStep8dp).margins(true, 0, 0, 60, 0).color(Color.WHITE).limit(4))
+                .addLayer(new GridLinesLayer(Gravity.RIGHT, gridStep8dp).margins(true, 60, 0, 0, 0).color(Color.WHITE).limit(4))
+                .addLayer(new GridLinesLayer(Gravity.TOP, gridStep8dp).margins(true, 0, 0, 0, 60).color(Color.WHITE).limit(4))
+                .addLayer(new GridLinesLayer(Gravity.BOTTOM, gridStep8dp).margins(true, 0, 60, 0, 0).color(Color.WHITE).limit(4))
                 .addToControl(secondaryControl);
 
-        mRhythmManager.showNotification(-2);
+        mRhythmControl.showQuickControl(-2);
     }
 
     @Override
-    public RhythmManager getRhythmManager() {
-        return mRhythmManager;
+    public RhythmControl getRhythmControl() {
+        return mRhythmControl;
     }
 }

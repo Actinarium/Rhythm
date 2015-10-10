@@ -1,8 +1,15 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Rhythm</string>
 
-    <string name="notif_control">Control: <xliff:g id="control_title" example="Card overlay">%s</xliff:g></string>
-    <string name="notif_config">Config: <xliff:g id="config_title" example="Grid and keylines">%s</xliff:g></string>
-    <string name="notif_error_title">Couldn’t connect to Rhythm</string>
-    <string name="notif_error_text">Check if your Application implements RhythmManager.Host</string>
+    <string name="group">Controlling: <xliff:g id="group_title" example="Card overlays">%s</xliff:g></string>
+    <string name="pattern">Current pattern: <xliff:g id="pattern_title" example="Grid and keylines">%s</xliff:g></string>
+    <string name="no_pattern">No pattern</string>
+    <string name="next_group">Group</string>
+    <string name="next_pattern">Pattern</string>
+
+    <string name="no_groups_title">No groups found</string>
+    <string name="no_groups_text">Rhythm control has no groups attached</string>
+
+    <string name="no_host_title">Couldn’t connect to Rhythm</string>
+    <string name="no_host_text">Check if your Application implements RhythmManager.Host</string>
 </resources>
