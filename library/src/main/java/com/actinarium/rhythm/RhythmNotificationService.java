@@ -19,7 +19,6 @@ import android.support.v4.app.NotificationCompat;
 public class RhythmNotificationService extends IntentService {
 
     public static final String ACTION_SHOW_NOTIFICATION = "com.actinarium.rhythm.action.SHOW_NOTIFICATION";
-    public static final String ACTION_HIDE_NOTIFICATION = "com.actinarium.rhythm.action.HIDE_NOTIFICATION";
     public static final String ACTION_TOGGLE_CONFIGURATION = "com.actinarium.rhythm.action.TOGGLE_CONFIGURATION";
 
     public static final String EXTRA_NOTIFICATION_ID = "com.actinarium.rhythm.extra.NOTIFICATION_ID";
@@ -29,11 +28,17 @@ public class RhythmNotificationService extends IntentService {
         super("RhythmService");
     }
 
-    public static void showNotification(Context context, int notificationId, int managerId) {
+    /**
+     * Show the "Quick Control" notification, which allows to switch configs for any Rhythm controls without leaving
+     * the app under development.
+     *
+     * @param context        Used to start the service and build the notification
+     * @param notificationId Notification ID, must be unique across the app
+     */
+    public static void showNotification(Context context, int notificationId) {
         Intent intent = new Intent(context, RhythmNotificationService.class);
         intent.setAction(ACTION_SHOW_NOTIFICATION);
         intent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-        intent.putExtra(EXTRA_MANAGER_ID, managerId);
         context.startService(intent);
     }
 
@@ -47,51 +52,35 @@ public class RhythmNotificationService extends IntentService {
                 handleToggleConfiguration(notificationId, managerId);
             } else if (ACTION_SHOW_NOTIFICATION.equals(action)) {
                 final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, Integer.MIN_VALUE);
-                final int managerId = intent.getIntExtra(EXTRA_MANAGER_ID, 0);
-                handleShowNotification(notificationId, managerId);
-            } else if (ACTION_HIDE_NOTIFICATION.equals(action)) {
-                final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, Integer.MIN_VALUE);
-                handleHideNotification(notificationId);
+                handleShowNotification(notificationId);
             }
         }
     }
 
     /**
-     * Show sticky notification for controlling a Rhythm manager
-     * @param notificationId Notification ID, must be unique across the app where Rhythm library is used
-     * @param managerId      ID of Rhythm manager to associate this notification with
+     * Show sticky "Quick Control" notification for Rhythm
+     * @param notificationId Notification ID, must be unique across the app
      */
-    private void handleShowNotification(int notificationId, int managerId) {
+    private void handleShowNotification(int notificationId) {
         Intent toggleAction = new Intent(this, RhythmNotificationService.class);
         toggleAction.setAction(ACTION_TOGGLE_CONFIGURATION);
         toggleAction.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-        toggleAction.putExtra(EXTRA_MANAGER_ID, managerId);
         PendingIntent piToggleAction = PendingIntent.getService(this, 0, toggleAction, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_grid_on_white_24dp)
+                .setSmallIcon(R.drawable.ic_grid)
                 .setColor(Color.BLACK)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setOngoing(true)
                 .setAutoCancel(false)
                 .setShowWhen(false)
-                .setContentTitle("Rhythm notification")
-                .setContentText("Click to select next mode")
-                .addAction(new NotificationCompat.Action(R.drawable.ic_grid_on_white_24dp, "Toggle config", piToggleAction));
-//                .setContentIntent(piToggleAction);
+                .setContentTitle("Control: Cards and such and such")
+                .setContentText("Config: 4dp baseline grid")
+                .addAction(new NotificationCompat.Action(R.drawable.ic_next, "Control", piToggleAction))
+                .addAction(new NotificationCompat.Action(R.drawable.ic_next, "Config", piToggleAction));
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify(notificationId, builder.build());
-    }
-
-    /**
-     * H
-     * @param notificationId
-     */
-    private void handleHideNotification(int notificationId) {
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        manager.cancel(notificationId);
     }
 
     /**
@@ -101,9 +90,9 @@ public class RhythmNotificationService extends IntentService {
      */
     private void handleToggleConfiguration(int notificationId, int managerId) {
         Application application = getApplication();
-        if (application instanceof Rhythmic) {
+        if (application instanceof RhythmManager.Host) {
             Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new ToggleConfigRunnable(((Rhythmic) application).getRhythmManager()));
+            handler.post(new ToggleConfigRunnable(((RhythmManager.Host) application).getRhythmManager().getControl(0)));
         }
     }
 
@@ -112,15 +101,15 @@ public class RhythmNotificationService extends IntentService {
      */
     private static class ToggleConfigRunnable implements Runnable {
 
-        private RhythmManager mManager;
+        private RhythmControl mControl;
 
-        public ToggleConfigRunnable(RhythmManager manager) {
-            mManager = manager;
+        public ToggleConfigRunnable(RhythmControl control) {
+            mControl = control;
         }
 
         @Override
         public void run() {
-            mManager.updateConfiguration();
+            mControl.selectNextConfig();
         }
     }
 }

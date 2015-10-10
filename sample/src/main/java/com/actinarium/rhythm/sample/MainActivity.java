@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         View view = findViewById(R.id.frame);
-        view.setBackgroundDrawable(((RhythmSampleApplication) getApplication()).getRhythmManager().makeDrawable());
+        view.setBackgroundDrawable(((RhythmSampleApplication) getApplication()).getRhythmManager().getControl(0).makeDrawable());
     }
 
     @Override
