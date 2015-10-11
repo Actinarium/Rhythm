@@ -42,8 +42,17 @@ public final class RhythmDrawable extends Drawable {
     }
 
     /**
-     * Set a {@link RhythmPattern} to draw by this drawable; will request redraw of the view where this drawable is
-     * used
+     * Get current pattern
+     *
+     * @return Currently active Rhythm pattern, or <code>null</code> if no pattern is set
+     */
+    public RhythmPattern getPattern() {
+        return mPattern;
+    }
+
+    /**
+     * Set a {@link RhythmPattern} to draw by this drawable. Will request redraw of the view where this drawable is
+     * used.
      *
      * @param pattern Pattern to draw. Provide <code>null</code> to disable overlay.
      */
@@ -53,10 +62,20 @@ public final class RhythmDrawable extends Drawable {
     }
 
     /**
-     * Set background {@link Drawable}. Should be used when decorating existing views, which already have background
-     * &mdash; this way the background will be preserved and the pattern will be drawn atop.
+     * Get decorated background drawable (i.e. the one drawn under the pattern), if present
      *
-     * @param backgroundDrawable View's background
+     * @return Background drawable or <code>null</code>
+     */
+    public Drawable getBackgroundDrawable() {
+        return mBackgroundDrawable;
+    }
+
+    /**
+     * Set background {@link Drawable}. Should be used when decorating existing views, which already have background
+     * &mdash; this way the background will be preserved and the pattern will be drawn atop. <b>Note:</b> for background
+     * drawable to function properly you must ensure that its {@link Drawable#setCallback(Callback)} has been called.
+     *
+     * @param backgroundDrawable Background drawable to draw below the pattern, can be <code>null</code>
      */
     public void setBackgroundDrawable(@Nullable Drawable backgroundDrawable) {
         mBackgroundDrawable = backgroundDrawable;

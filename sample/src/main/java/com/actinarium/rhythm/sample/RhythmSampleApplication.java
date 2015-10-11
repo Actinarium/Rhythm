@@ -33,10 +33,10 @@ public class RhythmSampleApplication extends Application implements RhythmContro
         final RhythmGroup secondaryControl = mRhythmControl.makeGroup("Card overlays");
         final int gridStep8dp = (int) (8 * density);
         new RhythmPattern("Test config")
-                .addLayer(new GridLinesLayer(Gravity.LEFT, gridStep8dp).margins(true, 0, 0, 60, 0).color(Color.WHITE).limit(4))
-                .addLayer(new GridLinesLayer(Gravity.RIGHT, gridStep8dp).margins(true, 60, 0, 0, 0).color(Color.WHITE).limit(4))
-                .addLayer(new GridLinesLayer(Gravity.TOP, gridStep8dp).margins(true, 0, 0, 0, 60).color(Color.WHITE).limit(4))
-                .addLayer(new GridLinesLayer(Gravity.BOTTOM, gridStep8dp).margins(true, 0, 60, 0, 0).color(Color.WHITE).limit(4))
+                .addLayer(new GridLinesLayer(Gravity.LEFT, gridStep8dp).margins(true, 0, 0, 60, 0).color(Color.BLACK).limit(4))
+                .addLayer(new GridLinesLayer(Gravity.RIGHT, gridStep8dp).margins(true, 60, 0, 0, 0).color(Color.BLACK).limit(4))
+                .addLayer(new GridLinesLayer(Gravity.TOP, gridStep8dp).margins(true, 0, 0, 0, 60).color(Color.BLACK).limit(4))
+                .addLayer(new GridLinesLayer(Gravity.BOTTOM, gridStep8dp).margins(true, 0, 60, 0, 0).color(Color.BLACK).limit(4))
                 .addToControl(secondaryControl);
 
         mRhythmControl.showQuickControl(-2);

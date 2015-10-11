@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="RhythmicFrameLayout">
+        <attr name="rhythmGroup" format="integer" />
+        <attr name="patternPosition" format="enum">
+            <enum name="underBackground" value="0" />
+            <enum name="underContent" value="1" />
+            <enum name="overContent" value="2" />
+            <enum name="overForeground" value="3" />
+        </attr>
+    </declare-styleable>
+
+</resources>

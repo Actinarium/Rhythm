@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import com.actinarium.rhythm.RhythmControl;
 import com.actinarium.rhythm.RhythmDrawable;
 
@@ -15,14 +16,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         View view = findViewById(R.id.frame);
-        View subView = findViewById(R.id.subframe);
+        FrameLayout subView = (FrameLayout) findViewById(R.id.subframe);
         final RhythmControl rhythmControl = ((RhythmSampleApplication) getApplication()).getRhythmControl();
         view.setBackgroundDrawable(rhythmControl.getGroup(0).makeDrawable());
         final RhythmDrawable drawable = rhythmControl.getGroup(1).makeDrawable();
 //        drawable.setBounds(new Rect(subView.getLeft(), subView.getTop(), subView.getRight(), subView.getBottom()));
 //        subView.getOverlay().add(drawable);
-        drawable.setBackgroundDrawable(subView.getBackground());
-        subView.setBackgroundDrawable(drawable);
+//        drawable.setBackgroundDrawable(subView.getBackground());
+        subView.setForeground(drawable);
     }
 
     @Override

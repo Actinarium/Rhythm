@@ -1,5 +1,6 @@
 package com.actinarium.rhythm.layers;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -125,6 +126,7 @@ public class GridLinesLayer implements RhythmDrawableLayer {
     }
 
     @Override
+    @SuppressLint("RtlHardcoded")
     public void draw(Canvas canvas, Rect drawableBounds) {
         // Calculate real left/right/top/bottom bounds based on drawable bounds and margins
         final int left, top, right, bottom;

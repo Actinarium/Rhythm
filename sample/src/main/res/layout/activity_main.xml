@@ -1,9 +1,11 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:id="@+id/frame"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".MainActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/frame"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context=".MainActivity">
 
     <FrameLayout
             android:id="@+id/subframe"
@@ -14,4 +16,20 @@
 
     </FrameLayout>
 
-</FrameLayout>
+    <com.actinarium.rhythm.widget.RhythmicFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_margin="16dp"
+            android:background="#F000B0B0"
+            app:rhythmGroup="1"
+            app:patternPosition="overContent">
+
+        <TextView
+                android:background="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sample text"/>
+
+    </com.actinarium.rhythm.widget.RhythmicFrameLayout>
+
+</LinearLayout>
