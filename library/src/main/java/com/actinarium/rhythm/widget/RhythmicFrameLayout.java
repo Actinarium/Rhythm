@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
@@ -166,6 +167,13 @@ public class RhythmicFrameLayout extends FrameLayout {
             mRhythmDrawable.draw(canvas);
         }
     }
+
+    @Override
+    protected boolean verifyDrawable(Drawable who) {
+        return (mRhythmDrawable != null && mRhythmDrawable == who) || super.verifyDrawable(who);
+    }
+
+    // Getters/setters
 
     public RhythmDrawable getRhythmDrawable() {
         return mRhythmDrawable;
