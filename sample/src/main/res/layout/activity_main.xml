@@ -18,7 +18,7 @@
 
     <com.actinarium.rhythm.widget.RhythmicFrameLayout
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="160.66dp"
             android:layout_margin="16dp"
             android:background="#F000B0B0"
             app:rhythmGroup="1"

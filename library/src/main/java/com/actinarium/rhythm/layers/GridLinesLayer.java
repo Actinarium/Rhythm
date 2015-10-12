@@ -51,7 +51,7 @@ public class GridLinesLayer implements RhythmDrawableLayer {
         // If gravity pulls the grid left or right (horizontal pull), then we're talking about vertical lines
         mIsVertical = Gravity.isHorizontal(gravity);
 
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(DEFAULT_GRID_COLOR);
     }
