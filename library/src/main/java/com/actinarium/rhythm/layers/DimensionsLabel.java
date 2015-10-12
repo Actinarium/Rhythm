@@ -16,7 +16,7 @@ import android.view.Gravity;
  *
  * @author Paul Danyliuk
  */
-public class DimensionsLabelLayer implements RhythmDrawableLayer {
+public class DimensionsLabel implements RhythmDrawableLayer {
 
     public static final int DEFAULT_BACKGROUND = 0x80000000;
     public static final int DEFAULT_TEXT_COLOR = 0xA0FFFFFF;
@@ -41,7 +41,7 @@ public class DimensionsLabelLayer implements RhythmDrawableLayer {
      * @param scaleFactor Scale factor to divide pixels by. Provide {@link DisplayMetrics#density} here to get thy
      *                    dimensions in dips, or set to 1f to get pixels.
      */
-    public DimensionsLabelLayer(float scaleFactor) {
+    public DimensionsLabel(float scaleFactor) {
         mScaleFactor = scaleFactor;
 
         mBackgroundPaint = new Paint();
@@ -62,7 +62,7 @@ public class DimensionsLabelLayer implements RhythmDrawableLayer {
      *                Gravity#LEFT}</code>
      * @return this for chaining
      */
-    public DimensionsLabelLayer gravity(int gravity) {
+    public DimensionsLabel gravity(int gravity) {
         mGravity = gravity;
         return this;
     }
@@ -73,7 +73,7 @@ public class DimensionsLabelLayer implements RhythmDrawableLayer {
      * @param color Text box background color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public DimensionsLabelLayer boxColor(int color) {
+    public DimensionsLabel boxColor(int color) {
         mBackgroundPaint.setColor(color);
         return this;
     }
@@ -84,7 +84,7 @@ public class DimensionsLabelLayer implements RhythmDrawableLayer {
      * @param color Text color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public DimensionsLabelLayer textColor(int color) {
+    public DimensionsLabel textColor(int color) {
         mTextPaint.setColor(color);
         return this;
     }
@@ -95,7 +95,7 @@ public class DimensionsLabelLayer implements RhythmDrawableLayer {
      * @param size Text size, in pixels
      * @return this for chaining
      */
-    public DimensionsLabelLayer textSize(float size) {
+    public DimensionsLabel textSize(float size) {
         mTextPaint.setTextSize(size);
         return this;
     }

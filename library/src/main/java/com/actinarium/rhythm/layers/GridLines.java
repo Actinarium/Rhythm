@@ -13,12 +13,11 @@ import android.view.Gravity;
  * grids and incremental keylines. <b>Note:</b> RTL properties are not supported, you only have <i>left</i> and
  * <i>right</i> properties at your disposal.
  */
-public class GridLinesLayer implements RhythmDrawableLayer {
+public class GridLines implements RhythmDrawableLayer {
 
     public static final int DEFAULT_GRID_COLOR = 0x60F50057;
     public static final int DEFAULT_BASELINE_COLOR = 0x800091EA;
 
-    protected boolean mIsVertical;
     protected int mStep;
     protected int mThickness = 1;
     protected int mLimit = Integer.MAX_VALUE;
@@ -28,7 +27,7 @@ public class GridLinesLayer implements RhythmDrawableLayer {
     protected int mMarginRight;
     protected int mMarginBottom;
     protected int mOffset;
-    protected int mGravity;
+    protected @LayerGravity int mGravity;
     protected Paint mPaint;
 
     /**
@@ -45,11 +44,9 @@ public class GridLinesLayer implements RhythmDrawableLayer {
      *                Gravity#RIGHT})
      * @param step    Grid step, in pixels
      */
-    public GridLinesLayer(@LayerGravityConstraint int gravity, int step) {
+    public GridLines(@LayerGravity int gravity, int step) {
         mStep = step;
         mGravity = gravity;
-        // If gravity pulls the grid left or right (horizontal pull), then we're talking about vertical lines
-        mIsVertical = Gravity.isHorizontal(gravity);
 
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
@@ -62,7 +59,7 @@ public class GridLinesLayer implements RhythmDrawableLayer {
      * @param color Grid line color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public GridLinesLayer color(int color) {
+    public GridLines color(int color) {
         mPaint.setColor(color);
         return this;
     }
@@ -73,7 +70,7 @@ public class GridLinesLayer implements RhythmDrawableLayer {
      * @param thickness Grid line thickness, in pixels
      * @return this for chaining
      */
-    public GridLinesLayer thickness(int thickness) {
+    public GridLines thickness(int thickness) {
         mThickness = thickness;
         return this;
     }
@@ -91,7 +88,7 @@ public class GridLinesLayer implements RhythmDrawableLayer {
      * @param bottom    bottom margin (px or %)
      * @return this for chaining
      */
-    public GridLinesLayer margins(boolean isPercent, int left, int top, int right, int bottom) {
+    public GridLines margins(boolean isPercent, int left, int top, int right, int bottom) {
         mMarginIsPercent = isPercent;
         mMarginLeft = left;
         mMarginTop = top;
@@ -107,7 +104,7 @@ public class GridLinesLayer implements RhythmDrawableLayer {
      * @param limit Number of lines to draw. Setting zero or less means no limit.
      * @return this for chaining
      */
-    public GridLinesLayer limit(int limit) {
+    public GridLines limit(int limit) {
         mLimit = limit > 0 ? limit : Integer.MAX_VALUE;
         return this;
     }
@@ -120,7 +117,7 @@ public class GridLinesLayer implements RhythmDrawableLayer {
      * @param offset Grid offset in pixels. Regardless of gravity, positive offset means down, negative means up
      * @return this for chaining
      */
-    public GridLinesLayer offset(int offset) {
+    public GridLines offset(int offset) {
         mOffset = offset;
         return this;
     }
@@ -184,4 +181,5 @@ public class GridLinesLayer implements RhythmDrawableLayer {
             }
         }
     }
+
 }

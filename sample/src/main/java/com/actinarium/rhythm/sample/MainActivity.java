@@ -1,7 +1,13 @@
 package com.actinarium.rhythm.sample;
 
+import android.app.ActivityManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +21,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = getTheme();
+            theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+            int color = typedValue.data;
+
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_rhythm);
+            ActivityManager.TaskDescription td = new ActivityManager.TaskDescription(null, bm, color);
+
+            setTaskDescription(td);
+            bm.recycle();
+        }
+
         View view = findViewById(R.id.frame);
         FrameLayout subView = (FrameLayout) findViewById(R.id.subframe);
         final RhythmControl rhythmControl = ((RhythmSampleApplication) getApplication()).getRhythmControl();

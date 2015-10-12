@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import com.actinarium.rhythm.layers.GridLinesLayer;
+import com.actinarium.rhythm.layers.GridLines;
 import com.actinarium.rhythm.layers.RhythmDrawableLayer;
 
 import java.util.ArrayList;
@@ -77,8 +77,8 @@ public class RhythmPattern {
     public static RhythmPattern make8DipGrid(String title, float scaleFactor) {
         final int step = (int) (scaleFactor * 8);
         return new RhythmPattern(title)
-                .addLayer(new GridLinesLayer(Gravity.TOP, step))
-                .addLayer(new GridLinesLayer(Gravity.LEFT, step));
+                .addLayer(new GridLines(Gravity.TOP, step))
+                .addLayer(new GridLines(Gravity.LEFT, step));
     }
 
     /**
@@ -90,7 +90,7 @@ public class RhythmPattern {
      */
     public static RhythmPattern makeBaselineGrid(String title, float scaleFactor) {
         return new RhythmPattern(title)
-                .addLayer(new GridLinesLayer(Gravity.TOP, (int) (scaleFactor * 4)).color(GridLinesLayer.DEFAULT_BASELINE_COLOR));
+                .addLayer(new GridLines(Gravity.TOP, (int) (scaleFactor * 4)).color(GridLines.DEFAULT_BASELINE_COLOR));
     }
 
     /**
@@ -104,6 +104,6 @@ public class RhythmPattern {
     public static RhythmPattern make8DipAndBaselineGrid(String title, float scaleFactor) {
         final int step = (int) (scaleFactor * 8);
         return make8DipGrid(title, scaleFactor)
-                .addLayer(new GridLinesLayer(Gravity.TOP, step).offset(step / 2).color(GridLinesLayer.DEFAULT_BASELINE_COLOR));
+                .addLayer(new GridLines(Gravity.TOP, step).offset(step / 2).color(GridLines.DEFAULT_BASELINE_COLOR));
     }
 }
