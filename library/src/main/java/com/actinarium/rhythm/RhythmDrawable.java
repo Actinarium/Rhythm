@@ -35,16 +35,16 @@ import java.util.List;
 public final class RhythmDrawable extends Drawable {
 
     private RhythmPattern mPattern;
-    private Drawable mBackgroundDrawable;
+    private Drawable mDecoratedBackground;
 
     @Override
     public void draw(Canvas canvas) {
         Rect bounds = getBounds();
 
         // Draw background if present
-        if (mBackgroundDrawable != null) {
-            mBackgroundDrawable.setBounds(bounds);
-            mBackgroundDrawable.draw(canvas);
+        if (mDecoratedBackground != null) {
+            mDecoratedBackground.setBounds(bounds);
+            mDecoratedBackground.draw(canvas);
         }
 
         // Draw overlay if present
@@ -82,8 +82,8 @@ public final class RhythmDrawable extends Drawable {
      *
      * @return Background drawable or <code>null</code>
      */
-    public Drawable getBackgroundDrawable() {
-        return mBackgroundDrawable;
+    public Drawable getDecoratedBackground() {
+        return mDecoratedBackground;
     }
 
     /**
@@ -91,24 +91,24 @@ public final class RhythmDrawable extends Drawable {
      * &mdash; this way the background will be preserved and the pattern will be drawn atop. <b>Note:</b> for background
      * drawable to function properly you must ensure that its {@link Drawable#setCallback(Callback)} has been called.
      *
-     * @param backgroundDrawable Background drawable to draw below the pattern, can be <code>null</code>
+     * @param decoratedBackground Background drawable to draw below the pattern, can be <code>null</code>
      */
-    public void setBackgroundDrawable(@Nullable Drawable backgroundDrawable) {
-        mBackgroundDrawable = backgroundDrawable;
+    public void setDecoratedBackground(@Nullable Drawable decoratedBackground) {
+        mDecoratedBackground = decoratedBackground;
         invalidateSelf();
     }
 
     @Override
     public void setAlpha(int alpha) {
-        if (mBackgroundDrawable != null) {
-            mBackgroundDrawable.setAlpha(alpha);
+        if (mDecoratedBackground != null) {
+            mDecoratedBackground.setAlpha(alpha);
         }
     }
 
     @Override
     public void setColorFilter(ColorFilter colorFilter) {
-        if (mBackgroundDrawable != null) {
-            mBackgroundDrawable.setColorFilter(colorFilter);
+        if (mDecoratedBackground != null) {
+            mDecoratedBackground.setColorFilter(colorFilter);
         }
     }
 

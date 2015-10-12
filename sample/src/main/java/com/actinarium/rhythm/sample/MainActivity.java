@@ -26,6 +26,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import com.actinarium.rhythm.RhythmControl;
 import com.actinarium.rhythm.RhythmDrawable;
 
@@ -56,7 +57,10 @@ public class MainActivity extends AppCompatActivity {
         final RhythmDrawable drawable = rhythmControl.getGroup(1).makeDrawable();
 //        drawable.setBounds(new Rect(subView.getLeft(), subView.getTop(), subView.getRight(), subView.getBottom()));
 //        subView.getOverlay().add(drawable);
-//        drawable.setBackgroundDrawable(subView.getBackground());
+//        drawable.setDecoratedBackground(subView.getBackground());
         subView.setForeground(drawable);
+
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.line);
+        rhythmControl.getGroup(1).decorate(linearLayout.getChildAt(0), linearLayout.getChildAt(1), linearLayout.getChildAt(2), linearLayout.getChildAt(3), linearLayout.getChildAt(4));
     }
 }

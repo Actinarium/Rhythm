@@ -17,6 +17,7 @@
 package com.actinarium.rhythm;
 
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -89,6 +90,22 @@ public final class RhythmGroup {
         drawable.setPattern(getCurrentPattern());
         mDrawables.add(new WeakReference<>(drawable));
         return drawable;
+    }
+
+    /**
+     * <p>A handy method that will decorate provided views with Rhythm drawables connected to this
+     * group.</p><p><b>Note:</b> while Rhythm patterns will be drawn over the views' existing backgrounds, their
+     * original background drawables will be replaced with decorated ones. To access it, you should call
+     * <code>view.getBackground().getDecoratedBackground()</code></p>
+     *
+     * @param views Views whose backgrounds should be decorated with Rhythm drawables
+     */
+    public void decorate(View... views) {
+        for (View view : views) {
+            RhythmDrawable decoratingRhythmDrawable = makeDrawable();
+            decoratingRhythmDrawable.setDecoratedBackground(view.getBackground());
+            view.setBackgroundDrawable(decoratingRhythmDrawable);
+        }
     }
 
     /**
