@@ -1,5 +1,4 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Rhythm</string>
 
     <string name="group">Controlling: <xliff:g id="group_title" example="Card overlays">%s</xliff:g></string>
     <string name="pattern">Current pattern: <xliff:g id="pattern_title" example="Grid and keylines">%s</xliff:g></string>

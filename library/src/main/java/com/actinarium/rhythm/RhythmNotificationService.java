@@ -27,7 +27,7 @@ public class RhythmNotificationService extends IntentService {
 
     public static final String EXTRA_NOTIFICATION_ID = "com.actinarium.rhythm.extra.NOTIFICATION_ID";
 
-    private static final int NOTIFICATION_ICON_COLOR = 0xEF43A7;
+    private static final int NOTIFICATION_ICON_COLOR = 0x6A50A7;
     private static final int NOTIFICATION_ERROR_COLOR = 0xEF4343;
 
     public RhythmNotificationService() {
@@ -132,7 +132,7 @@ public class RhythmNotificationService extends IntentService {
 
     private NotificationCompat.Builder makeCommonNotification(String text) {
         return new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_grid)
+                .setSmallIcon(R.drawable.ic_rhythm)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(false)

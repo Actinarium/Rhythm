@@ -15,8 +15,8 @@ import android.view.Gravity;
  */
 public class GridLinesLayer implements RhythmDrawableLayer {
 
-    public static final int DEFAULT_GRID_COLOR = 0x60EF43A7;
-    public static final int DEFAULT_BASELINE_COLOR = 0x8043A7EF;
+    public static final int DEFAULT_GRID_COLOR = 0x60F50057;
+    public static final int DEFAULT_BASELINE_COLOR = 0x800091EA;
 
     protected boolean mIsVertical;
     protected int mStep;
