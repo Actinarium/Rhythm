@@ -34,7 +34,7 @@ public final class RhythmControl {
     public static int NOTIFICATION_NO_GROUPS = -1;
 
     /**
-     * Context is used for the sole purpose of talking to the {@link RhythmNotificationService}. I sure hope it's not
+     * Context is used for the sole purpose of talking to the {@link RhythmNotificationService}. I sure hope it’s not
      * leaking.
      */
     private Context mContext;
@@ -50,7 +50,7 @@ public final class RhythmControl {
      * Create a Rhythm manager
      *
      * @param context Current context (usually the {@link Application} object where Rhythm manager setup is performed).
-     *                <br />You may actually set this to <code>null</code> if you wish to suppress the quick control
+     *                <br>You may actually set this to <code>null</code> if you wish to suppress the quick control
      *                notification.
      */
     public RhythmControl(@Nullable Context context) {
@@ -97,11 +97,11 @@ public final class RhythmControl {
     }
 
     /**
-     * <p>Show the "Quick Control" notification, which allows to switch configs for any Rhythm controls quickly without
-     * navigating away from your app. Usually you would want to call this once during initial configuration (unless you
-     * don't need the notification). If you add controls after the call to {@link #showQuickControl(int)}, the
-     * notification will be automatically updated.</p> <p>The notification is dismissible. You can use this method again
-     * to bring it back. Upon dismiss, all Rhythm overlays will be hidden.</p>
+     * <p>Show the &ldquo;Quick Control&rdquo; notification, which allows to switch configs for any Rhythm controls
+     * quickly without navigating away from your app. Usually you would want to call this once during initial
+     * configuration (unless you don’t need the notification). If you add controls after the call to {@link
+     * #showQuickControl(int)}, the notification will be automatically updated.</p> <p>The notification is dismissible.
+     * You can use this method again to bring it back. Upon dismiss, all Rhythm overlays will be hidden.</p>
      *
      * @param notificationId ID for Rhythm notification, must be unique across the app
      */
@@ -158,7 +158,7 @@ public final class RhythmControl {
     }
 
     /**
-     * The {@link Application} must implement this interface so that it's possible to access Rhythm API from anywhere in
+     * The {@link Application} must implement this interface so that it’s possible to access Rhythm API from anywhere in
      * the app, particularly from the Quick Control notification
      */
     public interface Host {

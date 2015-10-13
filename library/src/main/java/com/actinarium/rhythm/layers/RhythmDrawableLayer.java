@@ -38,8 +38,8 @@ public interface RhythmDrawableLayer {
      *
      * @param canvas         Canvas to draw this layer to
      * @param drawableBounds Bounds where this layer should draw itself. Since these are the bounds of a {@link
-     *                       RhythmDrawable} connected to the view, they are usually the same as the view's bounds,
-     *                       so you can get the view's dimensions if you need it.
+     *                       RhythmDrawable} connected to the view, they are usually the same as the view’s bounds,
+     *                       so you can get the view’s dimensions if you need it.
      */
     void draw(Canvas canvas, Rect drawableBounds);
 

@@ -30,6 +30,12 @@
             android:layout_margin="24dp"
             android:background="#ffaa66cc">
 
+        <TextView
+                android:background="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sample text"/>
+
     </FrameLayout>
 
     <com.actinarium.rhythm.widget.RhythmicFrameLayout

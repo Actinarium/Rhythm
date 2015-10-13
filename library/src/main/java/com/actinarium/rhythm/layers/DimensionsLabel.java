@@ -27,8 +27,8 @@ import android.view.Gravity;
 
 /**
  * A layer that draws a small box with dimensions of the current view. Used to inspect the dimensions of your views at
- * glance and notice the issues. By default, the box is placed in the bottom right corner, but you can control its
- * gravity.
+ * glance and notice the issues. By default, the box is placed in the bottom right corner, but you can change its
+ * gravity with {@link #gravity(int)}.
  *
  * @author Paul Danyliuk
  */
@@ -36,7 +36,7 @@ public class DimensionsLabel implements RhythmDrawableLayer {
 
     public static final int DEFAULT_BACKGROUND = 0x80000000;
     public static final int DEFAULT_TEXT_COLOR = 0xA0FFFFFF;
-    public static final int DEFAULT_TEXT_SIZE = 12;          // dp
+    public static final int DEFAULT_TEXT_SIZE = 12;              // dp
 
     private static final char ONE_HALF = '\u00bd';
     private static final char ONE_FOURTH = '\u00bc';
@@ -46,7 +46,7 @@ public class DimensionsLabel implements RhythmDrawableLayer {
     private static final char MULTIPLY = '\u00d7';
 
     protected float mScaleFactor;
-    protected int mGravity = Gravity.BOTTOM | Gravity.END;
+    protected int mGravity = Gravity.BOTTOM | Gravity.RIGHT;
     protected Paint mBackgroundPaint;
     protected TextPaint mTextPaint;
     private Rect mTempRect;

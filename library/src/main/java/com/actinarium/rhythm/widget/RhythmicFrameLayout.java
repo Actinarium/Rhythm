@@ -45,7 +45,7 @@ import java.lang.annotation.RetentionPolicy;
 public class RhythmicFrameLayout extends FrameLayout {
 
     /**
-     * Use this value to indicate that this view is not connected to any {@link RhythmGroup} and shouldn't display any
+     * Use this value to indicate that this view is not connected to any {@link RhythmGroup} and shouldn’t display any
      * pattern
      */
     public static final int NO_GROUP = -1;
@@ -56,11 +56,11 @@ public class RhythmicFrameLayout extends FrameLayout {
      */
     public static final int PATTERN_POSITION_UNDER_BACKGROUND = 0;
     /**
-     * Draw the pattern over view's background but under child views. Default choice: useful yet non-obtrusive.
+     * Draw the pattern over view’s background but under child views. Default choice: useful yet non-obtrusive.
      */
     public static final int PATTERN_POSITION_UNDER_CONTENT = 1;
     /**
-     * Draw the pattern over the view's content and overlay (sans foreground). Use this mode if you have nested opaque
+     * Draw the pattern over the view’s content and overlay (sans foreground). Use this mode if you have nested opaque
      * views that occlude the pattern, and there are elements within, which you still need to align.
      */
     public static final int PATTERN_POSITION_OVER_CONTENT = 2;

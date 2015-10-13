@@ -58,9 +58,10 @@ public class MainActivity extends AppCompatActivity {
 //        drawable.setBounds(new Rect(subView.getLeft(), subView.getTop(), subView.getRight(), subView.getBottom()));
 //        subView.getOverlay().add(drawable);
 //        drawable.setDecoratedBackground(subView.getBackground());
-        subView.setForeground(drawable);
+//        subView.setForeground(drawable);
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.line);
         rhythmControl.getGroup(1).decorate(linearLayout.getChildAt(0), linearLayout.getChildAt(1), linearLayout.getChildAt(2), linearLayout.getChildAt(3), linearLayout.getChildAt(4));
+        rhythmControl.getGroup(1).decorateForeground(subView);
     }
 }

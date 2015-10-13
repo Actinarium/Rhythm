@@ -18,6 +18,7 @@ package com.actinarium.rhythm;
 
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -28,8 +29,8 @@ import java.util.List;
 /**
  * <p>Groups all views and drawables that should display the same {@link RhythmPattern} at the moment. A Rhythm group
  * can have multiple Rhythm patterns set up and allow all associated drawables cycle through them.</p><p>Normally, the
- * group should be attached to {@link RhythmControl} (for that you don't instantiate RhythmGroup directly but use {@link
- * RhythmControl#makeGroup(String)}), but "orphaned" groups will work too.</p>
+ * group should be attached to {@link RhythmControl} (for that you don’t instantiate RhythmGroup directly but use {@link
+ * RhythmControl#makeGroup(String)}), but &ldquo;orphaned&rdquo; groups will work too.</p>
  *
  * @author Paul Danyliuk
  */
@@ -51,7 +52,7 @@ public final class RhythmGroup {
 
     /**
      * Create a new Rhythm group. <b>Heads up:</b> create a group by directly using this constructor only if you
-     * specifically don't want it attached to a {@link RhythmControl} (i.e. don't want it to appear in the Quick Control
+     * specifically don’t want it attached to a {@link RhythmControl} (i.e. don’t want it to appear in the Quick Control
      * notification). Instead, you should use {@link RhythmControl#makeGroup(String)}
      *
      * @param title A convenient title for this group, used to identify it in the notification. If you are calling this
@@ -78,7 +79,7 @@ public final class RhythmGroup {
     }
 
     /**
-     * Make a new Rhythm drawable that will draw the group's active {@link RhythmPattern} and can be used as an overlay
+     * Make a new Rhythm drawable that will draw the group’s active {@link RhythmPattern} and can be used as an overlay
      * or a background of a view. You should always make separate drawables for using them in different places, as
      * reusing the same instance may lead to unexpected results. All drawables are controlled by this group and will
      * redraw themselves when another pattern is selected.
@@ -94,17 +95,34 @@ public final class RhythmGroup {
 
     /**
      * <p>A handy method that will decorate provided views with Rhythm drawables connected to this
-     * group.</p><p><b>Note:</b> while Rhythm patterns will be drawn over the views' existing backgrounds, their
-     * original background drawables will be replaced with decorated ones. To access it, you should call
+     * group.</p><p><b>Note:</b> while Rhythm patterns will be drawn over the views’ existing backgrounds, their
+     * original background drawables will be replaced with decorated ones. To access the original ones you should call
      * <code>view.getBackground().getDecoratedBackground()</code></p>
      *
      * @param views Views whose backgrounds should be decorated with Rhythm drawables
+     * @see #decorateForeground(FrameLayout...)
      */
     public void decorate(View... views) {
         for (View view : views) {
             RhythmDrawable decoratingRhythmDrawable = makeDrawable();
             decoratingRhythmDrawable.setDecoratedBackground(view.getBackground());
             view.setBackgroundDrawable(decoratingRhythmDrawable);
+        }
+    }
+
+    /**
+     * Similar to {@link #decorate(View...)}, but decorates foregrounds instead of backgrounds of provided views
+     * (available only for {@link FrameLayout}), therefore drawing the pattern over the view’s content. Similarly to
+     * <code>decorate(View...)</code>, substitutes existing foreground with {@link RhythmDrawable}.
+     *
+     * @param views Frame layouts whose foregrounds should be decorated
+     * @see #decorate(View...)
+     */
+    public void decorateForeground(FrameLayout... views) {
+        for (FrameLayout view : views) {
+            RhythmDrawable decoratingRhythmDrawable = makeDrawable();
+            decoratingRhythmDrawable.setDecoratedBackground(view.getForeground());
+            view.setForeground(decoratingRhythmDrawable);
         }
     }
 
@@ -177,7 +195,7 @@ public final class RhythmGroup {
 
     /**
      * Propagates current pattern to all linked {@link RhythmDrawable}s, removing dead references on the way. Also
-     * updates the notification to reflect current pattern's name
+     * updates the notification to reflect current pattern’s name
      */
     private void doSetPattern() {
         final RhythmPattern pattern = getCurrentPattern();

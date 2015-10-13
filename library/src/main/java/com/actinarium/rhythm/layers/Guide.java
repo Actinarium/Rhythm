@@ -16,7 +16,6 @@
 
 package com.actinarium.rhythm.layers;
 
-import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -24,8 +23,9 @@ import android.view.Gravity;
 
 /**
  * A layer that draws a horizontal or vertical full-bleed guide at the specified distance from the specified edge of a
- * view. Can be used to draw "thin" keylines, as well as thick highlights (e.g. margins in avatar list view). The guide
- * is drawn towards the specified edge by default (i.e. touching aligned child views), but
+ * view. Can be used to draw &ldquo;thin&rdquo; keylines, as well as thick highlights (e.g. margins in avatar list
+ * view). The guide is drawn towards the specified edge by default (i.e. touching aligned child views) &mdash this can
+ * be set up with {@link #alignOutside(boolean)} method.
  *
  * @author Paul Danyliuk
  */
@@ -89,8 +89,8 @@ public class Guide implements RhythmDrawableLayer {
     /**
      * Set guide alignment. By default, the guide is drawn towards the specified edge, i.e. if the gravity is BOTTOM,
      * distance is 24px and thickness is 6px, the guide will appear as a horizontal rectangle starting at the 18th and
-     * ending at the 23rd pixel row from the bottom. But in certain cases you might want it to extend away from the
-     * edge (24th to 29th pixel rows in aforementioned example) &mdash; for that you should use this method.
+     * ending at the 23rd pixel row from the bottom. But in certain cases you might want it to extend away from the edge
+     * (24th to 29th pixel rows in aforementioned example) &mdash; for that you should use this method.
      *
      * @param alignOutside either <code>false</code> ({@link #ALIGN_INSIDE}, default) for the guide to extend towards
      *                     the edge defined by gravity, or <code>true</code> ({@link #ALIGN_OUTSIDE}) to extend away
@@ -103,7 +103,6 @@ public class Guide implements RhythmDrawableLayer {
     }
 
     @Override
-    @SuppressLint("RtlHardcoded")
     public void draw(Canvas canvas, Rect drawableBounds) {
         if (mGravity == Gravity.LEFT) {
             // Vertical line at offset points from the left

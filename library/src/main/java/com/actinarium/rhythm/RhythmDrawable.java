@@ -100,6 +100,7 @@ public final class RhythmDrawable extends Drawable {
 
     @Override
     public void setAlpha(int alpha) {
+        // todo: evaluate if applying alpha and color filter is crucial for grid overlay - implementing that isn't trivial
         if (mDecoratedBackground != null) {
             mDecoratedBackground.setAlpha(alpha);
         }
@@ -117,5 +118,20 @@ public final class RhythmDrawable extends Drawable {
         return PixelFormat.TRANSLUCENT;
     }
 
+    @Override
+    public boolean isStateful() {
+        return mDecoratedBackground != null && mDecoratedBackground.isStateful();
+    }
 
+    @Override
+    public boolean setState(int[] stateSet) {
+        return mDecoratedBackground != null && mDecoratedBackground.setState(stateSet);
+    }
+
+    @Override
+    public int[] getState() {
+        return mDecoratedBackground != null ? mDecoratedBackground.getState() : super.getState();
+    }
+
+    // todo: probably need to decorate some other methods?
 }

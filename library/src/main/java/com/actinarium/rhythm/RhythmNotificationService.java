@@ -30,18 +30,18 @@ import android.support.v4.app.NotificationCompat;
 
 /**
  * An intent service backing Quick Control notification functionality. Requires {@link Application} to implement {@link
- * RhythmControl.Host} to access the application's {@link RhythmControl}
+ * RhythmControl.Host} to access the application’s {@link RhythmControl}
  *
  * @author Paul Danyliuk
  */
 public class RhythmNotificationService extends IntentService {
 
-    public static final String ACTION_SHOW_QUICK_CONTROL = "com.actinarium.rhythm.action.SHOW_QUICK_CONTROL";
-    public static final String ACTION_NEXT_GROUP = "com.actinarium.rhythm.action.NEXT_GROUP";
-    public static final String ACTION_NEXT_PATTERN = "com.actinarium.rhythm.action.NEXT_PATTERN";
-    public static final String ACTION_DISMISS_QUICK_CONTROL = "com.actinarium.rhythm.action.DISMISS_QUICK_CONTROL";
+    static final String ACTION_SHOW_QUICK_CONTROL = "com.actinarium.rhythm.action.SHOW_QUICK_CONTROL";
+    static final String ACTION_NEXT_GROUP = "com.actinarium.rhythm.action.NEXT_GROUP";
+    static final String ACTION_NEXT_PATTERN = "com.actinarium.rhythm.action.NEXT_PATTERN";
+    static final String ACTION_DISMISS_QUICK_CONTROL = "com.actinarium.rhythm.action.DISMISS_QUICK_CONTROL";
 
-    public static final String EXTRA_NOTIFICATION_ID = "com.actinarium.rhythm.extra.NOTIFICATION_ID";
+    static final String EXTRA_NOTIFICATION_ID = "com.actinarium.rhythm.extra.NOTIFICATION_ID";
 
     private static final int NOTIFICATION_ICON_COLOR = 0x6A50A7;
     private static final int NOTIFICATION_ERROR_COLOR = 0xEF4343;
@@ -51,13 +51,13 @@ public class RhythmNotificationService extends IntentService {
     }
 
     /**
-     * Show the "Quick Control" notification, which allows to switch configs for any Rhythm controls without leaving the
-     * app under development. Can be used to update the notification as well.
+     * Show the &ldquo;Quick Control&rdquo; notification, which allows to switch configs for any Rhythm controls without
+     * leaving the app under development. Can be used to update the notification as well.
      *
      * @param context        Used to start the service and build the notification
      * @param notificationId Notification ID, must be unique across the app
      */
-    public static void showNotification(Context context, int notificationId) {
+    static void showNotification(Context context, int notificationId) {
         Intent intent = new Intent(context, RhythmNotificationService.class);
         intent.setAction(ACTION_SHOW_QUICK_CONTROL);
         intent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
@@ -82,7 +82,7 @@ public class RhythmNotificationService extends IntentService {
     }
 
     /**
-     * Show sticky "Quick Control" notification for Rhythm
+     * Show sticky &ldquo;Quick Control&rdquo; notification for Rhythm
      *
      * @param notificationId Notification ID, must be unique across the app
      */

@@ -16,7 +16,6 @@
 
 package com.actinarium.rhythm.layers;
 
-import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -52,12 +51,12 @@ public class GridLines implements RhythmDrawableLayer {
      * view is fully aligned to the grid on all sides, top and bottom grid lines will overdraw the view, whereas bottom
      * and right grid lines will touch the view.
      *
-     * @param gravity Grid alignment (gravity). Defines the side of enclosing view where "grid origin" will be placed
-     *                (that is, where to start counting steps from). This may be especially useful if you need to align
-     *                children in a view with the width/height not being an exact multiple of the step (e.g. because of
-     *                irregular screen dimensions).<br>Besides, this parameter determines whether the grid is horizontal
-     *                ({@link Gravity#TOP} or {@link Gravity#BOTTOM}) or vertical ({@link Gravity#LEFT} or {@link
-     *                Gravity#RIGHT})
+     * @param gravity Grid alignment (gravity). Defines the side of enclosing view where &ldquo;grid origin&rdquo; will
+     *                be placed (that is, where to start counting steps from). This may be especially useful if you need
+     *                to align children in a view with the width/height not being an exact multiple of the step (e.g.
+     *                because of irregular screen dimensions).<br>Besides, this parameter determines whether the grid is
+     *                horizontal ({@link Gravity#TOP} or {@link Gravity#BOTTOM}) or vertical ({@link Gravity#LEFT} or
+     *                {@link Gravity#RIGHT})
      * @param step    Grid step, in pixels
      */
     public GridLines(@LayerGravity int gravity, int step) {
@@ -93,7 +92,7 @@ public class GridLines implements RhythmDrawableLayer {
 
     /**
      * Set layer margins, in either pixels or percent of the view. This can be useful if you need to display e.g. a
-     * separate grid in the bottom of the view and a grid in the top, so that they don't overlap. By default the margins
+     * separate grid in the bottom of the view and a grid in the top, so that they don’t overlap. By default the margins
      * are 0.
      *
      * @param isPercent false to treat parameters as pixels, true to treat parameters as percent in range 0..100.
@@ -114,7 +113,7 @@ public class GridLines implements RhythmDrawableLayer {
     }
 
     /**
-     * Set the maximum number of lines to draw, respecting layer's gravity (i.e. if gravity is set to {@link
+     * Set the maximum number of lines to draw, respecting layer’s gravity (i.e. if gravity is set to {@link
      * Gravity#BOTTOM} and the limit is 4, this layer will draw 4. Default is no limit.
      *
      * @param limit Number of lines to draw. Setting zero or less means no limit.
@@ -139,7 +138,6 @@ public class GridLines implements RhythmDrawableLayer {
     }
 
     @Override
-    @SuppressLint("RtlHardcoded")
     public void draw(Canvas canvas, Rect drawableBounds) {
         // Calculate real left/right/top/bottom bounds based on drawable bounds and margins
         final int left, top, right, bottom;
