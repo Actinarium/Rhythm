@@ -24,7 +24,7 @@ import android.view.Gravity;
 /**
  * A layer that draws a horizontal or vertical full-bleed guide at the specified distance from the specified edge of a
  * view. Can be used to draw &ldquo;thin&rdquo; keylines, as well as thick highlights (e.g. margins in avatar list
- * view). The guide is drawn towards the specified edge by default (i.e. touching aligned child views) &mdash this can
+ * view). The guide is drawn towards the specified edge by default (i.e. touching aligned child views) &mdash; this can
  * be set up with {@link #alignOutside(boolean)} method.
  *
  * @author Paul Danyliuk

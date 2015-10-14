@@ -37,7 +37,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * <p></p>
+ * A {@link FrameLayout} implementation with rich Rhythm support. You can use this layout to wrap existing views and
+ * draw a Rhythm pattern from specified group. The pattern can be positioned either under the view, over the view, or
+ * just under/over the content (see {@link #setPatternPosition(int)}). Both the group and pattern position can be set in
+ * the layout XML with attributes <code>app:rhythmGroup</code> and <code>app:patternPosition</code> respectively.
  *
  * @author Paul Danyliuk
  * @version $Id$
@@ -74,8 +77,7 @@ public class RhythmicFrameLayout extends FrameLayout {
      * Index of the group this view should get its {@link RhythmDrawable} from, or {@link #NO_GROUP}.
      */
     protected int mRhythmGroupIndex;
-    @PatternPosition
-    protected int mPatternPosition;
+    protected @PatternPosition int mPatternPosition;
 
     /**
      * Obtained from {@link RhythmGroup}, which then controls this drawable, telling it what {@link RhythmPattern} to
@@ -191,6 +193,9 @@ public class RhythmicFrameLayout extends FrameLayout {
 
     // Getters/setters
 
+    /**
+     * @return Current Rhythm drawable
+     */
     public RhythmDrawable getRhythmDrawable() {
         return mRhythmDrawable;
     }
@@ -205,6 +210,9 @@ public class RhythmicFrameLayout extends FrameLayout {
         invalidate();
     }
 
+    /**
+     * @return Index if the Rhythm group this view is linked to, or {@link #NO_GROUP}
+     */
     public int getRhythmGroupIndex() {
         return mRhythmGroupIndex;
     }

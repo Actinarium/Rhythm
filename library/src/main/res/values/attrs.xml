@@ -18,7 +18,9 @@
 <resources>
 
     <declare-styleable name="RhythmicFrameLayout">
-        <attr name="rhythmGroup" format="integer" />
+        <attr name="rhythmGroup" format="integer">
+            <enum name="noGroup" value="-1" />
+        </attr>
         <attr name="patternPosition" format="enum">
             <enum name="underBackground" value="0" />
             <enum name="underContent" value="1" />
