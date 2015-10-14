@@ -25,6 +25,8 @@ import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 
+import java.text.DecimalFormat;
+
 /**
  * A layer that draws a small box with dimensions of the current view. Used to inspect the dimensions of your views at
  * glance and notice the issues. By default, the box is placed in the bottom right corner, but you can change its
@@ -44,6 +46,8 @@ public class DimensionsLabel implements RhythmDrawableLayer {
     private static final char ONE_THIRD = '\u2153';
     private static final char TWO_THIRDS = '\u2154';
     private static final char MULTIPLY = '\u00d7';
+
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
     protected float mScaleFactor;
     protected int mGravity = Gravity.BOTTOM | Gravity.RIGHT;
@@ -173,17 +177,8 @@ public class DimensionsLabel implements RhythmDrawableLayer {
                 dip += THREE_FOURTHS;
             }
         } else {
-            float result = px / scaleFactor;
-            float remainder = result - (int) result;
-            if (remainder == 0) {
-                dip = String.valueOf(px);
-            } else if (remainder == 1.0 / 3) {
-                dip = String.valueOf(px) + ONE_THIRD;
-            } else if (remainder == 2.0 / 3) {
-                dip = String.valueOf(px) + TWO_THIRDS;
-            } else {
-                dip = String.format("%.2f", result);
-            }
+            // Very hard to determine exactly, so falling back to decimals
+            dip = DECIMAL_FORMAT.format(px / scaleFactor);
         }
         return dip;
     }
