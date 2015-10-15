@@ -14,87 +14,112 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/frame"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context=".MainActivity">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:id="@+id/contentFrame"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.actinarium.rhythm.sample.MainActivity">
 
-    <FrameLayout
-            android:id="@+id/subframe"
+    <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_margin="24dp"
-            android:background="#ffaa66cc">
+            android:layout_height="match_parent"
+            android:layout_marginTop="?actionBarSize">
 
-        <TextView
-                android:background="@android:color/white"
-                android:layout_width="wrap_content"
+        <LinearLayout
+                android:id="@+id/scrollViewContent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sample text"/>
+                android:orientation="vertical">
 
-    </FrameLayout>
+            <FrameLayout
+                    android:id="@+id/subframe"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_margin="24dp"
+                    android:background="#ffaa66cc">
 
-    <com.actinarium.rhythm.widget.RhythmicFrameLayout
+                <TextView
+                        android:background="@android:color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sample text"/>
+
+            </FrameLayout>
+
+            <com.actinarium.rhythm.widget.RhythmicFrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="160.66dp"
+                    android:layout_margin="16dp"
+                    android:background="#F000B0B0"
+                    app:rhythmGroup="1"
+                    app:overlayPosition="overContent">
+
+                <TextView
+                        android:background="@android:color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sample text"/>
+
+            </com.actinarium.rhythm.widget.RhythmicFrameLayout>
+
+            <LinearLayout
+                    android:id="@+id/line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp">
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_rhythm"/>
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_rhythm"/>
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_rhythm"/>
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_rhythm"/>
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_rhythm"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="160.66dp"
-            android:layout_margin="16dp"
-            android:background="#F000B0B0"
-            app:rhythmGroup="1"
-            app:overlayPosition="overContent">
+            android:layout_height="?actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:background="?colorPrimary"
+            android:paddingRight="8dp"
+            android:paddingEnd="8dp"
+            app:titleMarginStart="16dp"/>
 
-        <TextView
-                android:background="@android:color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sample text"/>
-
-    </com.actinarium.rhythm.widget.RhythmicFrameLayout>
-
-    <LinearLayout
-            android:id="@+id/line"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp">
-
-        <ImageView
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:scaleType="center"
-                android:src="@drawable/ic_rhythm"/>
-
-        <ImageView
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:scaleType="center"
-                android:src="@drawable/ic_rhythm"/>
-
-        <ImageView
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:scaleType="center"
-                android:src="@drawable/ic_rhythm"/>
-
-        <ImageView
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:scaleType="center"
-                android:src="@drawable/ic_rhythm"/>
-
-        <ImageView
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:scaleType="center"
-                android:src="@drawable/ic_rhythm"/>
-
-    </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

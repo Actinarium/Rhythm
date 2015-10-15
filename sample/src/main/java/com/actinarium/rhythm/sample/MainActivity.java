@@ -22,13 +22,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import com.actinarium.rhythm.RhythmControl;
-import com.actinarium.rhythm.RhythmDrawable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +38,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Setting up toolbar
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        final ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setElevation(getResources().getDimension(R.dimen.actionBarElevation));
+        actionBar.setTitle(R.string.app_name);
+
+        // Setting up Recents card icon
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TypedValue typedValue = new TypedValue();
             Resources.Theme theme = getTheme();
@@ -50,17 +61,12 @@ public class MainActivity extends AppCompatActivity {
             bm.recycle();
         }
 
-        View view = findViewById(R.id.frame);
+        View view = findViewById(R.id.scrollViewContent);
         FrameLayout subView = (FrameLayout) findViewById(R.id.subframe);
         final RhythmControl rhythmControl = ((RhythmSampleApplication) getApplication()).getRhythmControl();
-        view.setBackgroundDrawable(rhythmControl.getGroup(0).makeDrawable());
-        final RhythmDrawable drawable = rhythmControl.getGroup(1).makeDrawable();
-//        drawable.setBounds(new Rect(subView.getLeft(), subView.getTop(), subView.getRight(), subView.getBottom()));
-//        subView.getOverlay().add(drawable);
-//        drawable.setDecorated(subView.getBackground());
-//        subView.setForeground(drawable);
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.line);
+        rhythmControl.getGroup(0).decorate(view);
         rhythmControl.getGroup(1).decorate(linearLayout.getChildAt(0), linearLayout.getChildAt(1), linearLayout.getChildAt(2), linearLayout.getChildAt(3), linearLayout.getChildAt(4));
         rhythmControl.getGroup(1).decorateForeground(subView);
     }
