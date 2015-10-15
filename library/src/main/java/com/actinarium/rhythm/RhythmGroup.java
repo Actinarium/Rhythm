@@ -16,7 +16,7 @@
 
 package com.actinarium.rhythm;
 
-import android.support.annotation.Nullable;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -27,77 +27,78 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * <p>Groups all views and drawables that should display the same {@link RhythmPattern} at the moment. A Rhythm group
- * can have multiple Rhythm patterns set up and allow all associated drawables cycle through them.</p><p>Normally, the
- * group should be attached to {@link RhythmControl} (for that you don’t instantiate RhythmGroup directly but use {@link
- * RhythmControl#makeGroup(String)}), but &ldquo;orphaned&rdquo; groups will work too.</p>
+ * <p>Controls a group of {@link RhythmDrawable}s, namely propagates the same {@link RhythmOverlay} for all registered
+ * <code>RhythmDrawables</code> to render. A {@link RhythmGroup} object holds onto a list of <code>RhythmOverlays</code>
+ * and allows cycling through them. Usually, Rhythm groups are used within a {@link RhythmControl} and instantiated via
+ * {@link RhythmControl#makeGroup(String)}) method, however you are free to make &ldquo;orphaned&rdquo; groups and
+ * control them explicitly from your app.</p><p>Also contains convenience methods for easy decoration of existing views
+ * &mdash; those can simplify the scenario when you don’t want to include Rhythm into production builds.</p>
  *
  * @author Paul Danyliuk
  */
 public final class RhythmGroup {
 
-    public static int NO_PATTERN = -1;
+    public static int NO_OVERLAY = -1;
 
-    private static final int ESTIMATED_PATTERNS_PER_GROUP = 4;
+    private static final int ESTIMATED_OVERLAYS_PER_GROUP = 4;
 
     private String mTitle;
 
-    // Assigned by RhythmControl upon instantiation via {@link RhythmControl#makeGroup(String)}; make no sense otherwise
+    // Assigned by RhythmControl upon instantiation via {@link RhythmControl#makeGroup(String)}; makes no sense otherwise
     int mIndex;
     RhythmControl mControl;
 
     private List<WeakReference<RhythmDrawable>> mDrawables;
-    private List<RhythmPattern> mPatterns;
-    private int mCurrentPatternIndex = NO_PATTERN;
+    private List<RhythmOverlay> mOverlays;
+    private int mCurrentOverlayIndex = NO_OVERLAY;
 
     /**
-     * Create a new Rhythm group. <b>Heads up:</b> create a group by directly using this constructor only if you
-     * specifically don’t want it attached to a {@link RhythmControl} (i.e. don’t want it to appear in the Quick Control
-     * notification). Instead, you should use {@link RhythmControl#makeGroup(String)}
+     * <p>Create a new Rhythm group.</p><p><b>Heads up:</b> do not explicitly call <code>new RhythmGroup()</code> unless
+     * you specifically don’t want it attached to a {@link RhythmControl} (i.e. don’t want it to appear in the Quick
+     * Control notification). Instead, you should use {@link RhythmControl#makeGroup(String)}.</p>
      *
      * @param title A convenient title for this group, used to identify it in the notification. If you are calling this
-     *              directly (i.e. without attaching to Rhythm control), just leave it <code>null</code>.
+     *              directly (i.e. without attaching to Rhythm control), you can just leave it <code>null</code>.
      */
-    public RhythmGroup(@Nullable String title) {
+    public RhythmGroup(String title) {
         mTitle = title;
         mDrawables = new LinkedList<>();
-        mPatterns = new ArrayList<>(ESTIMATED_PATTERNS_PER_GROUP);
+        mOverlays = new ArrayList<>(ESTIMATED_OVERLAYS_PER_GROUP);
     }
 
     /**
-     * Add Rhythm pattern to this group
+     * Add Rhythm overlay to this group
      *
-     * @param pattern The Rhythm pattern to add
+     * @param overlay The Rhythm overlay to add
      * @return this for chaining
      */
-    public RhythmGroup addPattern(RhythmPattern pattern) {
-        mPatterns.add(pattern);
-        if (mCurrentPatternIndex == NO_PATTERN) {
-            selectPattern(0);
+    public RhythmGroup addOverlay(RhythmOverlay overlay) {
+        mOverlays.add(overlay);
+        if (mCurrentOverlayIndex == NO_OVERLAY) {
+            selectOverlay(0);
         }
         return this;
     }
 
     /**
-     * Make a new Rhythm drawable that will draw the group’s active {@link RhythmPattern} and can be used as an overlay
-     * or a background of a view. You should always make separate drawables for using them in different places, as
-     * reusing the same instance may lead to unexpected results. All drawables are controlled by this group and will
-     * redraw themselves when another pattern is selected.
+     * Make a new {@link RhythmDrawable} that will draw the group’s active {@link RhythmOverlay} and can be used as any
+     * other {@link Drawable} in Android SDK. You must always make separate drawables for using them in different
+     * places, as reusing the same drawable instance may lead to unexpected results.
      *
-     * @return A new {@link RhythmDrawable} attached to this group.
+     * @return A new {@link RhythmDrawable} controlled by this group.
      */
     public RhythmDrawable makeDrawable() {
         RhythmDrawable drawable = new RhythmDrawable();
-        drawable.setPattern(getCurrentPattern());
+        drawable.setOverlay(getCurrentOverlay());
         mDrawables.add(new WeakReference<>(drawable));
         return drawable;
     }
 
     /**
-     * <p>A handy method that will decorate provided views with Rhythm drawables connected to this
-     * group.</p><p><b>Note:</b> while Rhythm patterns will be drawn over the views’ existing backgrounds, their
-     * original background drawables will be replaced with decorated ones. To access the original ones you should call
-     * <code>view.getBackground().getDecoratedBackground()</code></p>
+     * <p>A handy method that will decorate provided views with {@link RhythmDrawable}s controlled by this group.</p>
+     * <p><b>Note:</b> the backgrounds of all provided views will be wrapped and replaced by
+     * <code>RhythmDrawables</code>. To obtain the original background drawables you have to call
+     * {@link RhythmDrawable#getDecorated() view.getBackground().getDecorated()}.</p>
      *
      * @param views Views whose backgrounds should be decorated with Rhythm drawables
      * @see #decorateForeground(FrameLayout...)
@@ -105,15 +106,15 @@ public final class RhythmGroup {
     public void decorate(View... views) {
         for (View view : views) {
             RhythmDrawable decoratingRhythmDrawable = makeDrawable();
-            decoratingRhythmDrawable.setDecoratedBackground(view.getBackground());
+            decoratingRhythmDrawable.setDecorated(view.getBackground());
             view.setBackgroundDrawable(decoratingRhythmDrawable);
         }
     }
 
     /**
      * Similar to {@link #decorate(View...)}, but decorates foregrounds instead of backgrounds of provided views
-     * (available only for {@link FrameLayout}), therefore drawing the pattern over the view’s content. Similarly to
-     * <code>decorate(View...)</code>, substitutes existing foreground with {@link RhythmDrawable}.
+     * (available only for {@link FrameLayout}), therefore drawing the overlay over the view’s content. Similarly to
+     * <code>decorate(View...)</code>, wraps and replaces existing foreground drawable with {@link RhythmDrawable}.
      *
      * @param views Frame layouts whose foregrounds should be decorated
      * @see #decorate(View...)
@@ -121,71 +122,71 @@ public final class RhythmGroup {
     public void decorateForeground(FrameLayout... views) {
         for (FrameLayout view : views) {
             RhythmDrawable decoratingRhythmDrawable = makeDrawable();
-            decoratingRhythmDrawable.setDecoratedBackground(view.getForeground());
+            decoratingRhythmDrawable.setDecorated(view.getForeground());
             view.setForeground(decoratingRhythmDrawable);
         }
     }
 
     /**
-     * @return Index of currently selected pattern, or {@link #NO_PATTERN}
-     * @see #getCurrentPattern()
-     * @see #getPatternCount()
+     * @return Index of currently selected overlay, or {@link #NO_OVERLAY}
+     * @see #getCurrentOverlay()
+     * @see #getOverlayCount()
      */
-    public int getCurrentPatternIndex() {
-        return mCurrentPatternIndex;
+    public int getCurrentOverlayIndex() {
+        return mCurrentOverlayIndex;
     }
 
     /**
-     * @return Number of patterns associated with this group
-     * @see #getCurrentPatternIndex()
+     * @return Number of overlays associated with this group
+     * @see #getCurrentOverlayIndex()
      */
-    public int getPatternCount() {
-        return mPatterns.size();
+    public int getOverlayCount() {
+        return mOverlays.size();
     }
 
     /**
-     * @return Currently selected pattern, or null if overlay is disabled
-     * @see #getCurrentPatternIndex()
+     * @return Currently selected overlay, or null if overlay is disabled
+     * @see #getCurrentOverlayIndex()
      */
-    public RhythmPattern getCurrentPattern() {
-        return mCurrentPatternIndex != NO_PATTERN ? mPatterns.get(mCurrentPatternIndex) : null;
+    public RhythmOverlay getCurrentOverlay() {
+        return mCurrentOverlayIndex != NO_OVERLAY ? mOverlays.get(mCurrentOverlayIndex) : null;
     }
 
     /**
-     * Select pattern by index. Provide {@link #NO_PATTERN} to hide pattern.
+     * Select overlay by index. Provide {@link #NO_OVERLAY} to hide overlay.
      *
-     * @param index Pattern index, or {@link #NO_PATTERN}
-     * @see #selectNextPattern()
-     * @see #getPatternCount()
+     * @param index Overlay index, or {@link #NO_OVERLAY}
+     * @see #selectNextOverlay()
+     * @see #getOverlayCount()
      */
-    public void selectPattern(int index) {
-        if (index == NO_PATTERN || (index >= 0 && index < mPatterns.size())) {
-            if (mCurrentPatternIndex != index) {
-                mCurrentPatternIndex = index;
-                doSetPattern();
+    public void selectOverlay(int index) {
+        if (index == NO_OVERLAY || (index >= 0 && index < mOverlays.size())) {
+            if (mCurrentOverlayIndex != index) {
+                mCurrentOverlayIndex = index;
+                doSetOverlay();
             }
         } else {
-            throw new IndexOutOfBoundsException("The index is neither NO_PATTERN nor valid.");
+            throw new IndexOutOfBoundsException("The index is neither NO_OVERLAY nor valid.");
         }
     }
 
     /**
-     * Convenience method to cycle through patterns. Meant primarily for use in Quick Control notification, but can be
+     * Convenience method to cycle through overlays. Meant primarily for use in Quick Control notification, but can be
      * invoked programmatically.
      *
-     * @see #selectPattern(int)
+     * @see #selectOverlay(int)
      */
-    public void selectNextPattern() {
-        if (mCurrentPatternIndex == NO_PATTERN) {
-            mCurrentPatternIndex = 0;
+    public void selectNextOverlay() {
+        if (mCurrentOverlayIndex == NO_OVERLAY) {
+            mCurrentOverlayIndex = 0;
         } else {
-            mCurrentPatternIndex = ++mCurrentPatternIndex % mPatterns.size();
-            // After the last pattern comes disabled overlay
-            if (mCurrentPatternIndex == 0) {
-                mCurrentPatternIndex = NO_PATTERN;
+            mCurrentOverlayIndex = ++mCurrentOverlayIndex % mOverlays.size();
+            // Disabling overlay after the last one
+            if (mCurrentOverlayIndex == 0) {
+                mCurrentOverlayIndex = NO_OVERLAY;
             }
         }
-        doSetPattern();
+        doSetOverlay();
     }
 
     @Override
@@ -194,11 +195,13 @@ public final class RhythmGroup {
     }
 
     /**
-     * Propagates current pattern to all linked {@link RhythmDrawable}s, removing dead references on the way. Also
-     * updates the notification to reflect current pattern’s name
+     * Propagates current overlay to all linked {@link RhythmDrawable}s, removing dead references on the way. Also
+     * updates the notification to reflect current overlay’s name
+     *
+     * @todo In v1.0 add possibility to propagate arbitrary overlay, not just one of those in the list
      */
-    private void doSetPattern() {
-        final RhythmPattern pattern = getCurrentPattern();
+    private void doSetOverlay() {
+        final RhythmOverlay overlay = getCurrentOverlay();
 
         // Using iterator here because we need to remove elements halfway
         Iterator<WeakReference<RhythmDrawable>> iterator = mDrawables.iterator();
@@ -208,7 +211,7 @@ public final class RhythmGroup {
                 // Clean up dead references
                 iterator.remove();
             } else {
-                item.setPattern(pattern);
+                item.setOverlay(overlay);
             }
         }
 

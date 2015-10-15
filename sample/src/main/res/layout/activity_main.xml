@@ -44,7 +44,7 @@
             android:layout_margin="16dp"
             android:background="#F000B0B0"
             app:rhythmGroup="1"
-            app:patternPosition="overContent">
+            app:overlayPosition="overContent">
 
         <TextView
                 android:background="@android:color/white"

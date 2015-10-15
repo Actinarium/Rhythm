@@ -19,12 +19,12 @@ package com.actinarium.rhythm.sample;
 import android.app.Application;
 import android.graphics.Color;
 import android.view.Gravity;
-import com.actinarium.rhythm.RhythmPattern;
+import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.RhythmGroup;
 import com.actinarium.rhythm.RhythmControl;
-import com.actinarium.rhythm.layers.DimensionsLabel;
-import com.actinarium.rhythm.layers.GridLines;
-import com.actinarium.rhythm.layers.Guide;
+import com.actinarium.rhythm.spec.DimensionsLabel;
+import com.actinarium.rhythm.spec.GridLines;
+import com.actinarium.rhythm.spec.Guide;
 
 /**
  * <p></p>
@@ -45,32 +45,39 @@ public class RhythmSampleApplication extends Application implements RhythmContro
 
         final int step = (int) (density * 8);
         mRhythmControl.makeGroup("Activity background")
-                .addPattern(new RhythmPattern("8dp grid")
+                .addOverlay(new RhythmOverlay("8dp grid")
                         .addLayer(new GridLines(Gravity.TOP, step))
                         .addLayer(new GridLines(Gravity.LEFT, step)))
-                .addPattern(new RhythmPattern("Baseline grid")
+                .addOverlay(new RhythmOverlay("Baseline grid")
                         .addLayer(new GridLines(Gravity.TOP, step / 2).color(GridLines.DEFAULT_BASELINE_COLOR)))
-                .addPattern(new RhythmPattern("Both 8dp and baseline")
+                .addOverlay(new RhythmOverlay("Both 8dp and baseline")
                         .addLayer(new GridLines(Gravity.TOP, step))
                         .addLayer(new GridLines(Gravity.LEFT, step))
-                        .addLayer(new GridLines(Gravity.TOP, step).offset(step / 2).color(GridLines.DEFAULT_BASELINE_COLOR)))
-                .addPattern(
-                        new RhythmPattern("Baseline grid with keylines")
+                        .addLayer(new GridLines(Gravity.TOP, step).offset(step / 2)
+                                .color(GridLines.DEFAULT_BASELINE_COLOR)))
+                .addOverlay(
+                        new RhythmOverlay("Baseline grid with keylines")
                                 .addLayer(new GridLines(Gravity.TOP, step / 2).color(GridLines.DEFAULT_BASELINE_COLOR))
                                 .addLayer(new Guide(Gravity.LEFT, (int) (24 * density)))
                                 .addLayer(new Guide(Gravity.RIGHT, (int) (24 * density)))
-                                .addLayer(new Guide(Gravity.LEFT, (int) (24 * density)).thickness(step).color(Guide.DEFAULT_HIGHLIGHT_COLOR).alignOutside(false))
+                                .addLayer(new Guide(Gravity.LEFT, (int) (24 * density)).thickness(step)
+                                        .color(Guide.DEFAULT_HIGHLIGHT_COLOR)
+                                        .alignOutside(false))
                                 .addLayer(new Guide(Gravity.RIGHT, (int) (24 * density)).thickness(step)
                                         .color(Guide.DEFAULT_HIGHLIGHT_COLOR)
                                         .alignOutside(false))
                                 .addLayer(new Guide(Gravity.TOP, (int) (24 * density)))
                                 .addLayer(new Guide(Gravity.BOTTOM, (int) (24 * density)))
-                                .addLayer(new Guide(Gravity.TOP, (int) (24 * density)).thickness(step).color(Guide.DEFAULT_HIGHLIGHT_COLOR).alignOutside(false))
-                                .addLayer(new Guide(Gravity.BOTTOM, (int) (24 * density)).thickness(step).color(Guide.DEFAULT_HIGHLIGHT_COLOR).alignOutside(false))
+                                .addLayer(new Guide(Gravity.TOP, (int) (24 * density)).thickness(step)
+                                        .color(Guide.DEFAULT_HIGHLIGHT_COLOR)
+                                        .alignOutside(false))
+                                .addLayer(new Guide(Gravity.BOTTOM, (int) (24 * density)).thickness(step)
+                                        .color(Guide.DEFAULT_HIGHLIGHT_COLOR)
+                                        .alignOutside(false))
                 );
 
         final RhythmGroup secondaryControl = mRhythmControl.makeGroup("Card overlays");
-        new RhythmPattern("Test config")
+        new RhythmOverlay("Test config")
                 .addLayer(new GridLines(Gravity.LEFT, step).margins(true, 0, 0, 60, 0)
                         .color(Color.BLACK)
                         .limit(4))
@@ -84,7 +91,7 @@ public class RhythmSampleApplication extends Application implements RhythmContro
                         .color(Color.BLACK)
                         .limit(4))
                 .addLayer(new DimensionsLabel(density))
-                .addToControl(secondaryControl);
+                .addToGroup(secondaryControl);
 
         mRhythmControl.showQuickControl(-2);
     }

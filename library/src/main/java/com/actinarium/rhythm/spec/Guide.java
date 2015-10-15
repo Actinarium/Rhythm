@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.layers;
+package com.actinarium.rhythm.spec;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -24,12 +24,12 @@ import android.view.Gravity;
 /**
  * A layer that draws a horizontal or vertical full-bleed guide at the specified distance from the specified edge of a
  * view. Can be used to draw &ldquo;thin&rdquo; keylines, as well as thick highlights (e.g. margins in avatar list
- * view). The guide is drawn towards the specified edge by default (i.e. touching aligned child views) &mdash; this can
- * be set up with {@link #alignOutside(boolean)} method.
+ * view). The guide is drawn towards the specified edge by default (i.e. touching aligned child views), but this can be
+ * tweaked using {@link #alignOutside(boolean)} method.
  *
  * @author Paul Danyliuk
  */
-public class Guide implements RhythmDrawableLayer {
+public class Guide implements RhythmSpecLayer {
 
     public static final int DEFAULT_KEYLINE_COLOR = 0x60F50057;
     public static final int DEFAULT_HIGHLIGHT_COLOR = 0x400091EA;
@@ -37,8 +37,9 @@ public class Guide implements RhythmDrawableLayer {
     public static final boolean ALIGN_INSIDE = false;
     public static final boolean ALIGN_OUTSIDE = true;
 
-    protected int mThickness = 3;
-    protected @LayerGravity int mGravity;
+    protected int mThickness = 3;           // px - for thin keyline
+    @LayerGravity
+    protected int mGravity;
     protected int mDistance;
     protected boolean mAlignOutside;
     protected Paint mPaint;
@@ -89,8 +90,8 @@ public class Guide implements RhythmDrawableLayer {
     /**
      * Set guide alignment. By default, the guide is drawn towards the specified edge, i.e. if the gravity is BOTTOM,
      * distance is 24px and thickness is 6px, the guide will appear as a horizontal rectangle starting at the 18th and
-     * ending at the 23rd pixel row from the bottom. But in certain cases you might want it to extend away from the edge
-     * (24th to 29th pixel rows in aforementioned example) &mdash; for that you should use this method.
+     * ending at the 23rd pixel row from the bottom. You can use this method to override that behavior and make the
+     * guide face outwards (24th to 29th pixel rows in aforementioned example).
      *
      * @param alignOutside either <code>false</code> ({@link #ALIGN_INSIDE}, default) for the guide to extend towards
      *                     the edge defined by gravity, or <code>true</code> ({@link #ALIGN_OUTSIDE}) to extend away

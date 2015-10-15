@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.layers;
+package com.actinarium.rhythm.spec;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -28,18 +28,19 @@ import android.view.Gravity;
 import java.text.DecimalFormat;
 
 /**
- * A layer that draws a small box with dimensions of the current view. Used to inspect the dimensions of your views at
- * glance and notice the issues. By default, the box is placed in the bottom right corner, but you can change its
- * gravity with {@link #gravity(int)}.
+ * A layer that draws a small box with dimensions of the current view. Inspect the dimensions of your views at glance.
+ * noticing the issues asap. By default, the box is placed in the bottom right corner, but you can change its gravity
+ * with {@link #gravity(int)}.
  *
  * @author Paul Danyliuk
  */
-public class DimensionsLabel implements RhythmDrawableLayer {
+public class DimensionsLabel implements RhythmSpecLayer {
 
     public static final int DEFAULT_BACKGROUND = 0x80000000;
     public static final int DEFAULT_TEXT_COLOR = 0xA0FFFFFF;
     public static final int DEFAULT_TEXT_SIZE = 12;              // dp
 
+    // Pretty print chars
     private static final char ONE_HALF = '\u00bd';
     private static final char ONE_FOURTH = '\u00bc';
     private static final char THREE_FOURTHS = '\u00be';
@@ -56,10 +57,10 @@ public class DimensionsLabel implements RhythmDrawableLayer {
     private Rect mTempRect;
 
     /**
-     * Create a layer that displays dimensions label
+     * Create a spec layer that displays dimensions label
      *
-     * @param scaleFactor Scale factor to divide pixels by. Provide {@link DisplayMetrics#density} here to get thy
-     *                    dimensions in dips, or set to 1f to get pixels.
+     * @param scaleFactor Scale factor to divide pixels by. Provide {@link DisplayMetrics#density} here to get your
+     *                    dimensions displayed in dips, or set to 1f to get pixels.
      */
     public DimensionsLabel(float scaleFactor) {
         mScaleFactor = scaleFactor;
@@ -99,7 +100,7 @@ public class DimensionsLabel implements RhythmDrawableLayer {
     }
 
     /**
-     * Set text color of the label
+     * Set the color of the text itself
      *
      * @param color Text color, in #AARRGGBB format as usual
      * @return this for chaining
@@ -124,11 +125,10 @@ public class DimensionsLabel implements RhythmDrawableLayer {
     public void draw(Canvas canvas, Rect drawableBounds) {
         final int intWidth = drawableBounds.width();
         // Make the label text based on width, height, and scale factor
-        String text = pxToDipVulgar(intWidth, mScaleFactor)
-                + ' ' + MULTIPLY + ' '
-                + pxToDipVulgar(drawableBounds.height(), mScaleFactor);
+        String text = prettyPrintDips(intWidth, mScaleFactor) + ' ' + MULTIPLY + ' '
+                + prettyPrintDips(drawableBounds.height(), mScaleFactor);
 
-        // Use StaticLayout, which will calculate text dimensions nicely, then position the box using Gravity.apply
+        // Use StaticLayout, which will calculate text dimensions nicely, then position the box using Gravity.apply()
         // (although that's one instantiation per draw call...)
         // This is what happens if you're obsessed with perfection like me
         StaticLayout layout = new StaticLayout(text, mTextPaint, intWidth, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
@@ -148,10 +148,10 @@ public class DimensionsLabel implements RhythmDrawableLayer {
      * Sophisticated conversion of pixels to dips with the use of vulgar fractions (to save screen space)
      *
      * @param px          Pixels to convert to dips
-     * @param scaleFactor Scale factor, equal to {@link DisplayMetrics#density}
-     * @return String formatted with vulgar fraction if required
+     * @param scaleFactor Scale factor, should be equal to {@link DisplayMetrics#density} for px to dp conversion
+     * @return String formatted with vulgar fraction if needed and possible
      */
-    public static String pxToDipVulgar(int px, float scaleFactor) {
+    public static String prettyPrintDips(int px, float scaleFactor) {
         String dip;
         if (scaleFactor == 1) {
             dip = String.valueOf(px);

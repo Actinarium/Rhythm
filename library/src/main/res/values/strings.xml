@@ -16,11 +16,11 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="group">Controlling: <xliff:g id="group_title" example="Card overlays">%s</xliff:g></string>
-    <string name="pattern">Current pattern: <xliff:g id="pattern_title" example="Grid and keylines">%s</xliff:g></string>
-    <string name="no_pattern">No pattern</string>
+    <string name="group">Group: <xliff:g id="group_title" example="Card overlays">%s</xliff:g></string>
+    <string name="overlay">Overlay: <xliff:g id="overlay_title" example="Grid and keylines">%s</xliff:g></string>
+    <string name="no_overlay">No overlay</string>
     <string name="next_group">Group</string>
-    <string name="next_pattern">Pattern</string>
+    <string name="next_overlay">Overlay</string>
 
     <string name="no_groups_title">No groups found</string>
     <string name="no_groups_text">Rhythm control has no groups attached</string>

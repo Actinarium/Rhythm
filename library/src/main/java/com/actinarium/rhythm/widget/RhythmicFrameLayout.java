@@ -31,16 +31,16 @@ import com.actinarium.rhythm.R;
 import com.actinarium.rhythm.RhythmControl;
 import com.actinarium.rhythm.RhythmDrawable;
 import com.actinarium.rhythm.RhythmGroup;
-import com.actinarium.rhythm.RhythmPattern;
+import com.actinarium.rhythm.RhythmOverlay;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
  * A {@link FrameLayout} implementation with rich Rhythm support. You can use this layout to wrap existing views and
- * draw a Rhythm pattern from specified group. The pattern can be positioned either under the view, over the view, or
- * just under/over the content (see {@link #setPatternPosition(int)}). Both the group and pattern position can be set in
- * the layout XML with attributes <code>app:rhythmGroup</code> and <code>app:patternPosition</code> respectively.
+ * draw a Rhythm overlay from specified group. The overlay can be positioned either under the view, over the view, or
+ * just under/over the content (see {@link #setOverlayPosition(int)}). Both the group and overlay position can be set in
+ * the layout XML with attributes <code>app:rhythmGroup</code> and <code>app:overlayPosition</code> respectively.
  *
  * @author Paul Danyliuk
  * @version $Id$
@@ -49,43 +49,45 @@ public class RhythmicFrameLayout extends FrameLayout {
 
     /**
      * Use this value to indicate that this view is not connected to any {@link RhythmGroup} and shouldn’t display any
-     * pattern
+     * overlay
      */
     public static final int NO_GROUP = -1;
 
-    // The following are to control where RhythmDrawable will be placed
+    // The following are to control where the overlay will be drawn
+    // todo: test how overlay position affects its properties on view's translation, rotation, scaling etc
     /**
-     * Draw the pattern under the background of this view. Pretty useless if this view has opaque background.
+     * Draw the overlay under the background of this view. Pretty useless if this view has opaque background.
      */
-    public static final int PATTERN_POSITION_UNDER_BACKGROUND = 0;
+    public static final int OVERLAY_POSITION_UNDER_BACKGROUND = 0;
     /**
-     * Draw the pattern over view’s background but under child views. Default choice: useful yet non-obtrusive.
+     * Draw the overlay over view’s background but under child views. Default choice: useful yet non-obtrusive.
      */
-    public static final int PATTERN_POSITION_UNDER_CONTENT = 1;
+    public static final int OVERLAY_POSITION_UNDER_CONTENT = 1;
     /**
-     * Draw the pattern over the view’s content and overlay (sans foreground). Use this mode if you have nested opaque
-     * views that occlude the pattern, and there are elements within, which you still need to align.
+     * Draw the overlay over the view’s content (sans foreground). Use this mode if you have nested opaque views that
+     * occlude the overlay, and there are elements within, which you still need to align.
      */
-    public static final int PATTERN_POSITION_OVER_CONTENT = 2;
+    public static final int OVERLAY_POSITION_OVER_CONTENT = 2;
     /**
-     * Same as {@link #PATTERN_POSITION_OVER_CONTENT}, but this also draws over any foreground (ripples, touch
+     * Same as {@link #OVERLAY_POSITION_OVER_CONTENT}, but this also draws over any foreground (ripples, touch
      * highlights etc).
      */
-    public static final int PATTERN_POSITION_OVER_FOREGROUND = 3;
+    public static final int OVERLAY_POSITION_OVER_FOREGROUND = 3;
 
     /**
      * Index of the group this view should get its {@link RhythmDrawable} from, or {@link #NO_GROUP}.
      */
     protected int mRhythmGroupIndex;
-    protected @PatternPosition int mPatternPosition;
+    @OverlayPosition
+    protected int mOverlayPosition;
 
     /**
-     * Obtained from {@link RhythmGroup}, which then controls this drawable, telling it what {@link RhythmPattern} to
+     * Obtained from {@link RhythmGroup}, which then controls this drawable, telling it what {@link RhythmOverlay} to
      * draw. Or <code>null</code>.
      */
     protected RhythmDrawable mRhythmDrawable;
     /**
-     * Pattern bounds, relative to this view (since canvas is already translated to the origin point of this view)
+     * Overlay bounds, relative to this view (since canvas is already translated to the origin point of this view)
      */
     protected Rect mBounds = new Rect();
 
@@ -94,7 +96,7 @@ public class RhythmicFrameLayout extends FrameLayout {
     public RhythmicFrameLayout(Context context) {
         super(context);
         mRhythmGroupIndex = NO_GROUP;
-        mPatternPosition = PATTERN_POSITION_UNDER_CONTENT;
+        mOverlayPosition = OVERLAY_POSITION_UNDER_CONTENT;
     }
 
     public RhythmicFrameLayout(Context context, AttributeSet attrs) {
@@ -118,15 +120,15 @@ public class RhythmicFrameLayout extends FrameLayout {
                 .getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.RhythmicFrameLayout, defStyleAttr, defStyleRes);
         try {
-            int position = array.getInteger(R.styleable.RhythmicFrameLayout_patternPosition, PATTERN_POSITION_UNDER_CONTENT);
-            if (position == PATTERN_POSITION_UNDER_BACKGROUND
-                    || position == PATTERN_POSITION_UNDER_CONTENT
-                    || position == PATTERN_POSITION_OVER_CONTENT
-                    || position == PATTERN_POSITION_OVER_FOREGROUND) {
+            int position = array.getInteger(R.styleable.RhythmicFrameLayout_overlayPosition, OVERLAY_POSITION_UNDER_CONTENT);
+            if (position == OVERLAY_POSITION_UNDER_BACKGROUND
+                    || position == OVERLAY_POSITION_UNDER_CONTENT
+                    || position == OVERLAY_POSITION_OVER_CONTENT
+                    || position == OVERLAY_POSITION_OVER_FOREGROUND) {
                 //noinspection ResourceType
-                mPatternPosition = position;
+                mOverlayPosition = position;
             } else {
-                mPatternPosition = PATTERN_POSITION_UNDER_CONTENT;
+                mOverlayPosition = OVERLAY_POSITION_UNDER_CONTENT;
             }
 
             mRhythmGroupIndex = array.getInteger(R.styleable.RhythmicFrameLayout_rhythmGroup, NO_GROUP);
@@ -157,10 +159,10 @@ public class RhythmicFrameLayout extends FrameLayout {
         // Draw before or after everything? (if there's anything to draw)
         if (mRhythmDrawable == null) {
             super.draw(canvas);
-        } else if (mPatternPosition == PATTERN_POSITION_UNDER_BACKGROUND) {
+        } else if (mOverlayPosition == OVERLAY_POSITION_UNDER_BACKGROUND) {
             mRhythmDrawable.draw(canvas);
             super.draw(canvas);
-        } else if (mPatternPosition == PATTERN_POSITION_OVER_FOREGROUND) {
+        } else if (mOverlayPosition == OVERLAY_POSITION_OVER_FOREGROUND) {
             super.draw(canvas);
             mRhythmDrawable.draw(canvas);
         } else {
@@ -171,7 +173,7 @@ public class RhythmicFrameLayout extends FrameLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         // Draw before content? (if there's anything to draw)
-        if (mRhythmDrawable != null && mPatternPosition == PATTERN_POSITION_UNDER_CONTENT) {
+        if (mRhythmDrawable != null && mOverlayPosition == OVERLAY_POSITION_UNDER_CONTENT) {
             mRhythmDrawable.draw(canvas);
         }
         super.onDraw(canvas);
@@ -181,7 +183,7 @@ public class RhythmicFrameLayout extends FrameLayout {
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
         // Draw over content and children? (if there's anything to draw)
-        if (mRhythmDrawable != null && mPatternPosition == PATTERN_POSITION_OVER_CONTENT) {
+        if (mRhythmDrawable != null && mOverlayPosition == OVERLAY_POSITION_OVER_CONTENT) {
             mRhythmDrawable.draw(canvas);
         }
     }
@@ -211,7 +213,7 @@ public class RhythmicFrameLayout extends FrameLayout {
     }
 
     /**
-     * @return Index if the Rhythm group this view is linked to, or {@link #NO_GROUP}
+     * @return Index of the Rhythm group this view is linked to, or {@link #NO_GROUP}
      */
     public int getRhythmGroupIndex() {
         return mRhythmGroupIndex;
@@ -233,28 +235,28 @@ public class RhythmicFrameLayout extends FrameLayout {
     }
 
     /**
-     * @return Pattern position
-     * @see #PATTERN_POSITION_UNDER_BACKGROUND
-     * @see #PATTERN_POSITION_UNDER_CONTENT
-     * @see #PATTERN_POSITION_OVER_CONTENT
-     * @see #PATTERN_POSITION_OVER_FOREGROUND
+     * @return Overlay position
+     * @see #OVERLAY_POSITION_UNDER_BACKGROUND
+     * @see #OVERLAY_POSITION_UNDER_CONTENT
+     * @see #OVERLAY_POSITION_OVER_CONTENT
+     * @see #OVERLAY_POSITION_OVER_FOREGROUND
      */
-    public int getPatternPosition() {
-        return mPatternPosition;
+    public int getOverlayPosition() {
+        return mOverlayPosition;
     }
 
     /**
-     * Set another pattern position
+     * Set overlay position
      *
-     * @param patternPosition New pattern position, one of pattern constants
-     * @see #PATTERN_POSITION_UNDER_BACKGROUND
-     * @see #PATTERN_POSITION_UNDER_CONTENT
-     * @see #PATTERN_POSITION_OVER_CONTENT
-     * @see #PATTERN_POSITION_OVER_FOREGROUND
+     * @param overlayPosition New overlay position, one of overlay position constants
+     * @see #OVERLAY_POSITION_UNDER_BACKGROUND
+     * @see #OVERLAY_POSITION_UNDER_CONTENT
+     * @see #OVERLAY_POSITION_OVER_CONTENT
+     * @see #OVERLAY_POSITION_OVER_FOREGROUND
      */
-    public void setPatternPosition(int patternPosition) {
-        if (mPatternPosition != patternPosition) {
-            mPatternPosition = patternPosition;
+    public void setOverlayPosition(int overlayPosition) {
+        if (mOverlayPosition != overlayPosition) {
+            mOverlayPosition = overlayPosition;
             invalidate();
         }
     }
@@ -294,11 +296,11 @@ public class RhythmicFrameLayout extends FrameLayout {
     }
 
     /**
-     * Type def annotation for pattern position enum
+     * Type def annotation for overlay position enum
      */
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({PATTERN_POSITION_UNDER_BACKGROUND, PATTERN_POSITION_UNDER_CONTENT, PATTERN_POSITION_OVER_CONTENT, PATTERN_POSITION_OVER_FOREGROUND})
-    public @interface PatternPosition {
+    @IntDef({OVERLAY_POSITION_UNDER_BACKGROUND, OVERLAY_POSITION_UNDER_CONTENT, OVERLAY_POSITION_OVER_CONTENT, OVERLAY_POSITION_OVER_FOREGROUND})
+    public @interface OverlayPosition {
     }
 
 }

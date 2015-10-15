@@ -22,35 +22,45 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
-import com.actinarium.rhythm.layers.RhythmDrawableLayer;
+import com.actinarium.rhythm.spec.RhythmSpecLayer;
 
 import java.util.List;
 
 /**
- * <p>Draws grids, keylines etc. May have optional background.</p> <p>Made final intentionally. If you need to perform
- * custom drawing, consider creating a custom {@link RhythmDrawableLayer} implementation.</p>
+ * <p>Renders the currently assigned {@link RhythmOverlay} and serves as an adapter between Rhythm (which sets the
+ * overlay to draw by this drawable at the moment) and the views where the overlay (grids, keylines etc) must be
+ * applied. You can use it as any other {@link Drawable} from Android SDK, e.g. assign it as background, foreground,
+ * overlay etc, but keep in mind that for different views, separate drawable instances must be created.</p> <p>For easy
+ * integration with existing layouts, <code>RhythmDrawable</code> can decorate another <code>Drawable</code> &mdash;
+ * that is, draw the decorated one below and then the overlay atop. This can be especially useful when decorating the
+ * views that already have backgrounds. <b>Note:</b> as of this version, decoration logic is very limited for the sake
+ * of simplicity, therefore in some cases (e.g. when decorated drawable is a state list or a level list), it may not
+ * respond correctly to state and level changes (e.g. pressing a decorated button won’t highlight it). But since
+ * decoration is mostly intended for ViewGroups, it’s unlikely that this will be addressed.</p> <p>Normally you
+ * shouldn’t extend this class. If you need to perform custom drawing, consider creating a custom {@link
+ * RhythmSpecLayer} implementation.</p>
  *
  * @author Paul Danyliuk
  */
-public final class RhythmDrawable extends Drawable {
+public class RhythmDrawable extends Drawable {
 
-    private RhythmPattern mPattern;
-    private Drawable mDecoratedBackground;
+    protected RhythmOverlay mOverlay;
+    protected Drawable mDecorated;
 
     @Override
     public void draw(Canvas canvas) {
         Rect bounds = getBounds();
 
-        // Draw background if present
-        if (mDecoratedBackground != null) {
-            mDecoratedBackground.setBounds(bounds);
-            mDecoratedBackground.draw(canvas);
+        // Draw decorated drawable if present
+        if (mDecorated != null) {
+            mDecorated.setBounds(bounds);
+            mDecorated.draw(canvas);
         }
 
         // Draw overlay if present
-        if (mPattern != null) {
-            final List<RhythmDrawableLayer> layers = mPattern.mLayers;
-            // Draw each layer
+        if (mOverlay != null) {
+            final List<RhythmSpecLayer> layers = mOverlay.mLayers;
+            // Make each spec layer draw itself onto the overlay
             for (int i = 0, size = layers.size(); i < size; i++) {
                 layers.get(i).draw(canvas, bounds);
             }
@@ -58,58 +68,59 @@ public final class RhythmDrawable extends Drawable {
     }
 
     /**
-     * Get current pattern
+     * Get current overlay
      *
-     * @return Currently active Rhythm pattern, or <code>null</code> if no pattern is set
+     * @return Currently active Rhythm overlay, or <code>null</code> if no overlay is set
      */
-    public RhythmPattern getPattern() {
-        return mPattern;
+    public RhythmOverlay getOverlay() {
+        return mOverlay;
     }
 
     /**
-     * Set a {@link RhythmPattern} to draw by this drawable. Will request redraw of the view where this drawable is
-     * used.
+     * Set a {@link RhythmOverlay} for this drawable. Will request redraw of this drawable’s view.
      *
-     * @param pattern Pattern to draw. Provide <code>null</code> to disable overlay.
+     * @param overlay Overlay to draw. Provide <code>null</code> to disable overlay.
      */
-    public void setPattern(@Nullable RhythmPattern pattern) {
-        mPattern = pattern;
+    public void setOverlay(@Nullable RhythmOverlay overlay) {
+        mOverlay = overlay;
         invalidateSelf();
     }
 
     /**
-     * Get decorated background drawable (i.e. the one drawn under the pattern), if present
+     * Get decorated drawable (the one drawn under the overlay) if present
      *
-     * @return Background drawable or <code>null</code>
+     * @return Decorated drawable or <code>null</code>
      */
-    public Drawable getDecoratedBackground() {
-        return mDecoratedBackground;
+    public Drawable getDecorated() {
+        return mDecorated;
     }
 
     /**
-     * Set background {@link Drawable}. Should be used when decorating existing views, which already have background
-     * &mdash; this way the background will be preserved and the pattern will be drawn atop. <b>Note:</b> for background
-     * drawable to function properly you must ensure that its {@link Drawable#setCallback(Callback)} has been called.
+     * Set a {@link Drawable} to decorate. Should be used when decorating an existing background or foreground of a view
+     * &mdash; this way the original drawable will be preserved and the overlay will be drawn atop. <b>Note:</b> to
+     * function properly, the decorated drawable’s {@link Drawable#setCallback(Callback) callbacks} must be set. Also
+     * see {@link RhythmDrawable the class’ description} for more info on decoration support.
      *
-     * @param decoratedBackground Background drawable to draw below the pattern, can be <code>null</code>
+     * @param decorated A drawable to draw below the overlay. Set <code>null</code> to remove decorated drawable.
      */
-    public void setDecoratedBackground(@Nullable Drawable decoratedBackground) {
-        mDecoratedBackground = decoratedBackground;
+    public void setDecorated(@Nullable Drawable decorated) {
+        mDecorated = decorated;
         invalidateSelf();
     }
 
     @Override
     public void setAlpha(int alpha) {
-        // todo: evaluate if applying alpha and color filter is crucial for grid overlay - implementing that isn't trivial
-        if (mDecoratedBackground != null) {
-            mDecoratedBackground.setAlpha(alpha);
+        // No-op for the overlay, for simplicity reasons - propagate to decorated drawable only
+        if (mDecorated != null) {
+            mDecorated.setAlpha(alpha);
         }
     }
 
     @Override
     public void setColorFilter(ColorFilter colorFilter) {
-        if (mDecoratedBackground != null) {
-            mDecoratedBackground.setColorFilter(colorFilter);
+        // No-op for the overlay, for simplicity reasons - propagate to decorated drawable only
+        if (mDecorated != null) {
+            mDecorated.setColorFilter(colorFilter);
         }
     }
 
@@ -120,18 +131,18 @@ public final class RhythmDrawable extends Drawable {
 
     @Override
     public boolean isStateful() {
-        return mDecoratedBackground != null && mDecoratedBackground.isStateful();
+        return mDecorated != null && mDecorated.isStateful();
     }
 
     @Override
     public boolean setState(int[] stateSet) {
-        return mDecoratedBackground != null && mDecoratedBackground.setState(stateSet);
+        return mDecorated != null && mDecorated.setState(stateSet);
     }
 
     @Override
     public int[] getState() {
-        return mDecoratedBackground != null ? mDecoratedBackground.getState() : super.getState();
+        return mDecorated != null ? mDecorated.getState() : super.getState();
     }
 
-    // todo: probably need to decorate some other methods?
+    // todo: evaluate if any other Drawable methods should be decorated
 }

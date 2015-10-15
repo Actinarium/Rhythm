@@ -30,7 +30,7 @@ import android.support.v4.app.NotificationCompat;
 
 /**
  * An intent service backing Quick Control notification functionality. Requires {@link Application} to implement {@link
- * RhythmControl.Host} to access the application’s {@link RhythmControl}
+ * RhythmControl.Host} to access the application’s {@link RhythmControl} singleton instance
  *
  * @author Paul Danyliuk
  */
@@ -38,7 +38,7 @@ public class RhythmNotificationService extends IntentService {
 
     static final String ACTION_SHOW_QUICK_CONTROL = "com.actinarium.rhythm.action.SHOW_QUICK_CONTROL";
     static final String ACTION_NEXT_GROUP = "com.actinarium.rhythm.action.NEXT_GROUP";
-    static final String ACTION_NEXT_PATTERN = "com.actinarium.rhythm.action.NEXT_PATTERN";
+    static final String ACTION_NEXT_OVERLAY = "com.actinarium.rhythm.action.NEXT_OVERLAY";
     static final String ACTION_DISMISS_QUICK_CONTROL = "com.actinarium.rhythm.action.DISMISS_QUICK_CONTROL";
 
     static final String EXTRA_NOTIFICATION_ID = "com.actinarium.rhythm.extra.NOTIFICATION_ID";
@@ -51,10 +51,10 @@ public class RhythmNotificationService extends IntentService {
     }
 
     /**
-     * Show the &ldquo;Quick Control&rdquo; notification, which allows to switch configs for any Rhythm controls without
-     * leaving the app under development. Can be used to update the notification as well.
+     * Show the &ldquo;Quick Control&rdquo; notification, which allows to switch overlays for all connected Rhythm
+     * groups without leaving the app under development. Can be used to update the notification as well.
      *
-     * @param context        Used to start the service and build the notification
+     * @param context        to start the service
      * @param notificationId Notification ID, must be unique across the app
      */
     static void showNotification(Context context, int notificationId) {
@@ -68,27 +68,22 @@ public class RhythmNotificationService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
-            if (ACTION_NEXT_PATTERN.equals(action)) {
-                handleNextPattern();
-            } else if (ACTION_NEXT_GROUP.equals(action)) {
-                handleNextGroup();
-            } else if (ACTION_SHOW_QUICK_CONTROL.equals(action)) {
+            if (ACTION_SHOW_QUICK_CONTROL.equals(action)) {
                 final int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, Integer.MIN_VALUE);
                 handleShowNotification(notificationId);
+            } else if (ACTION_NEXT_OVERLAY.equals(action)) {
+                handleNextOverlay();
+            } else if (ACTION_NEXT_GROUP.equals(action)) {
+                handleNextGroup();
             } else if (ACTION_DISMISS_QUICK_CONTROL.equals(action)) {
                 handleDismissQuickConfig();
             }
         }
     }
 
-    /**
-     * Show sticky &ldquo;Quick Control&rdquo; notification for Rhythm
-     *
-     * @param notificationId Notification ID, must be unique across the app
-     */
     private void handleShowNotification(int notificationId) {
         Application application = getApplication();
-        NotificationManager manager = ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification;
 
         // If the application is not the host - show error and return.
@@ -114,34 +109,34 @@ public class RhythmNotificationService extends IntentService {
             return;
         }
 
-        // Now if everything's OK:
-        Intent toggleGroupAction = new Intent(this, RhythmNotificationService.class);
-        toggleGroupAction.setAction(ACTION_NEXT_GROUP);
-        PendingIntent piToggleGroupAction = PendingIntent.getService(this, 0, toggleGroupAction, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Now if everything is OK:
+        Intent nextGroupAction = new Intent(this, RhythmNotificationService.class);
+        nextGroupAction.setAction(ACTION_NEXT_GROUP);
+        PendingIntent piNextGroupAction = PendingIntent.getService(this, 0, nextGroupAction, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent togglePatternAction = new Intent(this, RhythmNotificationService.class);
-        togglePatternAction.setAction(ACTION_NEXT_PATTERN);
-        PendingIntent piTogglePatternAction = PendingIntent.getService(this, 0, togglePatternAction, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent nextOverlayAction = new Intent(this, RhythmNotificationService.class);
+        nextOverlayAction.setAction(ACTION_NEXT_OVERLAY);
+        PendingIntent piNextOverlayAction = PendingIntent.getService(this, 0, nextOverlayAction, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent dismissAction = new Intent(this, RhythmNotificationService.class);
         dismissAction.setAction(ACTION_DISMISS_QUICK_CONTROL);
         PendingIntent piDismissAction = PendingIntent.getService(this, 0, dismissAction, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        // todo: another action when notification is clicked (control activity will be added in 1.0)
+        // todo: another action when notification is clicked (control activity will be added in v1.0)
 
         // Determine what to write in notification
-        RhythmPattern currentPattern = currentGroup.getCurrentPattern();
+        RhythmOverlay currentOverlay = currentGroup.getCurrentOverlay();
         String groupText = getString(R.string.group, currentGroup.toString());
-        String patternText = currentPattern == null ?
-                getString(R.string.no_pattern) : getString(R.string.pattern, currentPattern.toString());
+        String overlayText = currentOverlay == null ?
+                getString(R.string.no_overlay) : getString(R.string.overlay, currentOverlay.toString());
 
         // Finally, build and display the notification
-        notification = makeCommonNotification(patternText)
+        notification = makeCommonNotification(overlayText)
                 .setColor(NOTIFICATION_ICON_COLOR)
                 .setContentTitle(groupText)
                 .setDeleteIntent(piDismissAction)
-                .addAction(new NotificationCompat.Action(R.drawable.ic_loop, getString(R.string.next_group), piToggleGroupAction))
-                .addAction(new NotificationCompat.Action(R.drawable.ic_loop, getString(R.string.next_pattern), piTogglePatternAction))
+                .addAction(new NotificationCompat.Action(R.drawable.ic_loop, getString(R.string.next_group), piNextGroupAction))
+                .addAction(new NotificationCompat.Action(R.drawable.ic_loop, getString(R.string.next_overlay), piNextOverlayAction))
                 .build();
         manager.notify(notificationId, notification);
     }
@@ -162,16 +157,17 @@ public class RhythmNotificationService extends IntentService {
         if (application instanceof RhythmControl.Host) {
             final RhythmControl rhythmControl = ((RhythmControl.Host) application).getRhythmControl();
             Handler handler = new Handler(Looper.getMainLooper());
+            // Not using anonymous classes here to avoid leaking context
             handler.post(new NextGroupRunnable(rhythmControl));
         }
     }
 
-    private void handleNextPattern() {
+    private void handleNextOverlay() {
         Application application = getApplication();
         if (application instanceof RhythmControl.Host) {
             final RhythmControl rhythmControl = ((RhythmControl.Host) application).getRhythmControl();
             Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new NextPatternRunnable(rhythmControl.getCurrentNotificationGroup()));
+            handler.post(new NextOverlayRunnable(rhythmControl.getCurrentNotificationGroup()));
         }
     }
 
@@ -180,7 +176,7 @@ public class RhythmNotificationService extends IntentService {
         if (application instanceof RhythmControl.Host) {
             final RhythmControl rhythmControl = ((RhythmControl.Host) application).getRhythmControl();
             Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new HideAllPatternsRunnable(rhythmControl));
+            handler.post(new HideAllOverlaysRunnable(rhythmControl));
         }
     }
 
@@ -202,30 +198,30 @@ public class RhythmNotificationService extends IntentService {
     }
 
     /**
-     * Runnable to dispatch next pattern call to the UI thread
+     * Runnable to dispatch next overlay call to the UI thread
      */
-    private static class NextPatternRunnable implements Runnable {
+    private static class NextOverlayRunnable implements Runnable {
 
         private RhythmGroup mGroup;
 
-        public NextPatternRunnable(RhythmGroup group) {
+        public NextOverlayRunnable(RhythmGroup group) {
             mGroup = group;
         }
 
         @Override
         public void run() {
-            mGroup.selectNextPattern();
+            mGroup.selectNextOverlay();
         }
     }
 
     /**
-     * Runnable to dispatch hide all patterns call to the UI thread
+     * Runnable to dispatch hide all overlays call to the UI thread
      */
-    private static class HideAllPatternsRunnable implements Runnable {
+    private static class HideAllOverlaysRunnable implements Runnable {
 
         private RhythmControl mControl;
 
-        public HideAllPatternsRunnable(RhythmControl control) {
+        public HideAllOverlaysRunnable(RhythmControl control) {
             mControl = control;
         }
 

@@ -21,7 +21,7 @@
         <attr name="rhythmGroup" format="integer">
             <enum name="noGroup" value="-1" />
         </attr>
-        <attr name="patternPosition" format="enum">
+        <attr name="overlayPosition" format="enum">
             <enum name="underBackground" value="0" />
             <enum name="underContent" value="1" />
             <enum name="overContent" value="2" />

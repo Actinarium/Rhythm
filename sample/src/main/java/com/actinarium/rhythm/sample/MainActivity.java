@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         final RhythmDrawable drawable = rhythmControl.getGroup(1).makeDrawable();
 //        drawable.setBounds(new Rect(subView.getLeft(), subView.getTop(), subView.getRight(), subView.getBottom()));
 //        subView.getOverlay().add(drawable);
-//        drawable.setDecoratedBackground(subView.getBackground());
+//        drawable.setDecorated(subView.getBackground());
 //        subView.setForeground(drawable);
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.line);

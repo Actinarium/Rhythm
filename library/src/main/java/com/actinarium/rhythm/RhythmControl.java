@@ -19,12 +19,18 @@ package com.actinarium.rhythm;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import com.actinarium.rhythm.widget.RhythmicFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An entry point to Rhythm API, used to control Rhythm groups and communicate with the Quick Control notification
+ * <p>A controller that interconnects {@link RhythmGroup}s, {@link RhythmicFrameLayout}s, and the Quick Control
+ * notification, and should be used as an entry point to accessing Rhythm library programmatically. For proper function
+ * a singleton Rhythm control must be accessible from ApplicationContext (i.e. the app’s {@link Application} object must
+ * implement {@link Host}).</p><p><b>Note:</b> if you don’t need the notification or <code>RhythmicFrameLayouts</code>,
+ * you might actually not need a Rhythm control in your project &mdash; just instantiate and use {@link RhythmGroup}s
+ * directly.</p>
  *
  * @author Paul Danyliuk
  */
@@ -37,6 +43,7 @@ public final class RhythmControl {
      * Context is used for the sole purpose of talking to the {@link RhythmNotificationService}. I sure hope it’s not
      * leaking.
      */
+    @Nullable
     private Context mContext;
     private int mCurrentNotificationGroupIndex = NOTIFICATION_OFF;
     private int mNotificationId;
@@ -47,10 +54,10 @@ public final class RhythmControl {
     private List<RhythmGroup> mRhythmGroups;
 
     /**
-     * Create a Rhythm manager
+     * Create a Rhythm control. Normally you shouldn’t create more than one Rhythm control in your application.
      *
-     * @param context Current context (usually the {@link Application} object where Rhythm manager setup is performed).
-     *                <br>You may actually set this to <code>null</code> if you wish to suppress the quick control
+     * @param context Current context (usually the {@link Application} object where Rhythm control setup is performed).
+     *                <br>You may actually set this to <code>null</code> if you don’t need the Quick Control
      *                notification.
      */
     public RhythmControl(@Nullable Context context) {
@@ -59,10 +66,10 @@ public final class RhythmControl {
     }
 
     /**
-     * Make a new Rhythm group that will be controlled by this Rhythm control
+     * Make a new Rhythm group, registered in this Rhythm control
      *
-     * @param title A convenient title for this group, used to identify it in the notification. Can be <code>null</code>
-     *              &mdash; in this case the notification will show group index.
+     * @param title A convenient title for this group to identify it in the notification. Not mandatory (can be
+     *              <code>null</code>) but recommended.
      * @return The created Rhythm group instance, managed by this control
      */
     public RhythmGroup makeGroup(String title) {
@@ -82,7 +89,7 @@ public final class RhythmControl {
     /**
      * Get Rhythm group at requested index
      *
-     * @param index index, which was assigned to the required group upon adding
+     * @param index index of the group (0, 1, 2... in order of adding)
      * @return requested Rhythm group
      */
     public RhythmGroup getGroup(int index) {
@@ -90,18 +97,19 @@ public final class RhythmControl {
     }
 
     /**
-     * @return the number of groups registered with this control
+     * @return the number of groups registered in this control
      */
     public int getGroupCount() {
         return mRhythmGroups.size();
     }
 
     /**
-     * <p>Show the &ldquo;Quick Control&rdquo; notification, which allows to switch configs for any Rhythm controls
-     * quickly without navigating away from your app. Usually you would want to call this once during initial
-     * configuration (unless you don’t need the notification). If you add controls after the call to {@link
-     * #showQuickControl(int)}, the notification will be automatically updated.</p> <p>The notification is dismissible.
-     * You can use this method again to bring it back. Upon dismiss, all Rhythm overlays will be hidden.</p>
+     * <p>Show the &ldquo;Quick Control&rdquo; notification, which allows to switch overlays for all registered Rhythm
+     * groups quickly without navigating away from your app. Usually you would want to call this once during initial
+     * configuration (unless you don’t need the notification).</p> <p><b>Note:</b> Quick Control notification is
+     * dismissible.  Upon dismiss, all Rhythm overlays will be hidden. There’s no way to bring it back other than kill
+     * and restart the application, unless you explicitly create a button, a menu option etc in your application that
+     * would conjure the notification again by calling this method.</p>
      *
      * @param notificationId ID for Rhythm notification, must be unique across the app
      */
@@ -121,18 +129,18 @@ public final class RhythmControl {
     }
 
     /**
-     * Sets all registered drawables in all managed groups to display no Rhythm pattern; sets notification state to
+     * Sets all registered drawables in all managed groups to display no Rhythm overlays; sets notification state to
      * hidden
      */
     void onNotificationDismiss() {
         mCurrentNotificationGroupIndex = NOTIFICATION_OFF;
         for (int i = 0, size = mRhythmGroups.size(); i < size; i++) {
-            mRhythmGroups.get(i).selectPattern(RhythmGroup.NO_PATTERN);
+            mRhythmGroups.get(i).selectOverlay(RhythmGroup.NO_OVERLAY);
         }
     }
 
     /**
-     * Should be called whenever notification state is changed (e.g. current group is changed, its pattern is changed)
+     * Should be called whenever notification state is changed (e.g. when cycling through the groups or overlays)
      */
     void requestNotificationUpdate() {
         if (mCurrentNotificationGroupIndex != NOTIFICATION_OFF) {
@@ -140,11 +148,6 @@ public final class RhythmControl {
         }
     }
 
-    /**
-     * Notification service uses this to obtain information about currently controlled group
-     *
-     * @return Currently controlled group, or null if no groups attached to this control yet
-     */
     RhythmGroup getCurrentNotificationGroup() {
         return mCurrentNotificationGroupIndex < 0 ? null : mRhythmGroups.get(mCurrentNotificationGroupIndex);
     }
@@ -158,8 +161,8 @@ public final class RhythmControl {
     }
 
     /**
-     * The {@link Application} must implement this interface so that it’s possible to access Rhythm API from anywhere in
-     * the app, particularly from the Quick Control notification
+     * The {@link Application} must implement this interface to provide the singleton {@link RhythmControl} instance
+     * through its method {@link #getRhythmControl()} to {@link RhythmicFrameLayout}s and the Quick Control notification
      */
     public interface Host {
 
