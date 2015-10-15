@@ -37,31 +37,16 @@ public class RhythmOverlay {
     protected List<RhythmSpecLayer> mLayers;
 
     /**
-     * Create a new overlay with no spec layers
+     * Create a new overlay
      *
      * @param title A convenient title for this overlay, used to identify it in the notification (not mandatory, but
      *              desirable). If you are not using this overlay within a Rhythm controlled group, you may leave this
      *              <code>null</code>.
+     * @see #addLayersFrom(RhythmOverlay)
      */
     public RhythmOverlay(String title) {
         mTitle = title;
         mLayers = new ArrayList<>(ESTIMATED_AVG_LAYERS);
-    }
-
-    /**
-     * <p>Create a new overlay out of existing overlay, copying all layers. Convenient for creating new layers with
-     * common base and just adding up specific layers.</p><p><b>Warning:</b> for simplicity and performance reasons,
-     * not copies but the same layer objects are used &mdash; keep this in mind if you plan to mutate them (don’t!)</p>
-     *
-     * @param title A convenient title for this overlay, used to identify it in the notification
-     * @param base  Existing overlay to use layers from.
-     */
-    public RhythmOverlay(String title, RhythmOverlay base) {
-        mTitle = title;
-        final int theirSize = base.mLayers.size();
-        final int ourSize = theirSize >= ESTIMATED_AVG_LAYERS / 2 ? theirSize + ESTIMATED_AVG_LAYERS : ESTIMATED_AVG_LAYERS;
-        mLayers = new ArrayList<>(ourSize);
-        mLayers.addAll(base.mLayers);
     }
 
     /**
@@ -72,6 +57,20 @@ public class RhythmOverlay {
      */
     public RhythmOverlay addLayer(@NonNull RhythmSpecLayer layer) {
         mLayers.add(layer);
+        return this;
+    }
+
+    /**
+     * <p>Add all layers to this overlay from another. Convenient if you have a common set of layers that you wish to
+     * include in multiple overlays, or want to create an overlay that combines a few others.</p>
+     * <p><b>Warning:</b> for simplicity and performance reasons, not copies but the same layer objects are used &mdash;
+     * keep this in mind if you plan to mutate them (advice: don’t mutate layers after adding to an overlay!)</p>
+     *
+     * @param source Existing overlay to add all layers from
+     * @return this for chaining
+     */
+    public RhythmOverlay addLayersFrom(@NonNull RhythmOverlay source) {
+        mLayers.addAll(source.mLayers);
         return this;
     }
 

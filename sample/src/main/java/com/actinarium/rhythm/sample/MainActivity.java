@@ -29,6 +29,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import com.actinarium.rhythm.RhythmControl;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,7 +68,21 @@ public class MainActivity extends AppCompatActivity {
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.line);
         rhythmControl.getGroup(0).decorate(view);
-        rhythmControl.getGroup(1).decorate(linearLayout.getChildAt(0), linearLayout.getChildAt(1), linearLayout.getChildAt(2), linearLayout.getChildAt(3), linearLayout.getChildAt(4));
+        final View button = findViewById(R.id.button);
+        rhythmControl.getGroup(1).decorate(
+                linearLayout.getChildAt(0),
+                linearLayout.getChildAt(1),
+                linearLayout.getChildAt(2),
+                linearLayout.getChildAt(3),
+                linearLayout.getChildAt(4)
+        );
         rhythmControl.getGroup(1).decorateForeground(subView);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
