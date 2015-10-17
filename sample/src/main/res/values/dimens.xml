@@ -16,4 +16,8 @@
 
 <resources>
     <dimen name="actionBarElevation">4dp</dimen>
+
+    <dimen name="bulletRadius">2dp</dimen>
+    <dimen name="bulletLeftPadding">6dp</dimen>
+    <dimen name="bulletRightPadding">14dp</dimen>
 </resources>

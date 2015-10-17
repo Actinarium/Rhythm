@@ -24,13 +24,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.actinarium.rhythm.RhythmControl;
+import com.actinarium.rhythm.sample.util.MyBulletSpan;
+
+import static com.actinarium.rhythm.sample.RhythmShowcaseApplication.ACTIVITY_OVERLAY_GROUP;
+import static com.actinarium.rhythm.sample.RhythmShowcaseApplication.CARD_OVERLAY_GROUP;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,7 +46,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Setting up toolbar
+        // Rhythm-unrelated init routines
+        setupToolbar();
+        setupRecentsIcon();
+        setupInteractivity();
+
+        // Find required layouts
+        LinearLayout contentView = (LinearLayout) findViewById(R.id.content);
+        CardView cardView = (CardView) findViewById(R.id.card);
+
+        // Setup Rhythm
+        RhythmControl rhythmControl = ((RhythmShowcaseApplication) getApplication()).getRhythmControl();
+        rhythmControl.getGroup(ACTIVITY_OVERLAY_GROUP).decorate(contentView);
+        rhythmControl.getGroup(CARD_OVERLAY_GROUP).decorateForeground(cardView);
+
+    }
+
+    // Methods for setup, not really relevant to showcasing Rhythm
+
+    private void setupToolbar() {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -47,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setElevation(getResources().getDimension(R.dimen.actionBarElevation));
         actionBar.setTitle(R.string.app_name);
+    }
 
-        // Setting up Recents card icon
+    private void setupRecentsIcon() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TypedValue typedValue = new TypedValue();
             Resources.Theme theme = getTheme();
@@ -61,28 +87,42 @@ public class MainActivity extends AppCompatActivity {
             setTaskDescription(td);
             bm.recycle();
         }
+    }
 
-        View view = findViewById(R.id.scrollViewContent);
-        FrameLayout subView = (FrameLayout) findViewById(R.id.subframe);
-        final RhythmControl rhythmControl = ((RhythmSampleApplication) getApplication()).getRhythmControl();
+    private void setupInteractivity() {
+        // Make links clickable
+        ((TextView) findViewById(R.id.copy_1)).setMovementMethod(LinkMovementMethod.getInstance());
 
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.line);
-        rhythmControl.getGroup(0).decorate(view);
-        final View button = findViewById(R.id.button);
-        rhythmControl.getGroup(1).decorate(
-                linearLayout.getChildAt(0),
-                linearLayout.getChildAt(1),
-                linearLayout.getChildAt(2),
-                linearLayout.getChildAt(3),
-                linearLayout.getChildAt(4)
-        );
-        rhythmControl.getGroup(1).decorateForeground(subView);
-
-        button.setOnClickListener(new View.OnClickListener() {
+        // Make card buttons responsible
+        findViewById(R.id.agree).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, R.string.agree_msg, Toast.LENGTH_SHORT).show();
             }
         });
+        findViewById(R.id.disagree).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, R.string.disagree_msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Build a bullet list (I still have no idea why it has to be so hard)
+        String[] bulletPoints = getResources().getStringArray(R.array.bullet_points);
+        final int bulletRadius = getResources().getDimensionPixelSize(R.dimen.bulletRadius);
+        final int bulletLeftPadding = getResources().getDimensionPixelSize(R.dimen.bulletLeftPadding);
+        final int bulletRightPadding = getResources().getDimensionPixelSize(R.dimen.bulletRightPadding);
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        int spanStart = 0;
+        int spanEnd;
+        for (String bulletPoint : bulletPoints) {
+            builder.append(bulletPoint);
+            spanEnd = builder.length();
+            builder.setSpan(new MyBulletSpan(bulletRadius, bulletLeftPadding, bulletRightPadding), spanStart, spanEnd, 0);
+            spanStart = spanEnd;
+        }
+        TextView textView = (TextView) findViewById(R.id.bullet_list);
+        textView.setText(builder);
+
     }
 }
