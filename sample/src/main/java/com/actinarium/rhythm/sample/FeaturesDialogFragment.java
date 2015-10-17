@@ -61,9 +61,12 @@ public class FeaturesDialogFragment extends DialogFragment {
         textView.setText(builder);
 
         return new AlertDialog.Builder(getContext())
-                .setTitle("Title")
+                .setTitle(R.string.layer_types)
                 .setView(view)
-                .setPositiveButton(android.R.string.ok, null)
+                .setPositiveButton(R.string.got_it, null)
                 .create();
+
+        // - Wait, that's it? Where's the getRhythmControl()? Where's decorate()?
+        // - You don't need it if you use RhythmicFrameLayout to wrap your views. Take a look at dialog_features.xml
     }
 }

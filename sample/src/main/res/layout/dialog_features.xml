@@ -20,7 +20,14 @@
             android:layout_height="match_parent"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Another, more flexible way to integrate Rhythm into layout is to wrap content with RhythmicFrameLayout-->
+    <!--
+    Another, more flexible way to integrate Rhythm into layout is to wrap content with RhythmicFrameLayout
+    This way you don't need any Java code - just specify app:rhythmGroup with proper index and optionally select one of
+    app:overlayPosition modes, and you're set.
+
+    This approach is less error-prone than decorating existing views, however it adds a level to your layout hierarchy,
+    and besides, decoration approach is more suitable for keeping Rhythm dependency for debug/development flavor only.
+    -->
     <com.actinarium.rhythm.widget.RhythmicFrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -112,7 +112,7 @@
                             android:lineSpacingExtra="3.5sp"
                             android:paddingBottom="1dp"
                             android:text="@string/card_text"
-                            android:hyphenationFrequency="normal"/>
+                            android:hyphenationFrequency="full"/>
 
                 </LinearLayout>
 
@@ -186,12 +186,11 @@
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"
-                    android:layout_marginTop="1dp"
+                    android:layout_marginTop="9dp"
                     android:layout_marginBottom="3dp"
-                    android:text="@string/show_dialog"/>
+                    android:text="@string/layer_types"/>
 
             <TextView
-                    android:id="@+id/copy_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -200,8 +199,84 @@
                     android:paddingTop="8dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="16dp"
+                    android:paddingBottom="1dp"
                     android:text="@string/copy_4"
+                    android:hyphenationFrequency="normal"/>
+
+            <LinearLayout
+                    android:id="@+id/mallows"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="11dp"
+                    android:orientation="horizontal"
+                    android:clipChildren="false">
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="64dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:src="@drawable/mallow"
+                        android:scaleType="fitCenter"
+                        android:importantForAccessibility="no"/>
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="64dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:src="@drawable/mallow"
+                        android:scaleType="fitCenter"
+                        android:importantForAccessibility="no"/>
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="64dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:src="@drawable/mallow"
+                        android:scaleType="fitCenter"
+                        android:importantForAccessibility="no"/>
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="64dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:src="@drawable/mallow"
+                        android:scaleType="fitCenter"
+                        android:importantForAccessibility="no"/>
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="64dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:src="@drawable/mallow"
+                        android:scaleType="fitCenter"
+                        android:importantForAccessibility="no"/>
+
+            </LinearLayout>
+
+            <TextView
+                    android:id="@+id/copy_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="3.5sp"
+                    android:paddingTop="13dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/copy_5"
                     android:textColorLink="?colorPrimaryDark"
                     android:hyphenationFrequency="normal"/>
 

@@ -20,6 +20,7 @@ import android.app.ActivityManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -28,11 +29,17 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.actinarium.rhythm.RhythmControl;
+import com.actinarium.rhythm.RhythmDrawable;
+import com.actinarium.rhythm.RhythmGroup;
+import com.actinarium.rhythm.RhythmOverlay;
+import com.actinarium.rhythm.spec.DimensionsLabel;
+import com.actinarium.rhythm.spec.Guide;
 
 import static com.actinarium.rhythm.sample.RhythmShowcaseApplication.ACTIVITY_OVERLAY_GROUP;
 import static com.actinarium.rhythm.sample.RhythmShowcaseApplication.CARD_OVERLAY_GROUP;
@@ -52,12 +59,44 @@ public class MainActivity extends AppCompatActivity {
         // Find required layouts
         LinearLayout contentView = (LinearLayout) findViewById(R.id.content);
         CardView cardView = (CardView) findViewById(R.id.card);
+        LinearLayout mallowsView = (LinearLayout) findViewById(R.id.mallows);
 
         // Setup Rhythm
+        // First let's attach the activity and the card to the groups defined in app's RhythmControl
         RhythmControl rhythmControl = ((RhythmShowcaseApplication) getApplication()).getRhythmControl();
+
+        // Decorate the provided views' backgrounds (any views) - draw overlays UNDER content
         rhythmControl.getGroup(ACTIVITY_OVERLAY_GROUP).decorate(contentView);
+        // Decorate the provided views' foregrounds (only for FrameLayouts) - draw overlays OVER content
         rhythmControl.getGroup(CARD_OVERLAY_GROUP).decorateForeground(cardView);
 
+        // Now let's create an unlinked group (i.e. not attached to the control) and draw some dimensions over mallows
+        // Note that when not using this group/overlay in notification, titles don't really matter, so leave them null
+        RhythmGroup mallowsGroup = new RhythmGroup(null);
+        final int accentColor = getResources().getColor(R.color.accent);
+        RhythmOverlay frameAndDimensions = new RhythmOverlay(null)
+                .addLayer(new Guide(Gravity.LEFT, 0).alignOutside(true).color(accentColor))
+                .addLayer(new Guide(Gravity.TOP, 0).alignOutside(true).color(accentColor))
+                .addLayer(new Guide(Gravity.BOTTOM, 0).alignOutside(true).color(accentColor))
+                .addLayer(new DimensionsLabel(getResources().getDisplayMetrics().density))
+                .addToGroup(mallowsGroup);
+
+        // Decorate a few mallows with this group
+        mallowsGroup.decorate(mallowsView.getChildAt(0), mallowsView.getChildAt(1), mallowsView.getChildAt(2));
+
+        // Or get a Drawable and use it explicitly
+        Drawable drawable = mallowsGroup.makeDrawable();
+        mallowsView.getChildAt(3).setBackgroundDrawable(drawable);
+
+        // Furthermore, you may not even need groups - for full manual transmission make RhythmDrawables explicitly
+        RhythmDrawable totallyExplicitlyCreatedDrawable = new RhythmDrawable();
+        RhythmOverlay lastFrameOverlay = new RhythmOverlay(null)
+                .addLayersFrom(frameAndDimensions)
+                .addLayer(new Guide(Gravity.RIGHT, 0).alignOutside(true).color(accentColor));
+        totallyExplicitlyCreatedDrawable.setOverlay(lastFrameOverlay);
+        mallowsView.getChildAt(4).setBackgroundDrawable(totallyExplicitlyCreatedDrawable);
+
+        // Take a look at FeaturesDialogFragment and its layout for RhythmicFrameLayout example
     }
 
     // Methods for setup, not really relevant to showcasing Rhythm
@@ -90,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupInteractivity() {
         // Make links clickable
         ((TextView) findViewById(R.id.copy_1)).setMovementMethod(LinkMovementMethod.getInstance());
-        ((TextView) findViewById(R.id.copy_4)).setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.copy_5)).setMovementMethod(LinkMovementMethod.getInstance());
 
         // Make card buttons responsible
         findViewById(R.id.agree).setOnClickListener(new View.OnClickListener() {
