@@ -17,12 +17,10 @@
 package com.actinarium.rhythm.sample;
 
 import android.app.Application;
-import android.graphics.Color;
 import android.view.Gravity;
-import com.actinarium.rhythm.RhythmOverlay;
-import com.actinarium.rhythm.RhythmGroup;
 import com.actinarium.rhythm.RhythmControl;
-import com.actinarium.rhythm.spec.DimensionsLabel;
+import com.actinarium.rhythm.RhythmGroup;
+import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.spec.GridLines;
 import com.actinarium.rhythm.spec.Guide;
 
@@ -62,7 +60,7 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
         // Groups, which are attached to the control, are assigned sequential indices starting at 0
         RhythmGroup activityBgGroup = mRhythmControl.makeGroup("Activity background");               // index = 0
         RhythmGroup cardOverlayGroup = mRhythmControl.makeGroup("Card overlay");                     // index = 1
-        RhythmGroup componentOverlaysGroup = mRhythmControl.makeGroup("Component overlays");         // index = 2
+        RhythmGroup dialogOverlayGroup = mRhythmControl.makeGroup("Dialog overlay");                 // index = 2
 
         // Now let's create some overlays. Mix and match!
 
@@ -137,15 +135,23 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
                 .addLayer(new ImageBox(i80dp, i80dp, i16dp, i16dp, Gravity.TOP | Gravity.RIGHT, density))
                 .addToGroup(cardOverlayGroup);
 
+        // Make a dialog overlay. Let it be a simple baseline grid with a few keylines corresponding to a bullet list
+        new RhythmOverlay("Baseline w/ 24dp keylines")
+                .addLayer(new GridLines(Gravity.TOP, i4dp).color(GridLines.DEFAULT_BASELINE_COLOR))
+                .addLayer(new Guide(Gravity.LEFT, i24dp))
+                .addLayer(new Guide(Gravity.RIGHT, i24dp))
+                .addLayer(new Guide(Gravity.LEFT, i24dp * 2))       // Extra keyline for list inset
+                .addToGroup(dialogOverlayGroup);
 
-        new RhythmOverlay("Test config")
-                .addLayer(new GridLines(Gravity.LEFT, i8dp).margins(true, 0, 0, 60, 0).color(Color.BLACK).limit(4))
-                .addLayer(new GridLines(Gravity.RIGHT, i8dp).margins(true, 60, 0, 0, 0).color(Color.BLACK).limit(4))
-                .addLayer(new GridLines(Gravity.TOP, i8dp).margins(true, 0, 0, 0, 60).color(Color.BLACK).limit(4))
-                .addLayer(new GridLines(Gravity.BOTTOM, i8dp).margins(true, 0, 60, 0, 0)
-                        .color(Color.BLACK).limit(4))
-                .addLayer(new DimensionsLabel(density))
-                .addToGroup(componentOverlaysGroup);
+
+//        new RhythmOverlay("Test config")
+//                .addLayer(new GridLines(Gravity.LEFT, i8dp).margins(true, 0, 0, 60, 0).color(Color.BLACK).limit(4))
+//                .addLayer(new GridLines(Gravity.RIGHT, i8dp).margins(true, 60, 0, 0, 0).color(Color.BLACK).limit(4))
+//                .addLayer(new GridLines(Gravity.TOP, i8dp).margins(true, 0, 0, 0, 60).color(Color.BLACK).limit(4))
+//                .addLayer(new GridLines(Gravity.BOTTOM, i8dp).margins(true, 0, 60, 0, 0)
+//                        .color(Color.BLACK).limit(4))
+//                .addLayer(new DimensionsLabel(density))
+//                .addToGroup(componentOverlaysGroup);
 
         mRhythmControl.showQuickControl(RHYTHM_NOTIFICATION_ID);
     }

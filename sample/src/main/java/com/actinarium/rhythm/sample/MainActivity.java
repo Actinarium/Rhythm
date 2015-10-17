@@ -26,7 +26,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.View;
@@ -34,7 +33,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.actinarium.rhythm.RhythmControl;
-import com.actinarium.rhythm.sample.util.MyBulletSpan;
 
 import static com.actinarium.rhythm.sample.RhythmShowcaseApplication.ACTIVITY_OVERLAY_GROUP;
 import static com.actinarium.rhythm.sample.RhythmShowcaseApplication.CARD_OVERLAY_GROUP;
@@ -71,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         final ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setElevation(getResources().getDimension(R.dimen.actionBarElevation));
-        actionBar.setTitle(R.string.app_name);
+        actionBar.setTitle(R.string.app_title);
     }
 
     private void setupRecentsIcon() {
@@ -92,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupInteractivity() {
         // Make links clickable
         ((TextView) findViewById(R.id.copy_1)).setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.copy_4)).setMovementMethod(LinkMovementMethod.getInstance());
 
         // Make card buttons responsible
         findViewById(R.id.agree).setOnClickListener(new View.OnClickListener() {
@@ -107,22 +106,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Build a bullet list (I still have no idea why it has to be so hard)
-        String[] bulletPoints = getResources().getStringArray(R.array.bullet_points);
-        final int bulletRadius = getResources().getDimensionPixelSize(R.dimen.bulletRadius);
-        final int bulletLeftPadding = getResources().getDimensionPixelSize(R.dimen.bulletLeftPadding);
-        final int bulletRightPadding = getResources().getDimensionPixelSize(R.dimen.bulletRightPadding);
-        SpannableStringBuilder builder = new SpannableStringBuilder();
-        int spanStart = 0;
-        int spanEnd;
-        for (String bulletPoint : bulletPoints) {
-            builder.append(bulletPoint);
-            spanEnd = builder.length();
-            builder.setSpan(new MyBulletSpan(bulletRadius, bulletLeftPadding, bulletRightPadding), spanStart, spanEnd, 0);
-            spanStart = spanEnd;
-        }
-        TextView textView = (TextView) findViewById(R.id.bullet_list);
-        textView.setText(builder);
-
+        // Show dialog button
+        findViewById(R.id.show_dialog).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FeaturesDialogFragment fragment = new FeaturesDialogFragment();
+                fragment.show(getSupportFragmentManager(), FeaturesDialogFragment.TAG);
+            }
+        });
     }
 }

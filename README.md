@@ -7,6 +7,8 @@ If you are passionate about carefully crafted layouts and aspiring to #BuildBett
 
 Current version: 0.9
 
+![Rhythm][hero]
+
 **Key features:**
 
 * Superior flexibility.  
@@ -50,3 +52,5 @@ in the notification. This will be addressed in v1.0. The drawing itself works fi
 
 [1]: http://www.google.com/design/spec/layout/metrics-keylines.html
 [2]: https://bintray.com/actinarium/maven/rhythm
+
+[hero]: https://github.com/Actinarium/Rhythm/blob/develop/images/rhythm-v0.9.png

@@ -24,6 +24,12 @@
         <item name="colorPrimaryDark">#492D8A</item>
         <item name="colorAccent">#7FD2F6</item>
         <item name="android:windowBackground">@color/windowBackground</item>
+
+        <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
+    </style>
+
+    <style name="AppTheme.AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">#7FD2F6</item>
     </style>
 
 </resources>

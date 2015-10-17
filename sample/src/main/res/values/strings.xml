@@ -15,14 +15,17 @@
   -->
 
 <resources>
-    <string name="app_name">Rhythm showcase</string>
+    <string name="app_name">Rhythm</string>
+    <string name="app_title">Rhythm showcase</string>
 
     <string name="sample_header">Welcome to the Rhythm&#160;library showcase!</string>
     <string name="copy_1">This app demonstrates the capabilities of the&#160;library and how it can be&#160;used in a real&#160;project.
        You are welcome to examine its source&#160;code on&#160;<a href="https://github.com/Actinarium/Rhythm/tree/master/sample">GitHub</a>.</string>
 
-    <string name="card_header">Details matter</string>
-    <string name="card_text">Do you agree with this white and purple marshmallow?</string>
+    <string name="copy_warning"><b>Note:</b> this is a rough sample tested only on Nexus 5. Painful misalignment expected on other devices.</string>
+
+    <string name="card_header">Details matter!</string>
+    <string name="card_text">— says designer marshmallow. Do you agree with her?</string>
     <string name="agree">Agree</string>
     <string name="agree_msg">That’s the spirit!</string>
     <string name="disagree">Disagree</string>
@@ -31,12 +34,17 @@
     <string name="copy_2">Open the Notification drawer to access Rhythm Quick Control, which allows&#160;you to cycle through configurations without leaving your current&#160;screen.
         Go ahead and play&#160;around with overlays for different provided&#160;groups.</string>
 
-    <string name="copy_3">As of v0.9, Rhythm allows you to mix and match these <i>spec layer</i> types to make various overlays:</string>
+    <string name="copy_3">As of v0.9, Rhythm allows you to mix and match these <i>spec layer</i> types to make various overlays.
+        In fact, here’s the dialog that describes available layer types:</string>
+    <string name="show_dialog">Layer types</string>
     <string-array name="bullet_points">
         <item>Horizontal and vertical grid lines, repeating at a fixed step, with optional offset and margins.
             Add two grid line layers to make a grid.\n</item>
         <item>Guides of arbitrary color and thickness, to make keylines and highlights.\n</item>
         <item>Dimensions label, to inspect view’s dimensions at glance.\n</item>
-        <item>More spec layer types coming soon; meanwhile you can create custom ones.</item>
+        <item>More spec layer types coming soon; meanwhile create your custom ones and don’t hesitate to tell me!</item>
     </string-array>
+
+    <string name="copy_4">If you already love this library and pictured how it would help you <i>tremendously</i> with
+        your next project, motor over to <a href="https://github.com/Actinarium/Rhythm">GitHub</a> to learn how you can support the developer.</string>
 </resources>
