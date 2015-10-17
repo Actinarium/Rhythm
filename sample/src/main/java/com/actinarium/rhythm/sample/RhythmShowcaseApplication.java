@@ -67,9 +67,9 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
         // First, let's create an overlay with standard Material keylines
         // We're not attaching it anywhere yet, but we'll include it in other overlays
         RhythmOverlay materialKeylines = new RhythmOverlay("Material keylines")
-                .addLayer(new Guide(Gravity.LEFT, i16dp))                       // 16 dp from the left
-                .addLayer(new Guide(Gravity.RIGHT, i16dp))                      // 16 dp from the right
-                .addLayer(new Guide(Gravity.LEFT, i72dp));                      // 72 dp from the left
+                .addLayer(new Guide(Gravity.LEFT, i16dp))                                  // 16 dp from the left
+                .addLayer(new Guide(Gravity.RIGHT, i16dp))                                 // 16 dp from the right
+                .addLayer(new Guide(Gravity.LEFT, i72dp));                                 // 72 dp from the left
 
         // Now make a simple 4dp baseline grid with keylines and attach it to the first group
         new RhythmOverlay("Baseline grid w/keylines")
@@ -88,8 +88,7 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
         // When gravity is LEFT, thickness controls how the guide expands towards the LEFT side of the screen
         new RhythmOverlay("Avatar list keylines")
                 .addLayersFrom(standardGrid)
-                .addLayer(new Guide(Gravity.LEFT, i16dp).thickness(i16dp)
-                        .color(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.LEFT, i16dp).thickness(i16dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
                 .addLayer(new Guide(Gravity.LEFT, i72dp).thickness(i16dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
                 .addLayer(new Guide(Gravity.RIGHT, i16dp).thickness(i16dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
                 .addToGroup(activityBgGroup);
@@ -103,9 +102,9 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
                 .addLayersFrom(standardGrid)
                 .addLayer(
                         new GridLines(Gravity.TOP, i8dp)                         // Draw a grid line each 8 dips...
-                                .offset(i4dp)                                // ...starting from 4dp...
+                                .offset(i4dp)                                    // ...starting from 4dp...
                                 .color(GridLines.DEFAULT_BASELINE_COLOR)
-                                .margins(false, i72dp, 0, i16dp, 0)   // ...with margins on both sides
+                                .margins(false, i72dp, 0, i16dp, 0)              // ...with margins on both sides
                 )
                 .addToGroup(activityBgGroup);
 
@@ -142,16 +141,6 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
                 .addLayer(new Guide(Gravity.RIGHT, i24dp))
                 .addLayer(new Guide(Gravity.LEFT, i24dp * 2))       // Extra keyline for list inset
                 .addToGroup(dialogOverlayGroup);
-
-
-//        new RhythmOverlay("Test config")
-//                .addLayer(new GridLines(Gravity.LEFT, i8dp).margins(true, 0, 0, 60, 0).color(Color.BLACK).limit(4))
-//                .addLayer(new GridLines(Gravity.RIGHT, i8dp).margins(true, 60, 0, 0, 0).color(Color.BLACK).limit(4))
-//                .addLayer(new GridLines(Gravity.TOP, i8dp).margins(true, 0, 0, 0, 60).color(Color.BLACK).limit(4))
-//                .addLayer(new GridLines(Gravity.BOTTOM, i8dp).margins(true, 0, 60, 0, 0)
-//                        .color(Color.BLACK).limit(4))
-//                .addLayer(new DimensionsLabel(density))
-//                .addToGroup(componentOverlaysGroup);
 
         mRhythmControl.showQuickControl(RHYTHM_NOTIFICATION_ID);
     }
