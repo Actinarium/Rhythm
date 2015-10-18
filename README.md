@@ -50,7 +50,10 @@ Maven repository.
 
 ### Quick start
 
-To set up Rhythm in an intended way—that is, with Quick Control notification, do the following in your `Application` class:
+To set up Rhythm in an intended way—that is, with Quick Control notification, do the following in your `Application` class.
+
+**Note:** While currently overlays are configured imperatively like this (i.e. with lots of code),
+it is already [planned](#plans-for-the-future) to add declarative configs (e.g. with JSON or such) in v1.0.
 
 ```java
 // Implement RhythmControl.Host - otherwise Rhythm components won't be able to access Rhythm control
