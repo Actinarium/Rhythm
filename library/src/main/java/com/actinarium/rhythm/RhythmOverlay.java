@@ -77,11 +77,11 @@ public class RhythmOverlay {
     /**
      * A shorthand for {@link RhythmGroup#addOverlay(RhythmOverlay)}
      *
-     * @param control Rhythm group to add this overlay to
+     * @param group Rhythm group to add this overlay to
      * @return this for chaining (e.g. for adding this overlay to other groups as well)
      */
-    public RhythmOverlay addToGroup(@NonNull RhythmGroup control) {
-        control.addOverlay(this);
+    public RhythmOverlay addToGroup(@NonNull RhythmGroup group) {
+        group.addOverlay(this);
         return this;
     }
 

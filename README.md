@@ -179,7 +179,7 @@ If you find this library useful and want to reward my work, here’s how you can
 
 The library is licensed under Apache 2.0 License, meaning that you can freely use it in any of your projects.
 
-The full license text is [here][license];
+The full license text is [here][license].
 
 ---
 ¹ — Controlling overlays on the go is available for Android 4.1+ only, since it relies on action buttons

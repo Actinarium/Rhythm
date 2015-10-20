@@ -19,6 +19,7 @@ package com.actinarium.rhythm.spec;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.ColorInt;
 import android.view.Gravity;
 
 /**
@@ -69,7 +70,7 @@ public class Guide implements RhythmSpecLayer {
      * @param color Grid line color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public Guide color(int color) {
+    public Guide color(@ColorInt int color) {
         mPaint.setColor(color);
         return this;
     }

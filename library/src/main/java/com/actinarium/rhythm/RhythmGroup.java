@@ -178,6 +178,10 @@ public final class RhythmGroup {
      */
     public void selectNextOverlay() {
         if (mCurrentOverlayIndex == NO_OVERLAY) {
+            if (mOverlays.isEmpty()) {
+                // Still no overlay, so no-op.
+                return;
+            }
             mCurrentOverlayIndex = 0;
         } else {
             mCurrentOverlayIndex = ++mCurrentOverlayIndex % mOverlays.size();

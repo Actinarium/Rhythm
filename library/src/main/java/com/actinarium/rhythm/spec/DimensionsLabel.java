@@ -19,6 +19,7 @@ package com.actinarium.rhythm.spec;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.ColorInt;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -94,7 +95,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
      * @param color Text box background color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public DimensionsLabel boxColor(int color) {
+    public DimensionsLabel boxColor(@ColorInt int color) {
         mBackgroundPaint.setColor(color);
         return this;
     }
@@ -105,7 +106,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
      * @param color Text color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public DimensionsLabel textColor(int color) {
+    public DimensionsLabel textColor(@ColorInt int color) {
         mTextPaint.setColor(color);
         return this;
     }
