@@ -18,11 +18,11 @@
     <string name="app_name">Rhythm</string>
     <string name="app_title">Rhythm showcase</string>
 
-    <string name="sample_header">Welcome to the Rhythm&#160;library showcase!</string>
+    <string name="sample_header">Welcome to the Rhythm&#160;library sample app!</string>
     <string name="copy_1">This app demonstrates the capabilities of the&#160;library and how it can be&#160;used in a real&#160;project.
        You are welcome to examine its source&#160;code on&#160;<a href="https://github.com/Actinarium/Rhythm/tree/master/sample">GitHub</a>.</string>
 
-    <string name="copy_warning"><b>Note:</b> this is a rough sample tested only on Nexus 5. Painful misalignment expected on other devices.</string>
+    <string name="copy_warning"><b>Heads up!</b> If you see this, and the text in this sample is not aligned nicely to the 4dp baseline grid, please file an issue on GitHub with the screenshot and your device model. Thank you.</string>
 
     <string name="card_header">Details matter</string>
     <string name="card_text">— says designer marshmallow. Do you agree with her?</string>

@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import com.actinarium.rhythm.sample.util.MyBulletSpan;
+import com.actinarium.rhythm.sample.util.TextViewUtils;
 
 /**
  * A dialog fragment showcasing how Rhythm works with dialogs as well
@@ -59,6 +60,11 @@ public class FeaturesDialogFragment extends DialogFragment {
         }
         TextView textView = (TextView) view.findViewById(R.id.bullet_list);
         textView.setText(builder);
+
+        // Fix text leading
+        final int step = getResources().getDimensionPixelSize(R.dimen.baselineStep);
+        final int leading20dp = getResources().getDimensionPixelSize(R.dimen.leading20);
+        TextViewUtils.setLeading(textView, step, leading20dp);
 
         return new AlertDialog.Builder(getContext())
                 .setTitle(R.string.layer_types)

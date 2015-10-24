@@ -40,11 +40,9 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textSize="14sp"
-                android:lineSpacingExtra="3.5sp"
-                android:paddingTop="9dp"
+                android:paddingTop="8dp"
                 android:paddingLeft="24dp"
                 android:paddingRight="24dp"
-                android:paddingBottom="1dp"
                 android:hyphenationFrequency="normal"/>
 
     </com.actinarium.rhythm.widget.RhythmicFrameLayout>

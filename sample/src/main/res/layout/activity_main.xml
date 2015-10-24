@@ -36,15 +36,15 @@
                 android:orientation="vertical">
 
             <TextView
+                    android:id="@+id/content_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                     android:textColor="?colorPrimaryDark"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingTop="22.25dp"
-                    android:paddingBottom="10.25dp"
-                    android:lineSpacingExtra="3.5sp"
+                    android:paddingTop="24dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/sample_header"/>
 
             <TextView
@@ -53,24 +53,21 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:lineSpacingExtra="3.5sp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="1dp"
                     android:text="@string/copy_1"
                     android:textColorLink="?colorPrimaryDark"
                     android:hyphenationFrequency="normal"/>
 
             <TextView
+                    android:id="@+id/copy_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:lineSpacingExtra="3.5sp"
                     android:paddingTop="8dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="1dp"
                     android:text="@string/copy_warning"
                     android:hyphenationFrequency="normal"/>
 
@@ -78,8 +75,8 @@
                     android:id="@+id/card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="19dp"
-                    android:layout_marginBottom="17dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:minHeight="152dp">
@@ -94,23 +91,23 @@
                         android:orientation="vertical">
 
                     <TextView
+                            android:id="@+id/card_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingTop="4dp"
+                            android:minHeight="36dp"
                             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                             android:textColor="?android:textColorPrimary"
-                            android:paddingTop="2.25dp"
-                            android:paddingBottom="2.25dp"
-                            android:lineSpacingExtra="3.5sp"
                             android:text="@string/card_header"/>
 
                     <TextView
+                            android:id="@+id/card_copy"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="-4dp"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                             android:textColor="?android:textColorSecondary"
                             android:textSize="14sp"
-                            android:lineSpacingExtra="3.5sp"
-                            android:paddingBottom="1dp"
                             android:text="@string/card_text"
                             android:hyphenationFrequency="full"/>
 
@@ -154,28 +151,26 @@
             </android.support.v7.widget.CardView>
 
             <TextView
+                    android:id="@+id/copy_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:lineSpacingExtra="3.5sp"
                     android:paddingTop="8dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="1dp"
                     android:text="@string/copy_2"
                     android:hyphenationFrequency="normal"/>
 
             <TextView
+                    android:id="@+id/copy_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:lineSpacingExtra="3.5sp"
                     android:paddingTop="8dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="1dp"
                     android:text="@string/copy_3"
                     android:hyphenationFrequency="normal"/>
 
@@ -186,20 +181,18 @@
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"
-                    android:layout_marginTop="9dp"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="6dp"
                     android:text="@string/layer_types"/>
 
             <TextView
+                    android:id="@+id/copy_5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:lineSpacingExtra="3.5sp"
-                    android:paddingTop="8dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="1dp"
                     android:text="@string/copy_4"
                     android:hyphenationFrequency="normal"/>
 
@@ -209,7 +202,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:layout_marginTop="11dp"
+                    android:layout_marginTop="8dp"
                     android:orientation="horizontal"
                     android:clipChildren="false">
 
@@ -266,16 +259,15 @@
             </LinearLayout>
 
             <TextView
-                    android:id="@+id/copy_5"
+                    android:id="@+id/copy_6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:lineSpacingExtra="3.5sp"
-                    android:paddingTop="13dp"
+                    android:paddingTop="8dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="16dp"
+                    android:paddingBottom="12dp"
                     android:text="@string/copy_5"
                     android:textColorLink="?colorPrimaryDark"
                     android:hyphenationFrequency="normal"/>

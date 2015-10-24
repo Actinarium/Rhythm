@@ -38,6 +38,7 @@ import com.actinarium.rhythm.RhythmControl;
 import com.actinarium.rhythm.RhythmDrawable;
 import com.actinarium.rhythm.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
+import com.actinarium.rhythm.sample.util.TextViewUtils;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.spec.Guide;
 
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         setupToolbar();
         setupRecentsIcon();
         setupInteractivity();
+        fixTextLeading();
 
         // Find required layouts
         LinearLayout contentView = (LinearLayout) findViewById(R.id.content);
@@ -129,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupInteractivity() {
         // Make links clickable
         ((TextView) findViewById(R.id.copy_1)).setMovementMethod(LinkMovementMethod.getInstance());
-        ((TextView) findViewById(R.id.copy_5)).setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.copy_6)).setMovementMethod(LinkMovementMethod.getInstance());
 
         // Make card buttons responsible
         findViewById(R.id.agree).setOnClickListener(new View.OnClickListener() {
@@ -153,5 +155,20 @@ public class MainActivity extends AppCompatActivity {
                 fragment.show(getSupportFragmentManager(), FeaturesDialogFragment.TAG);
             }
         });
+    }
+
+    private void fixTextLeading() {
+        final int step = getResources().getDimensionPixelSize(R.dimen.baselineStep);
+        final int leading20dp = getResources().getDimensionPixelSize(R.dimen.leading20);
+        final int leading32dp = getResources().getDimensionPixelSize(R.dimen.leading32);
+        TextViewUtils.setLeading((TextView) findViewById(R.id.content_title), step, leading32dp);
+        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_1), step, leading20dp);
+        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_2), step, leading20dp);
+        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_3), step, leading20dp);
+        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_4), step, leading20dp);
+        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_5), step, leading20dp);
+        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_6), step, leading20dp);
+        TextViewUtils.setLeading((TextView) findViewById(R.id.card_title), step, leading20dp);
+        TextViewUtils.setLeading((TextView) findViewById(R.id.card_copy), step, leading20dp);
     }
 }
