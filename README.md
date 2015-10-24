@@ -1,4 +1,4 @@
-# Rhythm [![Download](https://api.bintray.com/packages/actinarium/maven/rhythm/images/download.svg)](https://bintray.com/actinarium/maven/rhythm/_latestVersion)
+# Rhythm [![Download](https://api.bintray.com/packages/actinarium/maven/rhythm/images/download.svg)](https://bintray.com/actinarium/maven/rhythm/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rhythm-green.svg?style=flat)](https://android-arsenal.com/details/1/2664)
 
 Rhythm is a small library for Android that draws grids and guides over views, making it easier to fine tune
 your layouts according to the [principles][mdspec] of beautiful, balanced, _rhythmic_ design.
