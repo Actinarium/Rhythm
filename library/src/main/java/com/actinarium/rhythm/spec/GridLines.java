@@ -21,6 +21,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.view.Gravity;
+import com.actinarium.rhythm.RhythmSpecLayer;
 
 /**
  * A spec layer for horizontal <b>or</b> vertical grid lines (not both at once!), repeating at a fixed step. Horizontal
@@ -33,15 +34,15 @@ public class GridLines implements RhythmSpecLayer {
 
     public static final int DEFAULT_GRID_COLOR = 0x60F50057;
     public static final int DEFAULT_BASELINE_COLOR = 0x800091EA;
+    /**
+     * Default grid line thickness (1px)
+     */
+    public static final int DEFAULT_THICKNESS = 1;
 
     protected int mStep;
-    protected int mThickness = 1;
+    protected int mThickness = DEFAULT_THICKNESS;
     protected int mLimit = Integer.MAX_VALUE;
-    protected boolean mMarginIsPercent;
-    protected int mMarginLeft;
-    protected int mMarginTop;
-    protected int mMarginRight;
-    protected int mMarginBottom;
+
     protected int mOffset;
     @LayerGravity
     protected int mGravity;
@@ -75,7 +76,7 @@ public class GridLines implements RhythmSpecLayer {
      * @param color Grid line color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public GridLines color(@ColorInt int color) {
+    public GridLines setColor(@ColorInt int color) {
         mPaint.setColor(color);
         return this;
     }
@@ -86,29 +87,8 @@ public class GridLines implements RhythmSpecLayer {
      * @param thickness Grid line thickness, in pixels
      * @return this for chaining
      */
-    public GridLines thickness(int thickness) {
+    public GridLines setThickness(int thickness) {
         mThickness = thickness;
-        return this;
-    }
-
-    /**
-     * Set layer margins, in either pixels or percent of the view. This can be useful if you need to display e.g. a few
-     * separate grids in the opposite sides of the view so that they don’t overlap. By default the margins are 0.
-     *
-     * @param isPercent false to treat parameters as pixels, true to treat parameters as percent in range 0..100.
-     *                  Percent values outside this range will be treated as 0.
-     * @param left      left margin (px or %)
-     * @param top       top margin (px or %)
-     * @param right     right margin (px or %)
-     * @param bottom    bottom margin (px or %)
-     * @return this for chaining
-     */
-    public GridLines margins(boolean isPercent, int left, int top, int right, int bottom) {
-        mMarginIsPercent = isPercent;
-        mMarginLeft = left;
-        mMarginTop = top;
-        mMarginRight = right;
-        mMarginBottom = bottom;
         return this;
     }
 
@@ -119,7 +99,7 @@ public class GridLines implements RhythmSpecLayer {
      * @param limit Number of lines to draw. Setting zero or less means no limit.
      * @return this for chaining
      */
-    public GridLines limit(int limit) {
+    public GridLines setLimit(int limit) {
         mLimit = limit > 0 ? limit : Integer.MAX_VALUE;
         return this;
     }
@@ -133,64 +113,40 @@ public class GridLines implements RhythmSpecLayer {
      *               left/up
      * @return this for chaining
      */
-    public GridLines offset(int offset) {
+    public GridLines setOffset(int offset) {
         mOffset = offset;
         return this;
     }
 
     @Override
     public void draw(Canvas canvas, Rect drawableBounds) {
-        // Calculate real left/right/top/bottom bounds based on drawable bounds and margins
-        final int left, top, right, bottom;
-        if (mMarginIsPercent) {
-            final int width = drawableBounds.width();
-            final int height = drawableBounds.height();
-            left = drawableBounds.left + width * mMarginLeft / 100;
-            top = drawableBounds.top + height * mMarginTop / 100;
-            right = drawableBounds.right - width * mMarginRight / 100;
-            bottom = drawableBounds.bottom - height * mMarginBottom / 100;
-        } else {
-            left = drawableBounds.left + mMarginLeft;
-            top = drawableBounds.top + mMarginTop;
-            right = drawableBounds.right - mMarginRight;
-            bottom = drawableBounds.bottom - mMarginBottom;
-        }
-
-        // Calculate final width and height
-        final int width = right - left;
-        final int height = bottom - top;
-        if (width <= 0 || height <= 0) {
-            // Nothing to draw
-            return;
-        }
-
         // Depending on gravity the orientation, the order of drawing, and the starting point are different
         int line = 0;
         if (mGravity == Gravity.TOP) {
-            int curY = top + mOffset;
-            while (curY < bottom && line <= mLimit) {
-                canvas.drawRect(left, curY, right, curY + mThickness, mPaint);
+            int curY = drawableBounds.top + mOffset;
+            while (curY < drawableBounds.bottom && line <= mLimit) {
+                canvas.drawRect(drawableBounds.left, curY, drawableBounds.right, curY + mThickness, mPaint);
                 curY += mStep;
                 line++;
             }
         } else if (mGravity == Gravity.BOTTOM) {
-            int curY = bottom + mOffset;
-            while (curY >= top && line <= mLimit) {
-                canvas.drawRect(left, curY, right, curY + mThickness, mPaint);
+            int curY = drawableBounds.bottom + mOffset;
+            while (curY >= drawableBounds.top && line <= mLimit) {
+                canvas.drawRect(drawableBounds.left, curY, drawableBounds.right, curY + mThickness, mPaint);
                 curY -= mStep;
                 line++;
             }
         } else if (mGravity == Gravity.LEFT) {
-            int curX = left + mOffset;
-            while (curX < right && line <= mLimit) {
-                canvas.drawRect(curX, top, curX + mThickness, bottom, mPaint);
+            int curX = drawableBounds.left + mOffset;
+            while (curX < drawableBounds.right && line <= mLimit) {
+                canvas.drawRect(curX, drawableBounds.top, curX + mThickness, drawableBounds.bottom, mPaint);
                 curX += mStep;
                 line++;
             }
         } else if (mGravity == Gravity.RIGHT) {
-            int curX = right + mOffset;
-            while (curX >= left && line <= mLimit) {
-                canvas.drawRect(curX, top, curX + mThickness, bottom, mPaint);
+            int curX = drawableBounds.right + mOffset;
+            while (curX >= drawableBounds.left && line <= mLimit) {
+                canvas.drawRect(curX, drawableBounds.top, curX + mThickness, drawableBounds.bottom, mPaint);
                 curX -= mStep;
                 line++;
             }

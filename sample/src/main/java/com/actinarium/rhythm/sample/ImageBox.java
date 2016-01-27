@@ -22,7 +22,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.Gravity;
 import com.actinarium.rhythm.spec.DimensionsLabel;
-import com.actinarium.rhythm.spec.RhythmSpecLayer;
+import com.actinarium.rhythm.RhythmSpecLayer;
 
 /**
  * An example of a custom spec layer drawing a translucent overlay of specified width and height, gravity and margin,
@@ -51,9 +51,9 @@ public class ImageBox implements RhythmSpecLayer {
         mGravity = gravity;
 
         mDimensionsLabel = new DimensionsLabel(scaleFactor)
-                .gravity(Gravity.CENTER)
-                .boxColor(Color.TRANSPARENT)
-                .textColor(Color.WHITE);
+                .setGravity(Gravity.CENTER)
+                .setBackgroundColor(Color.TRANSPARENT)
+                .setTextColor(Color.WHITE);
 
         mTemp = new Rect();
 

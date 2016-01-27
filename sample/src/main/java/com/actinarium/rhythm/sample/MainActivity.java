@@ -77,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
         RhythmGroup mallowsGroup = new RhythmGroup(null);
         final int accentColor = getResources().getColor(R.color.accent);
         RhythmOverlay frameAndDimensions = new RhythmOverlay(null)
-                .addLayer(new Guide(Gravity.LEFT, 0).alignOutside(true).color(accentColor))
-                .addLayer(new Guide(Gravity.TOP, 0).alignOutside(true).color(accentColor))
-                .addLayer(new Guide(Gravity.BOTTOM, 0).alignOutside(true).color(accentColor))
+                .addLayer(new Guide(Gravity.LEFT, 0).setAlignOutside(true).setColor(accentColor))
+                .addLayer(new Guide(Gravity.TOP, 0).setAlignOutside(true).setColor(accentColor))
+                .addLayer(new Guide(Gravity.BOTTOM, 0).setAlignOutside(true).setColor(accentColor))
                 .addLayer(new DimensionsLabel(getResources().getDisplayMetrics().density))
                 .addToGroup(mallowsGroup);
 
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         RhythmDrawable totallyExplicitlyCreatedDrawable = new RhythmDrawable();
         RhythmOverlay lastFrameOverlay = new RhythmOverlay(null)
                 .addLayersFrom(frameAndDimensions)
-                .addLayer(new Guide(Gravity.RIGHT, 0).alignOutside(true).color(accentColor));
+                .addLayer(new Guide(Gravity.RIGHT, 0).setAlignOutside(true).setColor(accentColor));
         totallyExplicitlyCreatedDrawable.setOverlay(lastFrameOverlay);
         mallowsView.getChildAt(4).setBackgroundDrawable(totallyExplicitlyCreatedDrawable);
 
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
             int color = typedValue.data;
 
-            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_rhythm);
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.arl_rhythm);
             ActivityManager.TaskDescription td = new ActivityManager.TaskDescription(null, bm, color);
 
             setTaskDescription(td);

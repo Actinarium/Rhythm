@@ -88,9 +88,9 @@ public class RhythmNotificationService extends IntentService {
 
         // If the application is not the host - show error and return.
         if (!(application instanceof RhythmControl.Host)) {
-            notification = makeCommonNotification(getString(R.string.no_host_text))
+            notification = makeCommonNotification(getString(R.string.arl_no_host_text))
                     .setColor(NOTIFICATION_ERROR_COLOR)
-                    .setContentTitle(getString(R.string.no_host_title))
+                    .setContentTitle(getString(R.string.arl_no_host_title))
                     .build();
             manager.notify(notificationId, notification);
             return;
@@ -101,9 +101,9 @@ public class RhythmNotificationService extends IntentService {
 
         // If there are no groups yet - show warning and return.
         if (currentGroup == null) {
-            notification = makeCommonNotification(getString(R.string.no_groups_text))
+            notification = makeCommonNotification(getString(R.string.arl_no_groups_text))
                     .setColor(NOTIFICATION_ERROR_COLOR)
-                    .setContentTitle(getString(R.string.no_groups_title))
+                    .setContentTitle(getString(R.string.arl_no_groups_title))
                     .build();
             manager.notify(notificationId, notification);
             return;
@@ -126,24 +126,24 @@ public class RhythmNotificationService extends IntentService {
 
         // Determine what to write in notification
         RhythmOverlay currentOverlay = currentGroup.getCurrentOverlay();
-        String groupText = getString(R.string.group, currentGroup.toString());
+        String groupText = getString(R.string.arl_group, currentGroup.toString());
         String overlayText = currentOverlay == null ?
-                getString(R.string.no_overlay) : getString(R.string.overlay, currentOverlay.toString());
+                getString(R.string.arl_no_overlay) : getString(R.string.arl_overlay, currentOverlay.toString());
 
         // Finally, build and display the notification
         notification = makeCommonNotification(overlayText)
                 .setColor(NOTIFICATION_ICON_COLOR)
                 .setContentTitle(groupText)
                 .setDeleteIntent(piDismissAction)
-                .addAction(new NotificationCompat.Action(R.drawable.ic_loop, getString(R.string.next_group), piNextGroupAction))
-                .addAction(new NotificationCompat.Action(R.drawable.ic_loop, getString(R.string.next_overlay), piNextOverlayAction))
+                .addAction(new NotificationCompat.Action(R.drawable.arl_loop, getString(R.string.arl_next_group), piNextGroupAction))
+                .addAction(new NotificationCompat.Action(R.drawable.arl_loop, getString(R.string.arl_next_overlay), piNextOverlayAction))
                 .build();
         manager.notify(notificationId, notification);
     }
 
     private NotificationCompat.Builder makeCommonNotification(String text) {
         return new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_rhythm)
+                .setSmallIcon(R.drawable.arl_rhythm)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(false)

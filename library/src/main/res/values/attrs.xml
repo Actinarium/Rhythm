@@ -29,4 +29,6 @@
         </attr>
     </declare-styleable>
 
+    <public name="RhythmicFrameLayout" type="declare-styleable" />
+
 </resources>

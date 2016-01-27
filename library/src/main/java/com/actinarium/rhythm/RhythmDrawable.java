@@ -22,9 +22,6 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
-import com.actinarium.rhythm.spec.RhythmSpecLayer;
-
-import java.util.List;
 
 /**
  * <p>Renders the currently assigned {@link RhythmOverlay} and serves as an adapter between Rhythm (which sets the
@@ -59,11 +56,7 @@ public class RhythmDrawable extends Drawable {
 
         // Draw overlay if present
         if (mOverlay != null) {
-            final List<RhythmSpecLayer> layers = mOverlay.mLayers;
-            // Make each spec layer draw itself onto the overlay
-            for (int i = 0, size = layers.size(); i < size; i++) {
-                layers.get(i).draw(canvas, bounds);
-            }
+            mOverlay.draw(canvas, bounds);
         }
     }
 

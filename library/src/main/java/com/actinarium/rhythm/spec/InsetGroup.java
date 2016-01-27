@@ -1,0 +1,243 @@
+/*
+ * Copyright (C) 2016 Actinarium
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.actinarium.rhythm.spec;
+
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.support.annotation.IntDef;
+import com.actinarium.rhythm.AbstractSpecLayerGroup;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+/**
+ * A group that clips and/or insets its child layers. Allows
+ *
+ * @author Paul Danyliuk
+ */
+public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
+
+    /**
+     * Inset the bounds and clip the overlay. Default behavior
+     */
+    public static final int MODE_DEFAULT = 0;
+    /**
+     * Inset the bounds but don't clip drawing to the overlay. Best used for margins
+     */
+    public static final int MODE_NO_CLIP = 1;
+    /**
+     * Clip the group according to inset rect but keep the coordinates. Best for clipping an absolutely positioned
+     * overlay
+     */
+    public static final int MODE_CLIP_ONLY = 2;
+
+    /**
+     * Dimension specified in pixels
+     */
+    public static final boolean UNITS_PX = false;
+    /**
+     * Dimension specified in percent of container
+     */
+    public static final boolean UNITS_PERCENT = true;
+
+    @Mode
+    protected int mMode = MODE_DEFAULT;
+
+    // Insets
+    protected boolean mIsLeftPercent;
+    protected boolean mIsTopPercent;
+    protected boolean mIsRightPercent;
+    protected boolean mIsBottomPercent;
+    protected int mLeft;
+    protected int mTop;
+    protected int mRight;
+    protected int mBottom;
+
+    // Dimensions - override insets
+    protected boolean mIsWidthPercent;
+    protected boolean mIsHeightPercent;
+    protected int mWidth;
+    protected int mHeight;
+
+    // Flags for set values - determine how insets are calculated
+    protected boolean mIsLeftSet;
+    protected boolean mIsTopSet;
+    protected boolean mIsWidthSet;
+    protected boolean mIsHeightSet;
+
+    // Reusable resulting rect
+    private Rect mInsetRect;
+
+    /**
+     * Create a layer group that clips and/or insets its child layers.
+     *
+     * @param mode one of {@link #MODE_DEFAULT}, {@link #MODE_NO_CLIP}, {@link #MODE_CLIP_ONLY}
+     * @see #MODE_DEFAULT
+     * @see #MODE_NO_CLIP
+     * @see #MODE_CLIP_ONLY
+     */
+    public InsetGroup(@Mode int mode) {
+        super();
+        mMode = mode;
+        mInsetRect = new Rect();
+    }
+
+    /**
+     * Set top inset
+     *
+     * @param value     pixels or percent
+     * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
+     * @return this for chaining
+     */
+    public InsetGroup setTop(int value, boolean isPercent) {
+        mIsTopSet = true;
+        mTop = value;
+        mIsTopPercent = isPercent;
+        return this;
+    }
+
+    /**
+     * Set bottom inset
+     *
+     * @param value     pixels or percent
+     * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
+     * @return this for chaining
+     */
+    public InsetGroup setBottom(int value, boolean isPercent) {
+        mBottom = value;
+        mIsBottomPercent = isPercent;
+        return this;
+    }
+
+    /**
+     * Set left inset
+     *
+     * @param value     pixels or percent
+     * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
+     * @return this for chaining
+     */
+    public InsetGroup setLeft(int value, boolean isPercent) {
+        mIsLeftSet = true;
+        mLeft = value;
+        mIsLeftPercent = isPercent;
+        return this;
+    }
+
+    /**
+     * Set right inset
+     *
+     * @param value     pixels or percent
+     * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
+     * @return this for chaining
+     */
+    public InsetGroup setRight(int value, boolean isPercent) {
+        mRight = value;
+        mIsRightPercent = isPercent;
+        return this;
+    }
+
+    /**
+     * Set width. If both width, left inset, and right inset are set, right inset is ignored
+     *
+     * @param value     pixels or percent
+     * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
+     * @return this for chaining
+     */
+    public InsetGroup setWidth(int value, boolean isPercent) {
+        mIsWidthSet = true;
+        mWidth = value;
+        mIsWidthPercent = isPercent;
+        return this;
+    }
+
+    /**
+     * Set height. If both height, top inset, and bottom inset are set, bottom inset is ignored
+     *
+     * @param value     pixels or percent
+     * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
+     * @return this for chaining
+     */
+    public InsetGroup setHeight(int value, boolean isPercent) {
+        mIsHeightSet = true;
+        mHeight = value;
+        mIsHeightPercent = false;
+        return this;
+    }
+
+    @Override
+    public void draw(Canvas canvas, Rect drawableBounds) {
+        // Assume this is a) not called very often, and b) is a fast operation anyway
+        recalculateInsetRect(drawableBounds);
+
+        final int state = canvas.save();
+        if (mMode != MODE_NO_CLIP) {
+            canvas.clipRect(mInsetRect);
+        }
+
+        if (mMode == MODE_CLIP_ONLY) {
+            // Draw sub-layers within original bounds
+            super.draw(canvas, drawableBounds);
+        } else {
+            // Draw sub-layers within new bounds
+            super.draw(canvas, mInsetRect);
+        }
+
+
+        canvas.restoreToCount(state);
+    }
+
+    private void recalculateInsetRect(Rect outerBounds) {
+        final int parentWidth = outerBounds.width();
+        final int parentHeight = outerBounds.height();
+
+        if (!mIsWidthSet) {
+            // No width - inset based on left and right. Assume those are set, otherwise those are 0 anyway
+            mInsetRect.left = outerBounds.left + (mIsLeftPercent ? parentWidth * mLeft / 100 : mLeft);
+            mInsetRect.right = outerBounds.right - (mIsRightPercent ? parentWidth * mRight / 100 : mRight);
+        } else if (mIsLeftSet) {
+            // Width and left are set - right is ignored
+            mInsetRect.left = outerBounds.left + (mIsLeftPercent ? parentWidth * mLeft / 100 : mLeft);
+            mInsetRect.right = outerBounds.right - (mIsWidthPercent ? parentWidth * mWidth / 100 : mWidth);
+        } else {
+            // Width and right are set, left not set but calculated from width
+            mInsetRect.left = outerBounds.left + (mIsWidthPercent ? parentWidth * mWidth / 100 : mWidth);
+            mInsetRect.right = outerBounds.right - (mIsRightPercent ? parentWidth * mRight / 100 : mRight);
+        }
+
+        if (!mIsHeightSet) {
+            // No width - inset based on left and right. Assume those are set, otherwise those are 0 anyway
+            mInsetRect.top = outerBounds.top + (mIsTopPercent ? parentHeight * mTop / 100 : mTop);
+            mInsetRect.bottom = outerBounds.bottom - (mIsBottomPercent ? parentHeight * mBottom / 100 : mBottom);
+        } else if (mIsTopSet) {
+            // Width and left are set - right is ignored
+            mInsetRect.top = outerBounds.top + (mIsTopPercent ? parentHeight * mTop / 100 : mTop);
+            mInsetRect.bottom = outerBounds.bottom - (mIsHeightPercent ? parentHeight * mHeight / 100 : mHeight);
+        } else {
+            // Width and right are set, left not set but calculated from width
+            mInsetRect.top = outerBounds.top + (mIsHeightPercent ? parentHeight * mHeight / 100 : mHeight);
+            mInsetRect.bottom = outerBounds.bottom - (mIsBottomPercent ? parentHeight * mBottom / 100 : mBottom);
+        }
+    }
+
+    /**
+     * Type definition for inset group type
+     */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({MODE_DEFAULT, MODE_NO_CLIP, MODE_CLIP_ONLY})
+    @interface Mode {
+    }
+}

@@ -23,6 +23,7 @@ import com.actinarium.rhythm.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.spec.GridLines;
 import com.actinarium.rhythm.spec.Guide;
+import com.actinarium.rhythm.spec.InsetGroup;
 
 /**
  * Application class of Rhythm sample app. For RhythmicFrameLayout and Quick Control notification support, it must
@@ -73,7 +74,7 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
 
         // Now make a simple 4dp baseline grid with keylines and attach it to the first group
         new RhythmOverlay("Baseline grid w/keylines")
-                .addLayer(new GridLines(Gravity.TOP, i4dp).color(GridLines.DEFAULT_BASELINE_COLOR))
+                .addLayer(new GridLines(Gravity.TOP, i4dp).setColor(GridLines.DEFAULT_BASELINE_COLOR))
                 .addLayersFrom(materialKeylines)
                 .addToGroup(activityBgGroup);
 
@@ -88,9 +89,9 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
         // When gravity is LEFT, thickness controls how the guide expands towards the LEFT side of the screen
         new RhythmOverlay("Avatar list keylines")
                 .addLayersFrom(standardGrid)
-                .addLayer(new Guide(Gravity.LEFT, i16dp).thickness(i16dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.LEFT, i72dp).thickness(i16dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.RIGHT, i16dp).thickness(i16dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.LEFT, i16dp).setThickness(i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.LEFT, i72dp).setThickness(i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.RIGHT, i16dp).setThickness(i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
                 .addToGroup(activityBgGroup);
 
         // Now for something more interesting
@@ -100,43 +101,50 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
         // that's because we already have a 8dp grid, so why overdraw?
         new RhythmOverlay("Standard w/ baseline")
                 .addLayersFrom(standardGrid)
-                .addLayer(
-                        new GridLines(Gravity.TOP, i8dp)                         // Draw a grid line each 8 dips...
-                                .offset(i4dp)                                    // ...starting from 4dp...
-                                .color(GridLines.DEFAULT_BASELINE_COLOR)
-                                .margins(false, i72dp, 0, i16dp, 0)              // ...with margins on both sides
+                .addLayer(new InsetGroup(InsetGroup.MODE_DEFAULT)                     // Inset and clip grid lines
+                        .setLeft(i72dp, InsetGroup.UNITS_PX)
+                        .setRight(i16dp, InsetGroup.UNITS_PX)
+                        .addLayer(new GridLines(Gravity.TOP, i8dp)                    // Draw a grid line each 8 dips...
+                                .setOffset(i4dp)                                      // ...starting from 4dp...
+                                .setColor(GridLines.DEFAULT_BASELINE_COLOR)
+                        )
                 )
                 .addToGroup(activityBgGroup);
 
         // Since some devices are not exactly 8x dip wide (e.g. Nexus 5 is not 8x dip wide in landscape),
         // let's draw a right-aligned grid on the right half of the screen
-        // To make the effect more profound, leave unshaded 20% in the middle
         new RhythmOverlay("Split-screen aligned 8dp")
                 .addLayer(new GridLines(Gravity.TOP, i8dp))
-                .addLayer(new GridLines(Gravity.LEFT, i8dp).margins(true, 0, 0, 60, 0))      // right margin = 60%
-                .addLayer(new GridLines(Gravity.RIGHT, i8dp).margins(true, 60, 0, 0, 0))     //  left margin = 60%
+                .addLayer(new GridLines(Gravity.LEFT, i8dp).setLimit(4))      // 4 lines from the left
+                .addLayer(new GridLines(Gravity.RIGHT, i8dp).setLimit(4))     // 4 lines from the right
                 .addLayersFrom(materialKeylines)
                 .addToGroup(activityBgGroup);
 
         // Media card overlay, as per the spec: http://bit.ly/1PoQbHb
         new RhythmOverlay("Content card w/ 80dp image")
-                .addLayer(new GridLines(Gravity.TOP, i4dp).margins(false, i16dp, i24dp, i16dp + i80dp, i56dp))
-                .addLayer(new Guide(Gravity.LEFT, i16dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR).thickness(i16dp))
-                .addLayer(new Guide(Gravity.RIGHT, i16dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR).thickness(i16dp))
-                .addLayer(new Guide(Gravity.TOP, i24dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR).thickness(i24dp))
+                .addLayer(new InsetGroup(InsetGroup.MODE_DEFAULT)
+                        .setLeft(i16dp, InsetGroup.UNITS_PX)
+                        .setTop(i24dp, InsetGroup.UNITS_PX)
+                        .setRight(i16dp + i80dp, InsetGroup.UNITS_PX)
+                        .setBottom(i56dp, InsetGroup.UNITS_PX)
+                        .addLayer(new GridLines(Gravity.TOP, i4dp))
+                )
+                .addLayer(new Guide(Gravity.LEFT, i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR).setThickness(i16dp))
+                .addLayer(new Guide(Gravity.RIGHT, i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR).setThickness(i16dp))
+                .addLayer(new Guide(Gravity.TOP, i24dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR).setThickness(i24dp))
                 .addLayer(new Guide(Gravity.LEFT, i16dp))
                 .addLayer(new Guide(Gravity.RIGHT, i16dp))
                 .addLayer(new Guide(Gravity.TOP, i24dp))
-                .addLayer(new Guide(Gravity.LEFT, i8dp).thickness(i8dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.RIGHT, i8dp).thickness(i8dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.BOTTOM, i8dp).thickness(i8dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.BOTTOM, i56dp).thickness(i8dp).color(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.LEFT, i8dp).setThickness(i8dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.RIGHT, i8dp).setThickness(i8dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.BOTTOM, i8dp).setThickness(i8dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.BOTTOM, i56dp).setThickness(i8dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
                 .addLayer(new ImageBox(i80dp, i80dp, i16dp, i16dp, Gravity.TOP | Gravity.RIGHT, density))
                 .addToGroup(cardOverlayGroup);
 
         // Make a dialog overlay. Let it be a simple baseline grid with a few keylines corresponding to a bullet list
         new RhythmOverlay("Baseline w/ 24dp keylines")
-                .addLayer(new GridLines(Gravity.TOP, i4dp).color(GridLines.DEFAULT_BASELINE_COLOR))
+                .addLayer(new GridLines(Gravity.TOP, i4dp).setColor(GridLines.DEFAULT_BASELINE_COLOR))
                 .addLayer(new Guide(Gravity.LEFT, i24dp))
                 .addLayer(new Guide(Gravity.RIGHT, i24dp))
                 .addLayer(new Guide(Gravity.LEFT, i24dp * 2))       // Extra keyline for list inset

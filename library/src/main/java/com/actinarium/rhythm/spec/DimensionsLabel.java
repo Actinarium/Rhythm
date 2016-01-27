@@ -25,13 +25,14 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import com.actinarium.rhythm.RhythmSpecLayer;
 
 import java.text.DecimalFormat;
 
 /**
  * A layer that draws a small box with dimensions of the current view. Inspect the dimensions of your views at glance.
  * noticing the issues asap. By default, the box is placed in the bottom right corner, but you can change its gravity
- * with {@link #gravity(int)}.
+ * with {@link #setGravity(int)}.
  *
  * @author Paul Danyliuk
  */
@@ -42,14 +43,14 @@ public class DimensionsLabel implements RhythmSpecLayer {
     public static final int DEFAULT_TEXT_SIZE = 12;              // dp
 
     // Pretty print chars
-    private static final char ONE_HALF = '\u00bd';
-    private static final char ONE_FOURTH = '\u00bc';
-    private static final char THREE_FOURTHS = '\u00be';
-    private static final char ONE_THIRD = '\u2153';
-    private static final char TWO_THIRDS = '\u2154';
-    private static final char MULTIPLY = '\u00d7';
+    public static final char ONE_HALF = '\u00bd';
+    public static final char ONE_FOURTH = '\u00bc';
+    public static final char THREE_FOURTHS = '\u00be';
+    public static final char ONE_THIRD = '\u2153';
+    public static final char TWO_THIRDS = '\u2154';
+    public static final char MULTIPLY = '\u00d7';
 
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
+    protected static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
     protected float mScaleFactor;
     protected int mGravity = Gravity.BOTTOM | Gravity.RIGHT;
@@ -84,7 +85,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
      *                Gravity#LEFT}</code>
      * @return this for chaining
      */
-    public DimensionsLabel gravity(int gravity) {
+    public DimensionsLabel setGravity(int gravity) {
         mGravity = gravity;
         return this;
     }
@@ -95,7 +96,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
      * @param color Text box background color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public DimensionsLabel boxColor(@ColorInt int color) {
+    public DimensionsLabel setBackgroundColor(@ColorInt int color) {
         mBackgroundPaint.setColor(color);
         return this;
     }
@@ -106,7 +107,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
      * @param color Text color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public DimensionsLabel textColor(@ColorInt int color) {
+    public DimensionsLabel setTextColor(@ColorInt int color) {
         mTextPaint.setColor(color);
         return this;
     }
@@ -117,7 +118,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
      * @param size Text size, in pixels
      * @return this for chaining
      */
-    public DimensionsLabel textSize(float size) {
+    public DimensionsLabel setTextSize(float size) {
         mTextPaint.setTextSize(size);
         return this;
     }

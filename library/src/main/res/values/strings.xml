@@ -16,15 +16,15 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="group">Group: <xliff:g id="group_title" example="Card overlays">%s</xliff:g></string>
-    <string name="overlay">Overlay: <xliff:g id="overlay_title" example="Grid and keylines">%s</xliff:g></string>
-    <string name="no_overlay">No overlay</string>
-    <string name="next_group">Group</string>
-    <string name="next_overlay">Overlay</string>
+    <string name="arl_group">Group: <xliff:g id="group_title" example="Card overlays">%s</xliff:g></string>
+    <string name="arl_overlay">Overlay: <xliff:g id="overlay_title" example="Grid and keylines">%s</xliff:g></string>
+    <string name="arl_no_overlay">No overlay</string>
+    <string name="arl_next_group">Group</string>
+    <string name="arl_next_overlay">Overlay</string>
 
-    <string name="no_groups_title">No groups found</string>
-    <string name="no_groups_text">Rhythm control has no groups attached</string>
+    <string name="arl_no_groups_title">No groups found</string>
+    <string name="arl_no_groups_text">Rhythm control has no groups attached</string>
 
-    <string name="no_host_title">Couldn’t connect to Rhythm</string>
-    <string name="no_host_text">Check if your Application implements RhythmManager.Host</string>
+    <string name="arl_no_host_title">Couldn’t connect to Rhythm</string>
+    <string name="arl_no_host_text">Check if your Application implements RhythmManager.Host</string>
 </resources>

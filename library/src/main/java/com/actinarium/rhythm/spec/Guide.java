@@ -21,12 +21,13 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.view.Gravity;
+import com.actinarium.rhythm.RhythmSpecLayer;
 
 /**
  * A layer that draws a horizontal or vertical full-bleed guide at the specified distance from the specified edge of a
  * view. Can be used to draw &ldquo;thin&rdquo; keylines, as well as thick highlights (e.g. margins in avatar list
  * view). The guide is drawn towards the specified edge by default (i.e. touching aligned child views), but this can be
- * tweaked using {@link #alignOutside(boolean)} method.
+ * tweaked using {@link #setAlignOutside(boolean)} method.
  *
  * @author Paul Danyliuk
  */
@@ -34,11 +35,15 @@ public class Guide implements RhythmSpecLayer {
 
     public static final int DEFAULT_KEYLINE_COLOR = 0x60F50057;
     public static final int DEFAULT_HIGHLIGHT_COLOR = 0x400091EA;
+    /**
+     * Default guide thickness (3px)
+     */
+    public static final int DEFAULT_THICKNESS = 3;
 
     public static final boolean ALIGN_INSIDE = false;
     public static final boolean ALIGN_OUTSIDE = true;
 
-    protected int mThickness = 3;           // px - for thin keyline
+    protected int mThickness = DEFAULT_THICKNESS;
     @LayerGravity
     protected int mGravity;
     protected int mDistance;
@@ -53,7 +58,7 @@ public class Guide implements RhythmSpecLayer {
      *                 {@link Gravity#RIGHT}) will result in a vertical guide, and values ({@link Gravity#TOP} and
      *                 {@link Gravity#BOTTOM}) will result in a horizontal guide.
      * @param distance Distance of this guide from the specified edge, in pixels.
-     * @see #alignOutside(boolean)
+     * @see #setAlignOutside(boolean)
      */
     public Guide(@LayerGravity int gravity, int distance) {
         mGravity = gravity;
@@ -70,7 +75,7 @@ public class Guide implements RhythmSpecLayer {
      * @param color Grid line color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public Guide color(@ColorInt int color) {
+    public Guide setColor(@ColorInt int color) {
         mPaint.setColor(color);
         return this;
     }
@@ -81,9 +86,9 @@ public class Guide implements RhythmSpecLayer {
      * @param thickness Guide thickness, in pixels. For keylines keep thickness around a few pixels, whereas for
      *                  highlights feel free to use as many dips as required.
      * @return this for chaining
-     * @see #alignOutside(boolean)
+     * @see #setAlignOutside(boolean)
      */
-    public Guide thickness(int thickness) {
+    public Guide setThickness(int thickness) {
         mThickness = thickness;
         return this;
     }
@@ -99,7 +104,7 @@ public class Guide implements RhythmSpecLayer {
      *                     from the edge
      * @return this for chaining
      */
-    public Guide alignOutside(boolean alignOutside) {
+    public Guide setAlignOutside(boolean alignOutside) {
         mAlignOutside = alignOutside;
         return this;
     }

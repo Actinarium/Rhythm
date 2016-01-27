@@ -17,10 +17,6 @@
 package com.actinarium.rhythm;
 
 import android.support.annotation.NonNull;
-import com.actinarium.rhythm.spec.RhythmSpecLayer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Defines a single overlay configuration, i.e. which spec layers (grid lines, keylines etc) must be drawn in the {@link
@@ -29,12 +25,16 @@ import java.util.List;
  *
  * @author Paul Danyliuk
  */
-public class RhythmOverlay {
-
-    protected static final int ESTIMATED_AVG_LAYERS = 8;
+public class RhythmOverlay extends AbstractSpecLayerGroup<RhythmOverlay> {
 
     protected String mTitle;
-    protected List<RhythmSpecLayer> mLayers;
+
+    /**
+     * Create a new untitled overlay
+     */
+    public RhythmOverlay() {
+        super();
+    }
 
     /**
      * Create a new overlay
@@ -45,26 +45,15 @@ public class RhythmOverlay {
      * @see #addLayersFrom(RhythmOverlay)
      */
     public RhythmOverlay(String title) {
+        super();
         mTitle = title;
-        mLayers = new ArrayList<>(ESTIMATED_AVG_LAYERS);
-    }
-
-    /**
-     * Add a spec layer to this overlay. <b>Note:</b> The changes will come in effect next time the overlay is drawn.
-     *
-     * @param layer A Rhythm spec layer
-     * @return this for chaining
-     */
-    public RhythmOverlay addLayer(@NonNull RhythmSpecLayer layer) {
-        mLayers.add(layer);
-        return this;
     }
 
     /**
      * <p>Add all layers to this overlay from another. Convenient if you have a common set of layers that you wish to
-     * include in multiple overlays, or want to create an overlay that combines a few others.</p>
-     * <p><b>Warning:</b> for simplicity and performance reasons, not copies but the same layer objects are used &mdash;
-     * keep this in mind if you plan to mutate them (advice: don’t mutate layers after adding to an overlay!)</p>
+     * include in multiple overlays, or want to create an overlay that combines a few others.</p> <p><b>Warning:</b> for
+     * simplicity and performance reasons, not copies but the same layer objects are used &mdash; keep this in mind if
+     * you plan to mutate them (advice: don’t mutate layers after adding to an overlay!)</p>
      *
      * @param source Existing overlay to add all layers from
      * @return this for chaining
@@ -89,5 +78,4 @@ public class RhythmOverlay {
     public String toString() {
         return mTitle != null ? mTitle : "Untitled overlay";
     }
-
 }
