@@ -37,39 +37,40 @@ import java.util.regex.Pattern;
  */
 public class Arguments {
 
-    public static final int TYPE_NULL = -2;
-    public static final int TYPE_INTEGER = -1;
-    public static final int TYPE_PX = 0;
-    public static final int TYPE_DP = 1;
-    public static final int TYPE_SP = 2;
-    public static final int TYPE_PT = 3;
-    public static final int TYPE_IN = 4;
-    public static final int TYPE_MM = 5;
-    public static final int TYPE_PERCENT = 10;
+    public static final int TYPE_NULL = -1;
+    public static final int TYPE_INTEGER = 0;
+    public static final int TYPE_PERCENT = 1;
+    public static final int TYPE_PX = 2;
+    public static final int TYPE_DP = 3;
+    public static final int TYPE_SP = 4;
+    public static final int TYPE_PT = 5;
+    public static final int TYPE_IN = 6;
+    public static final int TYPE_MM = 7;
 
-    private String mTitle;
+    private String mName;
     private Map<String, String> mArguments;
     private DisplayMetrics mMetrics;
 
     private static Pattern DIMEN_VALUE_PATTERN = Pattern.compile("^\\d*\\.?\\d+");
 
-    public Arguments(DisplayMetrics metrics) {
+    public Arguments() {
         mArguments = new ArrayMap<>();
-        mMetrics = metrics;
     }
 
-    public Arguments(String title, int initialCapacity, DisplayMetrics metrics) {
-        mTitle = title;
+    public Arguments(int initialCapacity) {
         mArguments = new ArrayMap<>(initialCapacity);
+    }
+
+    public void setDisplayMetrics(DisplayMetrics metrics) {
         mMetrics = metrics;
     }
 
-    public String getTitle() {
-        return mTitle;
+    public String getName() {
+        return mName;
     }
 
-    public void setTitle(String title) {
-        mTitle = title;
+    public void setName(String name) {
+        mName = name;
     }
 
     /**
@@ -111,8 +112,21 @@ public class Arguments {
         return mArguments.containsKey(key) ? Float.parseFloat(mArguments.get(key)) : defaultValue;
     }
 
-    public boolean getBoolean(String key, boolean defaultValue) {
-        return mArguments.containsKey(key) ? Boolean.parseBoolean(mArguments.get(key)) : defaultValue;
+    /**
+     * Get boolean argument, which can have implicit value
+     *
+     * @param key          argument key
+     * @param defaultValue value if argument is not present
+     * @param nullValue    value if argument is present but doesn't contain value (HTTP query string style)
+     * @return argument boolean value
+     */
+    public boolean getBoolean(String key, boolean defaultValue, boolean nullValue) {
+        if (mArguments.containsKey(key)) {
+            final String value = mArguments.get(key);
+            return value == null ? nullValue : Boolean.parseBoolean(value);
+        } else {
+            return defaultValue;
+        }
     }
 
     public int getColor(String key, int defaultValue) {
@@ -193,18 +207,33 @@ public class Arguments {
     public static float getDimensionPixelRaw(@ValueType int type, float value, DisplayMetrics metrics) {
         switch (type) {
             case TYPE_DP:
+                if (metrics == null) {
+                    throw new IllegalArgumentException("Need metrics for dp->px conversion");
+                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, metrics);
             case TYPE_PX:
             case TYPE_PERCENT:
             case TYPE_INTEGER:
                 return value;
             case TYPE_SP:
+                if (metrics == null) {
+                    throw new IllegalArgumentException("Need metrics for sp->px conversion");
+                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, metrics);
             case TYPE_PT:
+                if (metrics == null) {
+                    throw new IllegalArgumentException("Need metrics for pt->px conversion");
+                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, value, metrics);
             case TYPE_IN:
+                if (metrics == null) {
+                    throw new IllegalArgumentException("Need metrics for in->px conversion");
+                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, value, metrics);
             case TYPE_MM:
+                if (metrics == null) {
+                    throw new IllegalArgumentException("Need metrics for mm->px conversion");
+                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, value, metrics);
             default:
                 return 0;
