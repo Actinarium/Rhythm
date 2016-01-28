@@ -30,7 +30,7 @@ public class OverlayInflater {
 
     private static final Pattern ARGUMENTS_PATTERN = Pattern.compile("([^ =]+)(?:=([^ ]+))?");
 
-    public static Arguments parseLayerLine(String line) {
+    public static LayerConfig parseLayerLine(String line) {
         // Let's just iterate over the first chars to get indent and layer type, and parse the arguments with regex
         int i = 0;
         int length = line.length();
@@ -45,21 +45,22 @@ public class OverlayInflater {
         while (i < length && line.charAt(i) != ' ') {
             i++;
         }
-        final String name = line.substring(spaces, i);
+        final String specLayerType = line.substring(spaces, i);
 
         final int anticipatedCapacity = (length - i) / 12 + 1;
-        Arguments arguments = new Arguments(anticipatedCapacity);
-        arguments.setName(name);
+        LayerConfig layerConfig = new LayerConfig(anticipatedCapacity);
+        layerConfig.setLayerType(specLayerType);
+        layerConfig.setIndent(spaces);
 
         // todo: instead of regex, consider parsing linearly for efficiency
         Matcher matcher = ARGUMENTS_PATTERN.matcher(line.substring(i));
         while (matcher.find()) {
             String key = matcher.group(1);
             String value = matcher.group(2);
-            arguments.put(key, value);
+            layerConfig.put(key, value);
         }
 
-        return arguments;
+        return layerConfig;
     }
 
 }
