@@ -37,16 +37,24 @@ public class RhythmOverlay extends AbstractSpecLayerGroup<RhythmOverlay> {
     }
 
     /**
-     * Create a new overlay
+     * Set the title for this overlay. The title is only displayed in Rhythm control notification &mdash; you don't need
+     * it in programmatically created anonymous overlays.
      *
-     * @param title A convenient title for this overlay, used to identify it in the notification (not mandatory, but
-     *              desirable). If you are not using this overlay within a Rhythm controlled group, you may leave this
-     *              <code>null</code>.
-     * @see #addLayersFrom(RhythmOverlay)
+     * @param title A convenient title for this overlay.
+     * @return this for chaining
      */
-    public RhythmOverlay(String title) {
-        super();
+    public RhythmOverlay setTitle(String title) {
         mTitle = title;
+        return this;
+    }
+
+    /**
+     * Get overlay title
+     *
+     * @return overlay title of <code>null</code> if the overlay is anonymous
+     */
+    public String getTitle() {
+        return mTitle;
     }
 
     /**

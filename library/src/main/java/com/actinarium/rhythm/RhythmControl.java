@@ -73,7 +73,8 @@ public final class RhythmControl {
      * @return The created Rhythm group instance, managed by this control
      */
     public RhythmGroup makeGroup(String title) {
-        final RhythmGroup group = new RhythmGroup(title);
+        final RhythmGroup group = new RhythmGroup();
+        group.mTitle = title;
         group.mIndex = mRhythmGroups.size();
         group.mControl = this;
         mRhythmGroups.add(group);

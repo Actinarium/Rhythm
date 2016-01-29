@@ -21,6 +21,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.Gravity;
+import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.config.RhythmInflationException;
+import com.actinarium.rhythm.config.SpecLayerFactory;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.RhythmSpecLayer;
 
@@ -62,6 +65,21 @@ public class ImageBox implements RhythmSpecLayer {
         mPaint.setColor(COLOR);
     }
 
+    /**
+     * Private minimalistic constructor for the factory
+     */
+    private ImageBox(float scaleFactor) {
+        mTemp = new Rect();
+        mPaint = new Paint();
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(COLOR);
+
+        mDimensionsLabel = new DimensionsLabel(scaleFactor)
+                .setGravity(Gravity.CENTER)
+                .setBackgroundColor(Color.TRANSPARENT)
+                .setTextColor(Color.WHITE);
+    }
+
     @Override
     public void draw(Canvas canvas, Rect drawableBounds) {
         // Calculate the rect where we should draw the grid
@@ -72,5 +90,29 @@ public class ImageBox implements RhythmSpecLayer {
 
         // Draw dimensions in the center of the box
         mDimensionsLabel.draw(canvas, mTemp);
+    }
+
+    /**
+     * A factory to add inflater support for this custom layer. See how you can get various values from the LayerConfig
+     * object
+     */
+    public static class Factory implements SpecLayerFactory<ImageBox> {
+
+        @Override
+        public ImageBox createFromConfig(LayerConfig config) {
+            ImageBox box = new ImageBox(config.getDisplayMetrics().density);
+
+            box.mGravity = config.getGravity("gravity", Gravity.NO_GRAVITY);
+            if (box.mGravity == Gravity.NO_GRAVITY) {
+                throw new RhythmInflationException("Error when inflating image-box: 'gravity' argument missing or invalid");
+            }
+
+            box.mWidth = config.getDimensionPixelSize("width", 0);
+            box.mHeight = config.getDimensionPixelSize("height", 0);
+            box.mDistanceX = config.getDimensionPixelOffset("distance-x", 0);
+            box.mDistanceY = config.getDimensionPixelOffset("distance-y", 0);
+
+            return box;
+        }
     }
 }

@@ -42,7 +42,7 @@ public final class RhythmGroup {
 
     private static final int ESTIMATED_OVERLAYS_PER_GROUP = 4;
 
-    private String mTitle;
+    String mTitle;
 
     // Assigned by RhythmControl upon instantiation via {@link RhythmControl#makeGroup(String)}; makes no sense otherwise
     int mIndex;
@@ -56,14 +56,31 @@ public final class RhythmGroup {
      * <p>Create a new Rhythm group.</p><p><b>Heads up:</b> do not explicitly call <code>new RhythmGroup()</code> unless
      * you specifically don’t want it attached to a {@link RhythmControl} (i.e. don’t want it to appear in the Quick
      * Control notification). Instead, you should use {@link RhythmControl#makeGroup(String)}.</p>
-     *
-     * @param title A convenient title for this group, used to identify it in the notification. If you are calling this
-     *              directly (i.e. without attaching to Rhythm control), you can just leave it <code>null</code>.
      */
-    public RhythmGroup(String title) {
-        mTitle = title;
+    public RhythmGroup() {
         mDrawables = new LinkedList<>();
         mOverlays = new ArrayList<>(ESTIMATED_OVERLAYS_PER_GROUP);
+    }
+
+    /**
+     * Set the title for this group. The title is only displayed in Rhythm control notification &mdash; you don't need it in
+     * programmatically created anonymous groups.
+     *
+     * @param title A convenient title for this group.
+     * @return this for chaining
+     */
+    public RhythmGroup setTitle(String title) {
+        mTitle = title;
+        return this;
+    }
+
+    /**
+     * Get group title
+     *
+     * @return group title of <code>null</code> if the group is anonymous
+     */
+    public String getTitle() {
+        return mTitle;
     }
 
     /**
@@ -97,8 +114,8 @@ public final class RhythmGroup {
     /**
      * <p>A handy method that will decorate provided views with {@link RhythmDrawable}s controlled by this group.</p>
      * <p><b>Note:</b> the backgrounds of all provided views will be wrapped and replaced by
-     * <code>RhythmDrawables</code>. To obtain the original background drawables you have to call
-     * {@link RhythmDrawable#getDecorated() view.getBackground().getDecorated()}.</p>
+     * <code>RhythmDrawables</code>. To obtain the original background drawables you have to call {@link
+     * RhythmDrawable#getDecorated() view.getBackground().getDecorated()}.</p>
      *
      * @param views Views whose backgrounds should be decorated with Rhythm drawables
      * @see #decorateForeground(FrameLayout...)
@@ -163,7 +180,7 @@ public final class RhythmGroup {
         if (index == NO_OVERLAY || (index >= 0 && index < mOverlays.size())) {
             if (mCurrentOverlayIndex != index) {
                 mCurrentOverlayIndex = index;
-                doSetOverlay();
+                doSetOverlay(getCurrentOverlay());
             }
         } else {
             throw new IndexOutOfBoundsException("The index is neither NO_OVERLAY nor valid.");
@@ -190,7 +207,7 @@ public final class RhythmGroup {
                 mCurrentOverlayIndex = NO_OVERLAY;
             }
         }
-        doSetOverlay();
+        doSetOverlay(getCurrentOverlay());
     }
 
     @Override
@@ -204,9 +221,7 @@ public final class RhythmGroup {
      *
      * @todo In v1.0 add possibility to propagate arbitrary overlay, not just one of those in the list
      */
-    private void doSetOverlay() {
-        final RhythmOverlay overlay = getCurrentOverlay();
-
+    private void doSetOverlay(RhythmOverlay overlay) {
         // Using iterator here because we need to remove elements halfway
         Iterator<WeakReference<RhythmDrawable>> iterator = mDrawables.iterator();
         while (iterator.hasNext()) {

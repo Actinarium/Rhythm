@@ -68,7 +68,7 @@ public class Fill implements RhythmSpecLayer {
      */
     public static class Factory implements SpecLayerFactory<Fill> {
 
-        public static final String LAYER_TYPE = "guide";
+        public static final String LAYER_TYPE = "fill";
 
         @Override
         public Fill createFromConfig(LayerConfig config) {

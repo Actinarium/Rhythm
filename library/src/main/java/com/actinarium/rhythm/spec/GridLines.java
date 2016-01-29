@@ -74,6 +74,14 @@ public class GridLines implements RhythmSpecLayer {
     }
 
     /**
+     * Minimum constructor for the factory
+     */
+    private GridLines() {
+        mPaint = new Paint();
+        mPaint.setStyle(Paint.Style.FILL);
+    }
+
+    /**
      * Set grid line color
      *
      * @param color Grid line color, in #AARRGGBB format as usual
@@ -166,17 +174,10 @@ public class GridLines implements RhythmSpecLayer {
 
         @Override
         public GridLines createFromConfig(LayerConfig config) {
-            @LayerGravity final int gravity;
-            String gravityArg = config.getString("gravity");
-            if ("top".equals(gravityArg)) {
-                gravity = Gravity.TOP;
-            } else if ("left".equals(gravityArg)) {
-                gravity = Gravity.LEFT;
-            } else if ("right".equals(gravityArg)) {
-                gravity = Gravity.RIGHT;
-            } else if ("bottom".equals(gravityArg)) {
-                gravity = Gravity.BOTTOM;
-            } else {
+            GridLines gridLines = new GridLines();
+
+            gridLines.mGravity = config.getLayerGravity("gravity", Gravity.NO_GRAVITY);
+            if (gridLines.mGravity == Gravity.NO_GRAVITY) {
                 throw new RhythmInflationException("Error when inflating grid-lines: 'gravity' argument missing or invalid");
             }
 
@@ -184,8 +185,7 @@ public class GridLines implements RhythmSpecLayer {
             if (step < 0) {
                 throw new RhythmInflationException("Error when inflating grid-lines: 'step' argument is missing or <= 0");
             }
-
-            GridLines gridLines = new GridLines(gravity, step);
+            gridLines.mStep = step;
 
             gridLines.mPaint.setColor(config.getColor("color", DEFAULT_GRID_COLOR));
             gridLines.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);

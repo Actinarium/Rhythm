@@ -74,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Now let's create an unlinked group (i.e. not attached to the control) and draw some dimensions over mallows
         // Note that when not using this group/overlay in notification, titles don't really matter, so leave them null
-        RhythmGroup mallowsGroup = new RhythmGroup(null);
+        RhythmGroup mallowsGroup = new RhythmGroup();
         final int accentColor = getResources().getColor(R.color.accent);
-        RhythmOverlay frameAndDimensions = new RhythmOverlay(null)
+        RhythmOverlay frameAndDimensions = new RhythmOverlay()
                 .addLayer(new Guide(Gravity.LEFT, 0).setAlignOutside(true).setColor(accentColor))
                 .addLayer(new Guide(Gravity.TOP, 0).setAlignOutside(true).setColor(accentColor))
                 .addLayer(new Guide(Gravity.BOTTOM, 0).setAlignOutside(true).setColor(accentColor))
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Furthermore, you may not even need groups - for full manual transmission make RhythmDrawables explicitly
         RhythmDrawable totallyExplicitlyCreatedDrawable = new RhythmDrawable();
-        RhythmOverlay lastFrameOverlay = new RhythmOverlay(null)
+        RhythmOverlay lastFrameOverlay = new RhythmOverlay()
                 .addLayersFrom(frameAndDimensions)
                 .addLayer(new Guide(Gravity.RIGHT, 0).setAlignOutside(true).setColor(accentColor));
         totallyExplicitlyCreatedDrawable.setOverlay(lastFrameOverlay);

@@ -23,7 +23,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
+import com.actinarium.rhythm.RhythmSpecLayer.LayerGravity;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -204,6 +206,79 @@ public class LayerConfig {
     @ColorInt
     public int getColor(String key, @ColorInt int defaultValue) {
         return mArguments.containsKey(key) ? Color.parseColor(mArguments.get(key)) : defaultValue;
+    }
+
+    /**
+     * Determine gravity constant (a combination of {@link Gravity} constants) from a string like <code>top|left</code>,
+     * with fallback to default value.
+     *
+     * @param key          argument key
+     * @param defaultValue fallback value
+     * @return gravity constant
+     * @see #getLayerGravity(String, int)
+     */
+    public int getGravity(String key, int defaultValue) {
+        String gravityArg = mArguments.get(key);
+        if (gravityArg == null) {
+            return defaultValue;
+        } else if (gravityArg.equals("center")) {
+            return Gravity.CENTER;
+        } else if (gravityArg.equals("fill")) {
+            return Gravity.FILL;
+        } else {
+            // supported options
+            int gravity = 0;
+            if (gravityArg.contains("top")) {
+                gravity |= Gravity.TOP;
+            }
+            if (gravityArg.contains("bottom")) {
+                gravity |= Gravity.BOTTOM;
+            }
+            if (gravityArg.contains("center_vertical")) {
+                gravity |= Gravity.CENTER_VERTICAL;
+            }
+            if (gravityArg.contains("fill_vertical")) {
+                gravity |= Gravity.FILL_VERTICAL;
+            }
+            if (gravityArg.contains("left")) {
+                gravity |= Gravity.LEFT;
+            }
+            if (gravityArg.contains("right")) {
+                gravity |= Gravity.RIGHT;
+            }
+            if (gravityArg.contains("center_horizontal")) {
+                gravity |= Gravity.CENTER_HORIZONTAL;
+            }
+            if (gravityArg.contains("fill_horizontal")) {
+                gravity |= Gravity.FILL_HORIZONTAL;
+            }
+            return gravity;
+        }
+    }
+
+    /**
+     * Get argument as layer gravity constant, which is either <code>top</code>, <code>bottom</code>, <code>left</code>,
+     * or <code>right</code>, with fallback to default value if argument is missing or invalid.
+     *
+     * @param key          argument key
+     * @param defaultValue fallback value
+     * @return gravity constant
+     * @see #getGravity(String, int)
+     */
+    @LayerGravity
+    public int getLayerGravity(String key, @LayerGravity int defaultValue) {
+        String gravityArg = mArguments.get(key);
+        if ("top".equals(gravityArg)) {
+            return Gravity.TOP;
+        } else if ("left".equals(gravityArg)) {
+            return Gravity.LEFT;
+        } else if ("right".equals(gravityArg)) {
+            return Gravity.RIGHT;
+        } else if ("bottom".equals(gravityArg)) {
+            return Gravity.BOTTOM;
+        } else {
+            return defaultValue;
+        }
     }
 
     /**

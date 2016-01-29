@@ -29,7 +29,7 @@ import java.util.List;
  *
  * @author Paul Danyliuk
  */
-public abstract class AbstractSpecLayerGroup<T extends AbstractSpecLayerGroup> implements RhythmSpecLayer, RhythmSpecLayerParent {
+public abstract class AbstractSpecLayerGroup<T extends AbstractSpecLayerGroup> implements RhythmSpecLayerParent {
 
     protected static final int ESTIMATED_AVG_LAYERS = 8;
     protected List<RhythmSpecLayer> mLayers;

@@ -49,7 +49,7 @@ public interface RhythmSpecLayer {
      */
     @SuppressLint("RtlHardcoded")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Gravity.TOP, Gravity.BOTTOM, Gravity.LEFT, Gravity.RIGHT})
+    @IntDef({Gravity.TOP, Gravity.BOTTOM, Gravity.LEFT, Gravity.RIGHT, Gravity.NO_GRAVITY})
     @interface LayerGravity {
     }
 }

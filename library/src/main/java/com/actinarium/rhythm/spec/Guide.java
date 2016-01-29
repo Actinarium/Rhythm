@@ -73,6 +73,14 @@ public class Guide implements RhythmSpecLayer {
     }
 
     /**
+     * Minimum constructor for the factory
+     */
+    private Guide() {
+        mPaint = new Paint();
+        mPaint.setStyle(Paint.Style.FILL);
+    }
+
+    /**
      * Set grid line color
      *
      * @param color Grid line color, in #AARRGGBB format as usual
@@ -143,26 +151,17 @@ public class Guide implements RhythmSpecLayer {
 
         @Override
         public Guide createFromConfig(LayerConfig config) {
-            @LayerGravity final int gravity;
-            String gravityArg = config.getString("gravity");
-            if ("top".equals(gravityArg)) {
-                gravity = Gravity.TOP;
-            } else if ("left".equals(gravityArg)) {
-                gravity = Gravity.LEFT;
-            } else if ("right".equals(gravityArg)) {
-                gravity = Gravity.RIGHT;
-            } else if ("bottom".equals(gravityArg)) {
-                gravity = Gravity.BOTTOM;
-            } else {
+            Guide guide = new Guide();
+
+            guide.mGravity = config.getLayerGravity("gravity", Gravity.NO_GRAVITY);
+            if (guide.mGravity == Gravity.NO_GRAVITY) {
                 throw new RhythmInflationException("Error when inflating guide: 'gravity' argument missing or invalid");
             }
 
             if (!config.hasArgument("distance")) {
                 throw new RhythmInflationException("Error when inflating guide: 'distance' argument is missing");
             }
-            final int distance = config.getDimensionPixelOffset("distance", 0);
-
-            Guide guide = new Guide(gravity, distance);
+            guide.mDistance = config.getDimensionPixelOffset("distance", 0);
 
             guide.mPaint.setColor(config.getColor("color", DEFAULT_KEYLINE_COLOR));
             guide.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);

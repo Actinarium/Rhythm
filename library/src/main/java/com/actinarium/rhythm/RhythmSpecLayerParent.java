@@ -17,14 +17,15 @@
 package com.actinarium.rhythm;
 
 /**
- * An object that can contain other spec layers. Not necessarily a spec layer itself
+ * An object that can contain other spec layers. Extends {@link RhythmSpecLayer}, therefore must know how to draw itself
+ * (usually just iterate over children and draw them in order within provided bounds)
  *
  * @author Paul Danyliuk
  */
-public interface RhythmSpecLayerParent {
+public interface RhythmSpecLayerParent extends RhythmSpecLayer {
 
     /**
-     * Add layer to this parent. Since this is mostly intended for initial configuration, it isn't mandatory that the
+     * Add layer to this parent. Since this is mostly intended for initial configuration, it is NOT mandatory that the
      * parent triggers redraw.
      *
      * @param layer Layer to add

@@ -81,6 +81,16 @@ public class DimensionsLabel implements RhythmSpecLayer {
     }
 
     /**
+     * Minimum constructor for the factory
+     */
+    private DimensionsLabel() {
+        mBackgroundPaint = new Paint();
+        mBackgroundPaint.setStyle(Paint.Style.FILL);
+        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        mTempRect = new Rect();
+    }
+
+    /**
      * Set label gravity. Default is bottom right.
      *
      * @param gravity Desired gravity. Can be combinations, e.g. <code>{@link Gravity#BOTTOM} | {@link
@@ -197,45 +207,15 @@ public class DimensionsLabel implements RhythmSpecLayer {
 
         @Override
         public DimensionsLabel createFromConfig(LayerConfig config) {
+            DimensionsLabel label = new DimensionsLabel();
+
             final float density = config.getDisplayMetrics().density;
-            DimensionsLabel label = new DimensionsLabel(density);
+            label.mScaleFactor = density;
 
-            // Gravity. Sorry, FILL options
-            int gravity;
-            String gravityArg = config.getString("gravity");
-            if (gravityArg == null) {
-                // default
-                gravity = Gravity.BOTTOM | Gravity.RIGHT;
-            } else if (gravityArg.equals("center")) {
-                // just center
-                gravity = Gravity.CENTER;
-            } else {
-                // supported options
-                gravity = 0;
-                if (gravityArg.contains("top")) {
-                    gravity |= Gravity.TOP;
-                }
-                if (gravityArg.contains("bottom")) {
-                    gravity |= Gravity.BOTTOM;
-                }
-                if (gravityArg.contains("center_vertical")) {
-                    gravity |= Gravity.CENTER_VERTICAL;
-                }
-                if (gravityArg.contains("left")) {
-                    gravity |= Gravity.LEFT;
-                }
-                if (gravityArg.contains("right")) {
-                    gravity |= Gravity.RIGHT;
-                }
-                if (gravityArg.contains("center_horizontal")) {
-                    gravity |= Gravity.CENTER_HORIZONTAL;
-                }
-            }
-            label.mGravity = gravity;
-
-            label.setBackgroundColor(config.getColor("background-color", DEFAULT_BACKGROUND));
-            label.setTextColor(config.getColor("text-color", DEFAULT_TEXT_COLOR));
-            label.setTextSize(config.getDimensionPixelExact("text-size", DEFAULT_TEXT_SIZE * density));
+            label.mGravity = config.getGravity("gravity", Gravity.BOTTOM | Gravity.RIGHT);
+            label.mBackgroundPaint.setColor(config.getColor("background-color", DEFAULT_BACKGROUND));
+            label.mTextPaint.setColor(config.getColor("text-color", DEFAULT_TEXT_COLOR));
+            label.mTextPaint.setTextSize(config.getDimensionPixelExact("text-size", DEFAULT_TEXT_SIZE * density));
 
             return label;
         }

@@ -77,7 +77,9 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
 
     // Flags for set values - determine how insets are calculated
     protected boolean mIsLeftSet;
+    protected boolean mIsRightSet;
     protected boolean mIsTopSet;
+    protected boolean mIsBottomSet;
     protected boolean mIsWidthSet;
     protected boolean mIsHeightSet;
 
@@ -95,6 +97,14 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
     public InsetGroup(@Mode int mode) {
         super();
         mMode = mode;
+        mInsetRect = new Rect();
+    }
+
+    /**
+     * Minimum constructor for the factory
+     */
+    private InsetGroup() {
+        super();
         mInsetRect = new Rect();
     }
 
@@ -120,6 +130,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      * @return this for chaining
      */
     public InsetGroup setBottom(int value, boolean isPercent) {
+        mIsBottomSet = true;
         mBottom = value;
         mIsBottomPercent = isPercent;
         return this;
@@ -147,6 +158,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      * @return this for chaining
      */
     public InsetGroup setRight(int value, boolean isPercent) {
+        mIsRightSet = true;
         mRight = value;
         mIsRightPercent = isPercent;
         return this;
@@ -210,28 +222,28 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
             // No width - inset based on left and right. Assume those are set, otherwise those are 0 anyway
             mInsetRect.left = outerBounds.left + (mIsLeftPercent ? parentWidth * mLeft / 100 : mLeft);
             mInsetRect.right = outerBounds.right - (mIsRightPercent ? parentWidth * mRight / 100 : mRight);
-        } else if (mIsLeftSet) {
-            // Width and left are set - right is ignored
-            mInsetRect.left = outerBounds.left + (mIsLeftPercent ? parentWidth * mLeft / 100 : mLeft);
-            mInsetRect.right = outerBounds.right - (mIsWidthPercent ? parentWidth * mWidth / 100 : mWidth);
-        } else {
+        } else if (mIsRightSet && !mIsLeftSet) {
             // Width and right are set, left not set but calculated from width
-            mInsetRect.left = outerBounds.left + (mIsWidthPercent ? parentWidth * mWidth / 100 : mWidth);
             mInsetRect.right = outerBounds.right - (mIsRightPercent ? parentWidth * mRight / 100 : mRight);
+            mInsetRect.left = mInsetRect.right - (mIsWidthPercent ? parentWidth * mWidth / 100 : mWidth);
+        } else {
+            // If right not set, or all three are set, right is ignored and calculated as left + width
+            mInsetRect.left = outerBounds.left + (mIsLeftPercent ? parentWidth * mLeft / 100 : mLeft);
+            mInsetRect.right = mInsetRect.left + (mIsWidthPercent ? parentWidth * mWidth / 100 : mWidth);
         }
 
         if (!mIsHeightSet) {
-            // No width - inset based on left and right. Assume those are set, otherwise those are 0 anyway
+            // No height - inset based on top and bottom. Assume those are set, otherwise those are 0 anyway
             mInsetRect.top = outerBounds.top + (mIsTopPercent ? parentHeight * mTop / 100 : mTop);
             mInsetRect.bottom = outerBounds.bottom - (mIsBottomPercent ? parentHeight * mBottom / 100 : mBottom);
-        } else if (mIsTopSet) {
-            // Width and left are set - right is ignored
-            mInsetRect.top = outerBounds.top + (mIsTopPercent ? parentHeight * mTop / 100 : mTop);
-            mInsetRect.bottom = outerBounds.bottom - (mIsHeightPercent ? parentHeight * mHeight / 100 : mHeight);
+        } else if (mIsBottomSet && !mIsTopSet) {
+            // Height and bottom are set, top not set but calculated from height
+            mInsetRect.bottom = outerBounds.bottom - (mIsBottomPercent ? parentHeight * mBottom / 100 : mBottom);
+            mInsetRect.top = mInsetRect.bottom - (mIsHeightPercent ? parentHeight * mHeight / 100 : mHeight);
         } else {
-            // Width and right are set, left not set but calculated from width
-            mInsetRect.top = outerBounds.top + (mIsHeightPercent ? parentHeight * mHeight / 100 : mHeight);
-            mInsetRect.bottom = outerBounds.bottom - (mIsBottomPercent ? parentHeight * mBottom / 100 : mBottom);
+            // If bottom not set, or all three are set, bottom is ignored and calculated as top + height
+            mInsetRect.top = outerBounds.top + (mIsTopPercent ? parentHeight * mTop / 100 : mTop);
+            mInsetRect.bottom = mInsetRect.top + (mIsHeightPercent ? parentHeight * mHeight / 100 : mHeight);
         }
     }
 
@@ -244,16 +256,15 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
 
         @Override
         public InsetGroup createFromConfig(LayerConfig config) {
-            @Mode final int mode;
-            if (config.hasArgument("no-clip")) {
-                mode = MODE_NO_CLIP;
-            } else if (config.hasArgument("clip-only")) {
-                mode = MODE_CLIP_ONLY;
-            } else {
-                mode = MODE_DEFAULT;
-            }
+            InsetGroup insetGroup = new InsetGroup();
 
-            InsetGroup insetGroup = new InsetGroup(mode);
+            if (config.hasArgument("no-clip")) {
+                insetGroup.mMode = MODE_NO_CLIP;
+            } else if (config.hasArgument("clip-only")) {
+                insetGroup.mMode = MODE_CLIP_ONLY;
+            } else {
+                insetGroup.mMode = MODE_DEFAULT;
+            }
 
             if (config.hasArgument("top")) {
                 boolean isPercent = config.getDimensionUnits("top") == LayerConfig.UNITS_PERCENT;
