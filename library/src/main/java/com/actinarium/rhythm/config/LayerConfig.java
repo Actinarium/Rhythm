@@ -19,8 +19,8 @@ package com.actinarium.rhythm.config;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.ArrayMap;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import com.actinarium.rhythm.RhythmSpecLayer;
@@ -56,19 +56,34 @@ public class LayerConfig {
     private static Pattern DIMEN_VALUE_PATTERN = Pattern.compile("^\\d*\\.?\\d+");
 
     /**
-     * Create layer config object with the arguments bag of zero initial capacity
+     * Create layer config object for layer of given type, with known indent, and with pre-filled arguments bag
+     *
+     * @param layerType spec layer type, used for appropriate factory lookup
+     * @param indent    number of leading spaces in the config line, used to resolve layer hierarchy
+     * @param arguments bag of raw arguments parsed from configuration string
      */
-    public LayerConfig() {
-        mArguments = new ArrayMap<>();
+    LayerConfig(@NonNull String layerType, int indent, @NonNull Map<String, String> arguments) {
+        mLayerType = layerType;
+        mIndent = indent;
+        mArguments = arguments;
     }
 
     /**
-     * Create layer config object with the arguments bag of arbitrary initial capacity
+     * Get the name of {@link RhythmSpecLayer spec layer} to inflate with these arguments
      *
-     * @param initialCapacity predicted bag capacity, shouldn't be too generous
+     * @return spec layer type
      */
-    public LayerConfig(int initialCapacity) {
-        mArguments = new ArrayMap<>(initialCapacity);
+    public String getLayerType() {
+        return mLayerType;
+    }
+
+    /**
+     * Get the number of spaces this config line was indented with. Used internally to resolve grouping
+     *
+     * @return number of spaces
+     */
+    public int getIndent() {
+        return mIndent;
     }
 
     /**
@@ -81,39 +96,12 @@ public class LayerConfig {
     }
 
     /**
-     * Get the name of {@link RhythmSpecLayer spec layer} to inflate with these arguments
+     * Get display metrics injected in this config
      *
-     * @return spec layer type
+     * @return display metrics object
      */
-    String getLayerType() {
-        return mLayerType;
-    }
-
-    /**
-     * Set the name of {@link RhythmSpecLayer spec layer} to inflate with these arguments
-     *
-     * @param layerType spec layer type
-     */
-    void setLayerType(String layerType) {
-        mLayerType = layerType;
-    }
-
-    /**
-     * Get the number of spaces this config line was indented with. Used internally to resolve grouping
-     *
-     * @return number of spaces
-     */
-    int getIndent() {
-        return mIndent;
-    }
-
-    /**
-     * Set the number of spaces this config line was indented with. Used internally to resolve grouping
-     *
-     * @param indent number of spaces
-     */
-    void setIndent(int indent) {
-        mIndent = indent;
+    public DisplayMetrics getDisplayMetrics() {
+        return mMetrics;
     }
 
     /**
@@ -276,6 +264,28 @@ public class LayerConfig {
 
     /**
      * Get dimension argument value as pixels with possible fallback to default value. Unlike {@link
+     * #getDimensionPixelSize(String, int)} and {@link #getDimensionPixelSize(String, int)}, this method <b>doesn't</b>
+     * perform any rounding. <b>Note:</b> for resolving complex dimension types, {@link DisplayMetrics} must be injected
+     * into this config
+     *
+     * @param key          argument key
+     * @param defaultValue fallback value
+     * @return argument value converted to pixels
+     * @see #getDimensionPixelSize(String, int)
+     * @see #getDimensionPixelOffset(String, int)
+     * @see #getDimensionPixelRaw(float, int, DisplayMetrics)
+     */
+    public float getDimensionPixelExact(String key, float defaultValue) {
+        @DimensionUnits int units = getDimensionUnits(key);
+        if (units == UNITS_NULL) {
+            return defaultValue;
+        }
+        float rawValue = getDimensionValueRaw(key, defaultValue);
+        return getDimensionPixelRaw(rawValue, units, mMetrics);
+    }
+
+    /**
+     * Get dimension argument value as pixels with possible fallback to default value. Unlike {@link
      * #getDimensionPixelSize(String, int)}, this method rounds converted value <b>down</b> to the closest integer.
      * <b>Note:</b> for resolving complex dimension types, {@link DisplayMetrics} must be injected into this config
      *
@@ -283,6 +293,7 @@ public class LayerConfig {
      * @param defaultValue fallback value
      * @return argument value converted to pixels
      * @see #getDimensionPixelSize(String, int)
+     * @see #getDimensionPixelExact(String, float)
      * @see #getDimensionPixelRaw(float, int, DisplayMetrics)
      */
     public int getDimensionPixelOffset(String key, int defaultValue) {
@@ -304,6 +315,7 @@ public class LayerConfig {
      * @param defaultValue fallback value
      * @return argument value converted to pixels
      * @see #getDimensionPixelOffset(String, int)
+     * @see #getDimensionPixelExact(String, float)
      * @see #getDimensionPixelRaw(float, int, DisplayMetrics)
      */
     public int getDimensionPixelSize(String key, int defaultValue) {
@@ -367,13 +379,30 @@ public class LayerConfig {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        LayerConfig that = (LayerConfig) o;
+        return mIndent == that.mIndent
+                && mLayerType.equals(that.mLayerType)
+                && mArguments.equals(that.mArguments);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mLayerType.hashCode();
+        result = 31 * result + mIndent;
+        result = 31 * result + mArguments.hashCode();
+        return result;
+    }
+
     /**
      * Dimension argument units
      */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({UNITS_NULL, UNITS_INTEGER, UNITS_PERCENT, UNITS_PX, UNITS_DP, UNITS_SP, UNITS_MM, UNITS_PT, UNITS_IN})
-    @interface DimensionUnits {
+    public @interface DimensionUnits {
     }
-
 
 }

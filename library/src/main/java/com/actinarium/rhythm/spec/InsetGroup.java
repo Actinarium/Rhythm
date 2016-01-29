@@ -20,6 +20,8 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import com.actinarium.rhythm.AbstractSpecLayerGroup;
+import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.config.SpecLayerFactory;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -234,10 +236,65 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
     }
 
     /**
+     * A factory that creates new InsetGroups from config lines like <code>inset no-clip top=24dp width=50%</code>
+     */
+    public static class Factory implements SpecLayerFactory<InsetGroup> {
+
+        public static final String LAYER_TYPE = "inset";
+
+        @Override
+        public InsetGroup createFromConfig(LayerConfig config) {
+            @Mode final int mode;
+            if (config.hasArgument("no-clip")) {
+                mode = MODE_NO_CLIP;
+            } else if (config.hasArgument("clip-only")) {
+                mode = MODE_CLIP_ONLY;
+            } else {
+                mode = MODE_DEFAULT;
+            }
+
+            InsetGroup insetGroup = new InsetGroup(mode);
+
+            if (config.hasArgument("top")) {
+                boolean isPercent = config.getDimensionUnits("top") == LayerConfig.UNITS_PERCENT;
+                int value = config.getDimensionPixelOffset("top", 0);
+                insetGroup.setTop(value, isPercent);
+            }
+            if (config.hasArgument("bottom")) {
+                boolean isPercent = config.getDimensionUnits("bottom") == LayerConfig.UNITS_PERCENT;
+                int value = config.getDimensionPixelOffset("bottom", 0);
+                insetGroup.setBottom(value, isPercent);
+            }
+            if (config.hasArgument("left")) {
+                boolean isPercent = config.getDimensionUnits("left") == LayerConfig.UNITS_PERCENT;
+                int value = config.getDimensionPixelOffset("left", 0);
+                insetGroup.setLeft(value, isPercent);
+            }
+            if (config.hasArgument("right")) {
+                boolean isPercent = config.getDimensionUnits("right") == LayerConfig.UNITS_PERCENT;
+                int value = config.getDimensionPixelOffset("right", 0);
+                insetGroup.setRight(value, isPercent);
+            }
+            if (config.hasArgument("width")) {
+                boolean isPercent = config.getDimensionUnits("width") == LayerConfig.UNITS_PERCENT;
+                int value = config.getDimensionPixelSize("width", 0);
+                insetGroup.setWidth(value, isPercent);
+            }
+            if (config.hasArgument("height")) {
+                boolean isPercent = config.getDimensionUnits("height") == LayerConfig.UNITS_PERCENT;
+                int value = config.getDimensionPixelSize("height", 0);
+                insetGroup.setHeight(value, isPercent);
+            }
+
+            return insetGroup;
+        }
+    }
+
+    /**
      * Type definition for inset group type
      */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({MODE_DEFAULT, MODE_NO_CLIP, MODE_CLIP_ONLY})
-    @interface Mode {
+    public @interface Mode {
     }
 }

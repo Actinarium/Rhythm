@@ -22,6 +22,9 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
+import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.config.RhythmInflationException;
+import com.actinarium.rhythm.config.SpecLayerFactory;
 
 /**
  * A spec layer for horizontal <b>or</b> vertical grid lines (not both at once!), repeating at a fixed step. Horizontal
@@ -150,6 +153,46 @@ public class GridLines implements RhythmSpecLayer {
                 curX -= mStep;
                 line++;
             }
+        }
+    }
+
+    /**
+     * A factory that creates new GridLines layers from config lines like <code>grid-lines gravity=left step=4dp
+     * thickness=1px color=#00FFFF</code>
+     */
+    public static class Factory implements SpecLayerFactory<GridLines> {
+
+        public static final String LAYER_TYPE = "grid-lines";
+
+        @Override
+        public GridLines createFromConfig(LayerConfig config) {
+            @LayerGravity final int gravity;
+            String gravityArg = config.getString("gravity");
+            if ("top".equals(gravityArg)) {
+                gravity = Gravity.TOP;
+            } else if ("left".equals(gravityArg)) {
+                gravity = Gravity.LEFT;
+            } else if ("right".equals(gravityArg)) {
+                gravity = Gravity.RIGHT;
+            } else if ("bottom".equals(gravityArg)) {
+                gravity = Gravity.BOTTOM;
+            } else {
+                throw new RhythmInflationException("Error when inflating grid-lines: 'gravity' argument missing or invalid");
+            }
+
+            final int step = config.getDimensionPixelOffset("step", 0);
+            if (step < 0) {
+                throw new RhythmInflationException("Error when inflating grid-lines: 'step' argument is missing or <= 0");
+            }
+
+            GridLines gridLines = new GridLines(gravity, step);
+
+            gridLines.mPaint.setColor(config.getColor("color", DEFAULT_GRID_COLOR));
+            gridLines.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
+            gridLines.setLimit(config.getInt("limit", Integer.MAX_VALUE));
+            gridLines.mOffset = config.getDimensionPixelOffset("offset", 0);
+
+            return gridLines;
         }
     }
 

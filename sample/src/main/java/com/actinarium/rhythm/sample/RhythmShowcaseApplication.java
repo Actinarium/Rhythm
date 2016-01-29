@@ -21,6 +21,7 @@ import android.view.Gravity;
 import com.actinarium.rhythm.RhythmControl;
 import com.actinarium.rhythm.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
+import com.actinarium.rhythm.spec.Fill;
 import com.actinarium.rhythm.spec.GridLines;
 import com.actinarium.rhythm.spec.Guide;
 import com.actinarium.rhythm.spec.InsetGroup;
@@ -89,9 +90,9 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
         // When gravity is LEFT, thickness controls how the guide expands towards the LEFT side of the screen
         new RhythmOverlay("Avatar list keylines")
                 .addLayersFrom(standardGrid)
-                .addLayer(new Guide(Gravity.LEFT, i16dp).setThickness(i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.LEFT, i72dp).setThickness(i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.RIGHT, i16dp).setThickness(i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.LEFT, i16dp).setThickness(i16dp).setColor(Fill.DEFAULT_FILL_COLOR))
+                .addLayer(new Guide(Gravity.LEFT, i72dp).setThickness(i16dp).setColor(Fill.DEFAULT_FILL_COLOR))
+                .addLayer(new Guide(Gravity.RIGHT, i16dp).setThickness(i16dp).setColor(Fill.DEFAULT_FILL_COLOR))
                 .addToGroup(activityBgGroup);
 
         // Now for something more interesting
@@ -129,16 +130,16 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
                         .setBottom(i56dp, InsetGroup.UNITS_PX)
                         .addLayer(new GridLines(Gravity.TOP, i4dp))
                 )
-                .addLayer(new Guide(Gravity.LEFT, i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR).setThickness(i16dp))
-                .addLayer(new Guide(Gravity.RIGHT, i16dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR).setThickness(i16dp))
-                .addLayer(new Guide(Gravity.TOP, i24dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR).setThickness(i24dp))
+                .addLayer(new Guide(Gravity.LEFT, i16dp).setColor(Fill.DEFAULT_FILL_COLOR).setThickness(i16dp))
+                .addLayer(new Guide(Gravity.RIGHT, i16dp).setColor(Fill.DEFAULT_FILL_COLOR).setThickness(i16dp))
+                .addLayer(new Guide(Gravity.TOP, i24dp).setColor(Fill.DEFAULT_FILL_COLOR).setThickness(i24dp))
                 .addLayer(new Guide(Gravity.LEFT, i16dp))
                 .addLayer(new Guide(Gravity.RIGHT, i16dp))
                 .addLayer(new Guide(Gravity.TOP, i24dp))
-                .addLayer(new Guide(Gravity.LEFT, i8dp).setThickness(i8dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.RIGHT, i8dp).setThickness(i8dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.BOTTOM, i8dp).setThickness(i8dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
-                .addLayer(new Guide(Gravity.BOTTOM, i56dp).setThickness(i8dp).setColor(Guide.DEFAULT_HIGHLIGHT_COLOR))
+                .addLayer(new Guide(Gravity.LEFT, i8dp).setThickness(i8dp).setColor(Fill.DEFAULT_FILL_COLOR))
+                .addLayer(new Guide(Gravity.RIGHT, i8dp).setThickness(i8dp).setColor(Fill.DEFAULT_FILL_COLOR))
+                .addLayer(new Guide(Gravity.BOTTOM, i8dp).setThickness(i8dp).setColor(Fill.DEFAULT_FILL_COLOR))
+                .addLayer(new Guide(Gravity.BOTTOM, i56dp).setThickness(i8dp).setColor(Fill.DEFAULT_FILL_COLOR))
                 .addLayer(new ImageBox(i80dp, i80dp, i16dp, i16dp, Gravity.TOP | Gravity.RIGHT, density))
                 .addToGroup(cardOverlayGroup);
 

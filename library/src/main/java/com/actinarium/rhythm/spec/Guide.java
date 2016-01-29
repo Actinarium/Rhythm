@@ -22,19 +22,22 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
+import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.config.RhythmInflationException;
+import com.actinarium.rhythm.config.SpecLayerFactory;
 
 /**
  * A layer that draws a horizontal or vertical full-bleed guide at the specified distance from the specified edge of a
  * view. Can be used to draw &ldquo;thin&rdquo; keylines, as well as thick highlights (e.g. margins in avatar list
- * view). The guide is drawn towards the specified edge by default (i.e. touching aligned child views), but this can be
- * tweaked using {@link #setAlignOutside(boolean)} method.
+ * view), although it's recommended to use {@link Fill} inside a {@link InsetGroup} for the latter. The guide is drawn
+ * towards the specified edge by default (i.e. touching aligned child views), but this can be tweaked using {@link
+ * #setAlignOutside(boolean)} method.
  *
  * @author Paul Danyliuk
  */
 public class Guide implements RhythmSpecLayer {
 
     public static final int DEFAULT_KEYLINE_COLOR = 0x60F50057;
-    public static final int DEFAULT_HIGHLIGHT_COLOR = 0x400091EA;
     /**
      * Default guide thickness (3px)
      */
@@ -127,6 +130,45 @@ public class Guide implements RhythmSpecLayer {
             // Horizontal line at offset points from the top
             final int topY = drawableBounds.bottom - mDistance - (mAlignOutside ? mThickness : 0);
             canvas.drawRect(drawableBounds.left, topY, drawableBounds.right, topY + mThickness, mPaint);
+        }
+    }
+
+    /**
+     * A factory that creates new Guides from config lines like <code>guide gravity=left distance=16dp
+     * thickness=3px outside</code>
+     */
+    public static class Factory implements SpecLayerFactory<Guide> {
+
+        public static final String LAYER_TYPE = "guide";
+
+        @Override
+        public Guide createFromConfig(LayerConfig config) {
+            @LayerGravity final int gravity;
+            String gravityArg = config.getString("gravity");
+            if ("top".equals(gravityArg)) {
+                gravity = Gravity.TOP;
+            } else if ("left".equals(gravityArg)) {
+                gravity = Gravity.LEFT;
+            } else if ("right".equals(gravityArg)) {
+                gravity = Gravity.RIGHT;
+            } else if ("bottom".equals(gravityArg)) {
+                gravity = Gravity.BOTTOM;
+            } else {
+                throw new RhythmInflationException("Error when inflating guide: 'gravity' argument missing or invalid");
+            }
+
+            if (!config.hasArgument("distance")) {
+                throw new RhythmInflationException("Error when inflating guide: 'distance' argument is missing");
+            }
+            final int distance = config.getDimensionPixelOffset("distance", 0);
+
+            Guide guide = new Guide(gravity, distance);
+
+            guide.mPaint.setColor(config.getColor("color", DEFAULT_KEYLINE_COLOR));
+            guide.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
+            guide.mAlignOutside = config.getBoolean("outside", ALIGN_INSIDE, ALIGN_OUTSIDE);
+
+            return guide;
         }
     }
 

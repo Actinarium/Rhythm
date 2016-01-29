@@ -26,6 +26,8 @@ import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
+import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.config.SpecLayerFactory;
 
 import java.text.DecimalFormat;
 
@@ -155,21 +157,21 @@ public class DimensionsLabel implements RhythmSpecLayer {
      */
     public static String prettyPrintDips(int px, float scaleFactor) {
         String dip;
-        if (scaleFactor == 1) {
+        if (scaleFactor == 1f) {
             dip = String.valueOf(px);
-        } else if (scaleFactor == 2) {
+        } else if (scaleFactor == 2f) {
             dip = String.valueOf(px / 2);
             if (px % 2 == 1) {
                 dip += ONE_HALF;
             }
-        } else if (scaleFactor == 3) {
+        } else if (scaleFactor == 3f) {
             dip = String.valueOf(px / 3);
             if (px % 3 == 1) {
                 dip += ONE_THIRD;
             } else if (px % 3 == 2) {
                 dip += TWO_THIRDS;
             }
-        } else if (scaleFactor == 4) {
+        } else if (scaleFactor == 4f) {
             dip = String.valueOf(px / 4);
             if (px % 4 == 1) {
                 dip += ONE_FOURTH;
@@ -183,5 +185,59 @@ public class DimensionsLabel implements RhythmSpecLayer {
             dip = DECIMAL_FORMAT.format(px / scaleFactor);
         }
         return dip;
+    }
+
+    /**
+     * A factory that creates new DimensionsLabel layers from config lines like <code>dimensions-label
+     * gravity=top|left text-color=black text-size=8sp</code>
+     */
+    public static class Factory implements SpecLayerFactory<DimensionsLabel> {
+
+        public static final String LAYER_TYPE = "dimensions-label";
+
+        @Override
+        public DimensionsLabel createFromConfig(LayerConfig config) {
+            final float density = config.getDisplayMetrics().density;
+            DimensionsLabel label = new DimensionsLabel(density);
+
+            // Gravity. Sorry, FILL options
+            int gravity;
+            String gravityArg = config.getString("gravity");
+            if (gravityArg == null) {
+                // default
+                gravity = Gravity.BOTTOM | Gravity.RIGHT;
+            } else if (gravityArg.equals("center")) {
+                // just center
+                gravity = Gravity.CENTER;
+            } else {
+                // supported options
+                gravity = 0;
+                if (gravityArg.contains("top")) {
+                    gravity |= Gravity.TOP;
+                }
+                if (gravityArg.contains("bottom")) {
+                    gravity |= Gravity.BOTTOM;
+                }
+                if (gravityArg.contains("center_vertical")) {
+                    gravity |= Gravity.CENTER_VERTICAL;
+                }
+                if (gravityArg.contains("left")) {
+                    gravity |= Gravity.LEFT;
+                }
+                if (gravityArg.contains("right")) {
+                    gravity |= Gravity.RIGHT;
+                }
+                if (gravityArg.contains("center_horizontal")) {
+                    gravity |= Gravity.CENTER_HORIZONTAL;
+                }
+            }
+            label.mGravity = gravity;
+
+            label.setBackgroundColor(config.getColor("background-color", DEFAULT_BACKGROUND));
+            label.setTextColor(config.getColor("text-color", DEFAULT_TEXT_COLOR));
+            label.setTextSize(config.getDimensionPixelExact("text-size", DEFAULT_TEXT_SIZE * density));
+
+            return label;
+        }
     }
 }
