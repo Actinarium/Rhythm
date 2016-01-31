@@ -24,6 +24,9 @@ import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.config.SpecLayerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A layer that fills all provided area with solid color. You will usually want to use it inside {@link InsetGroup} to
  * draw rectangles (margins, gutters etc).
@@ -64,16 +67,27 @@ public class Fill implements RhythmSpecLayer {
     }
 
     /**
-     * A factory that creates new Fill layers from config lines like <code>fill color=#2000FFFF</code>
+     * A factory that creates new Fill layers from config lines like <code>fill color=#2000FFFF</code> and maintains a
+     * cache of previously inflated layers that can be reused
      */
     public static class Factory implements SpecLayerFactory<Fill> {
 
         public static final String LAYER_TYPE = "fill";
 
+        private Map<LayerConfig, Fill> mCache = new HashMap<>();
+
         @Override
-        public Fill createFromConfig(LayerConfig config) {
+        public Fill getForConfig(LayerConfig config) {
+            Fill cached = mCache.get(config);
+            if (cached != null) {
+                return cached;
+            }
+
             Fill fill = new Fill();
             fill.mPaint.setColor(config.getColor("color", DEFAULT_FILL_COLOR));
+
+            mCache.put(config, fill);
+
             return fill;
         }
     }

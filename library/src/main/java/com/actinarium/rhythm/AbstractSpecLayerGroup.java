@@ -57,10 +57,10 @@ public abstract class AbstractSpecLayerGroup<T extends AbstractSpecLayerGroup> i
      * @param layer A Rhythm spec layer
      * @return this for chaining
      */
+    @SuppressWarnings("unchecked")
     @Override
     public T addLayer(RhythmSpecLayer layer) {
         mLayers.add(layer);
-        //noinspection unchecked
         return (T) this;
     }
 }

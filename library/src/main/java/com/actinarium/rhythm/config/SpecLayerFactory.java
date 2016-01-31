@@ -24,19 +24,20 @@ import com.actinarium.rhythm.RhythmSpecLayer;
  * overlays. If you make a custom spec layer, you should also create a corresponding <code>SpecLayerFactory</code> and
  * register it within {@link OverlayInflater#registerFactory(String, SpecLayerFactory)} method.<br>Concrete factories
  * may implement some sort of caching and provide the same {@link RhythmSpecLayer} instances for equal {@link
- * LayerConfig}s, but it's not mandatory.
+ * LayerConfig}s if they can be reused, but it's not mandatory.
  *
  * @author Paul Danyliuk
  */
 public interface SpecLayerFactory<T extends RhythmSpecLayer> {
 
     /**
-     * Create and configure a spec layer based on provided configuration. There's no need to verify {@link
-     * LayerConfig#getLayerType()} - OverlayInflater does the arbitration internally
+     * Create and configure a spec layer based on provided configuration, or get previously created one from cache if it
+     * can be safely reused. There's no need to verify if {@link LayerConfig#getLayerType()} corresponds to this
+     * factory.
      *
      * @param config container with arguments for this layer
      * @return configured layer
      */
-    T createFromConfig(LayerConfig config);
+    T getForConfig(LayerConfig config);
 
 }

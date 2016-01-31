@@ -120,6 +120,7 @@ public final class RhythmGroup {
      * @param views Views whose backgrounds should be decorated with Rhythm drawables
      * @see #decorateForeground(FrameLayout...)
      */
+    @SuppressWarnings("deprecation")
     public void decorate(View... views) {
         for (View view : views) {
             RhythmDrawable decoratingRhythmDrawable = makeDrawable();

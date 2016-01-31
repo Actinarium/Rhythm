@@ -188,7 +188,7 @@ public class OverlayInflater {
         if (factory == null) {
             throw new RhythmInflationException("No factory registered for type \"" + config.getLayerType() + "\"");
         }
-        return factory.createFromConfig(config);
+        return factory.getForConfig(config);
     }
 
     /**
@@ -196,7 +196,7 @@ public class OverlayInflater {
      *
      * @param configString configuration string, indented with spaces if required, starting with layer title and
      *                     containing args or key=value pairs
-     * @return layer config object to feed to {@link SpecLayerFactory#createFromConfig(LayerConfig)}. <b>Note:</b> does
+     * @return layer config object to feed to {@link SpecLayerFactory#getForConfig(LayerConfig)}. <b>Note:</b> does
      * not have {@link DisplayMetrics} injected into it - you have to do it yourself before querying complex dimensions
      * from this layer config object.
      */

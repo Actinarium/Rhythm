@@ -99,7 +99,7 @@ public class ImageBox implements RhythmSpecLayer {
     public static class Factory implements SpecLayerFactory<ImageBox> {
 
         @Override
-        public ImageBox createFromConfig(LayerConfig config) {
+        public ImageBox getForConfig(LayerConfig config) {
             ImageBox box = new ImageBox(config.getDisplayMetrics().density);
 
             box.mGravity = config.getGravity("gravity", Gravity.NO_GRAVITY);

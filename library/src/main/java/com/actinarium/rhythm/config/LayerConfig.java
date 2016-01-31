@@ -318,7 +318,8 @@ public class LayerConfig {
      * Extract numeric value from dimension argument disregarding units and NOT performing any conversion to pixels.
      * Normally you should use one of the "pixel" methods instead.
      *
-     * @param key argument key
+     * @param key          argument key
+     * @param defaultValue fallback value
      * @return dimension argument raw value
      * @see #getDimensionPixelSize(String, int)
      * @see #getDimensionPixelOffset(String, int)
@@ -459,15 +460,12 @@ public class LayerConfig {
         if (this == o) { return true; }
         if (o == null || getClass() != o.getClass()) { return false; }
         LayerConfig that = (LayerConfig) o;
-        return mIndent == that.mIndent
-                && mLayerType.equals(that.mLayerType)
-                && mArguments.equals(that.mArguments);
+        return mArguments.equals(that.mArguments) && mLayerType.equals(that.mLayerType);
     }
 
     @Override
     public int hashCode() {
         int result = mLayerType.hashCode();
-        result = 31 * result + mIndent;
         result = 31 * result + mArguments.hashCode();
         return result;
     }

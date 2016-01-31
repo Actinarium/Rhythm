@@ -199,14 +199,14 @@ public class DimensionsLabel implements RhythmSpecLayer {
 
     /**
      * A factory that creates new DimensionsLabel layers from config lines like <code>dimensions-label
-     * gravity=top|left text-color=black text-size=8sp</code>
+     * gravity=top|left text-color=black text-size=8sp</code>. Doesn't keep the cache of previously inflated layers.
      */
     public static class Factory implements SpecLayerFactory<DimensionsLabel> {
 
         public static final String LAYER_TYPE = "dimensions-label";
 
         @Override
-        public DimensionsLabel createFromConfig(LayerConfig config) {
+        public DimensionsLabel getForConfig(LayerConfig config) {
             DimensionsLabel label = new DimensionsLabel();
 
             final float density = config.getDisplayMetrics().density;

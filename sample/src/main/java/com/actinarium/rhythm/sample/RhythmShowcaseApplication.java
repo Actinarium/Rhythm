@@ -117,7 +117,7 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
         new RhythmOverlay()
                 .setTitle("Standard w/ baseline")
                 .addLayersFrom(standardGrid)
-                .addLayer(new InsetGroup(InsetGroup.MODE_DEFAULT)                     // Inset and clip grid lines
+                .addLayer(new InsetGroup()                                            // Inset and clip grid lines
                         .setLeft(i72dp, InsetGroup.UNITS_PX)
                         .setRight(i16dp, InsetGroup.UNITS_PX)
                         .addLayer(new GridLines(Gravity.TOP, i8dp)                    // Draw a grid line each 8 dips...

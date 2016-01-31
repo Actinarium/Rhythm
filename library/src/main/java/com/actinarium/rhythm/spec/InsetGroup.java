@@ -87,25 +87,35 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
     private Rect mInsetRect;
 
     /**
-     * Create a layer group that clips and/or insets its child layers.
-     *
-     * @param mode one of {@link #MODE_DEFAULT}, {@link #MODE_NO_CLIP}, {@link #MODE_CLIP_ONLY}
-     * @see #MODE_DEFAULT
-     * @see #MODE_NO_CLIP
-     * @see #MODE_CLIP_ONLY
+     * Create a layer group that clips and/or insets its child layers
      */
-    public InsetGroup(@Mode int mode) {
+    public InsetGroup() {
         super();
-        mMode = mode;
         mInsetRect = new Rect();
     }
 
     /**
-     * Minimum constructor for the factory
+     * Create a layer group that clips and/or insets its child layers
+     *
+     * @param initialCapacity anticipated number of child layers
      */
-    private InsetGroup() {
-        super();
+    public InsetGroup(int initialCapacity) {
+        super(initialCapacity);
         mInsetRect = new Rect();
+    }
+
+    /**
+     * Set inset mode &mdash; whether the group should also clip the children, translate the coordinates, or both
+     *
+     * @param mode one of {@link #MODE_NO_CLIP}, {@link #MODE_CLIP_ONLY}, or {@link #MODE_DEFAULT}
+     * @return this for chaining
+     * @see #MODE_DEFAULT
+     * @see #MODE_NO_CLIP
+     * @see #MODE_CLIP_ONLY
+     */
+    public InsetGroup setMode(@Mode int mode) {
+        mMode = mode;
+        return this;
     }
 
     /**
@@ -255,7 +265,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
         public static final String LAYER_TYPE = "inset";
 
         @Override
-        public InsetGroup createFromConfig(LayerConfig config) {
+        public InsetGroup getForConfig(LayerConfig config) {
             InsetGroup insetGroup = new InsetGroup();
 
             if (config.hasArgument("no-clip")) {
