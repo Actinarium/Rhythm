@@ -55,7 +55,7 @@ public class LayerConfig {
     private Map<String, String> mArguments;
     private DisplayMetrics mMetrics;
 
-    private static Pattern DIMEN_VALUE_PATTERN = Pattern.compile("^\\d*\\.?\\d+");
+    private static Pattern DIMEN_VALUE_PATTERN = Pattern.compile("^-?\\d*\\.?\\d+");
 
     /**
      * Create layer config object for layer of given type, with known indent, and with pre-filled arguments bag

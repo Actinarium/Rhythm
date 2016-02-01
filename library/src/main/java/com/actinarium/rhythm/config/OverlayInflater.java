@@ -130,7 +130,7 @@ public class OverlayInflater {
         indents[0] = -1;
 
         // split configuration into lines
-        String[] lines = configString.split("\\n");
+        String[] lines = configString.split("\\r?\\n");
 
         // parse line by line, nest as required
         for (String line : lines) {
