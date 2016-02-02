@@ -198,8 +198,8 @@ public class DimensionsLabel implements RhythmSpecLayer {
     }
 
     /**
-     * A factory that creates new DimensionsLabel layers from config lines like <code>dimensions-label
-     * gravity=top|left text-color=black text-size=8sp</code>. Doesn't keep the cache of previously inflated layers.
+     * A factory that creates new DimensionsLabel layers from config lines like <code>dimensions-label gravity=top|left
+     * text-color=black text-size=8sp</code>
      */
     public static class Factory implements SpecLayerFactory<DimensionsLabel> {
 

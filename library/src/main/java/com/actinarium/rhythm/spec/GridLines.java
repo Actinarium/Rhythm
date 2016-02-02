@@ -26,9 +26,6 @@ import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.config.RhythmInflationException;
 import com.actinarium.rhythm.config.SpecLayerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A spec layer for horizontal <b>or</b> vertical grid lines (not both at once!), repeating at a fixed step. Horizontal
  * grid can float either to the top or the bottom of the views, whereas vertical grid can float to the left or the
@@ -169,21 +166,14 @@ public class GridLines implements RhythmSpecLayer {
 
     /**
      * A factory that creates new GridLines layers from config lines like <code>grid-lines gravity=left step=4dp
-     * thickness=1px color=#00FFFF</code> and maintains a cache of previously inflated layers that can be reused
+     * thickness=1px color=#00FFFF</code>
      */
     public static class Factory implements SpecLayerFactory<GridLines> {
 
         public static final String LAYER_TYPE = "grid-lines";
 
-        private Map<LayerConfig, GridLines> mCache = new HashMap<>();
-
         @Override
         public GridLines getForConfig(LayerConfig config) {
-            GridLines cached = mCache.get(config);
-            if (cached != null) {
-                return cached;
-            }
-
             GridLines gridLines = new GridLines();
 
             gridLines.mGravity = config.getLayerGravity("gravity", Gravity.NO_GRAVITY);
@@ -201,8 +191,6 @@ public class GridLines implements RhythmSpecLayer {
             gridLines.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
             gridLines.setLimit(config.getInt("limit", Integer.MAX_VALUE));
             gridLines.mOffset = config.getDimensionPixelOffset("offset", 0);
-
-            mCache.put(config, gridLines);
 
             return gridLines;
         }

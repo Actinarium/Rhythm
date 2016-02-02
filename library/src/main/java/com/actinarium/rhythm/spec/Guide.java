@@ -26,9 +26,6 @@ import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.config.RhythmInflationException;
 import com.actinarium.rhythm.config.SpecLayerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A layer that draws a horizontal or vertical full-bleed guide at the specified distance from the specified edge of a
  * view. Can be used to draw &ldquo;thin&rdquo; keylines, as well as thick highlights (e.g. margins in avatar list
@@ -145,22 +142,15 @@ public class Guide implements RhythmSpecLayer {
     }
 
     /**
-     * A factory that creates new Guides from config lines like <code>guide gravity=left distance=16dp
-     * thickness=3px outside</code> and maintains a cache of previously inflated layers that can be reused
+     * A factory that creates new Guides from config lines like <code>guide gravity=left distance=16dp thickness=3px
+     * outside</code>
      */
     public static class Factory implements SpecLayerFactory<Guide> {
 
         public static final String LAYER_TYPE = "guide";
 
-        private Map<LayerConfig, Guide> mCache = new HashMap<>();
-
         @Override
         public Guide getForConfig(LayerConfig config) {
-            Guide cached = mCache.get(config);
-            if (cached != null) {
-                return cached;
-            }
-
             Guide guide = new Guide();
 
             guide.mGravity = config.getLayerGravity("gravity", Gravity.NO_GRAVITY);
@@ -176,8 +166,6 @@ public class Guide implements RhythmSpecLayer {
             guide.mPaint.setColor(config.getColor("color", DEFAULT_KEYLINE_COLOR));
             guide.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
             guide.mAlignOutside = config.getBoolean("outside", ALIGN_INSIDE, ALIGN_OUTSIDE);
-
-            mCache.put(config, guide);
 
             return guide;
         }

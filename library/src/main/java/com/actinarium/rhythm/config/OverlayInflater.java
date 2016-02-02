@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  */
 public class OverlayInflater {
 
-    private static final Pattern ARGUMENTS_PATTERN = Pattern.compile("([^ =]+)(?:=([^ ]+))?");
+    private static final Pattern ARGUMENTS_PATTERN = Pattern.compile("([^\\s=]+)(?:=([^\\s]+))?");
 
     private DisplayMetrics mDisplayMetrics;
     private Map<String, SpecLayerFactory> mFactories;
@@ -57,10 +57,10 @@ public class OverlayInflater {
         mFactories = new HashMap<>(8);
 
         // Register bundled spec layers
-        mFactories.put(GridLines.Factory.LAYER_TYPE, new GridLines.Factory());
-        mFactories.put(Guide.Factory.LAYER_TYPE, new Guide.Factory());
+        mFactories.put(GridLines.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new GridLines.Factory()));
+        mFactories.put(Guide.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new Guide.Factory()));
+        mFactories.put(Fill.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new Fill.Factory()));
         mFactories.put(InsetGroup.Factory.LAYER_TYPE, new InsetGroup.Factory());
-        mFactories.put(Fill.Factory.LAYER_TYPE, new Fill.Factory());
         mFactories.put(DimensionsLabel.Factory.LAYER_TYPE, new DimensionsLabel.Factory());
     }
 
