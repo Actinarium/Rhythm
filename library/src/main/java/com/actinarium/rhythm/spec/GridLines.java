@@ -182,7 +182,7 @@ public class GridLines implements RhythmSpecLayer {
             }
 
             final int step = config.getDimensionPixelOffset("step", 0);
-            if (step < 0) {
+            if (step <= 0) {
                 throw new RhythmInflationException("Error when inflating grid-lines: 'step' argument is missing or <= 0");
             }
             gridLines.mStep = step;

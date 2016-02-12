@@ -198,7 +198,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
     public InsetGroup setHeight(int value, boolean isPercent) {
         mIsHeightSet = true;
         mHeight = value;
-        mIsHeightPercent = false;
+        mIsHeightPercent = isPercent;
         return this;
     }
 
