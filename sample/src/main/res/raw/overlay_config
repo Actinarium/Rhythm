@@ -1,0 +1,67 @@
+# Standard grid
+grid-lines gravity=top  step=8dp
+grid-lines gravity=left step=8dp
+
+# Typography grid w/keylines
+grid-lines gravity=top step=4dp color=#800091EA
+guide gravity=left  distance=16dp
+guide gravity=right distance=16dp
+guide gravity=left  distance=72dp
+
+# Avatar list
+grid-lines gravity=top  step=8dp
+grid-lines gravity=left step=8dp
+inset no-clip left=0dp width=16dp
+  fill color=#400091EA
+inset no-clip left=56dp width=16dp
+  fill color=#400091EA
+inset no-clip right=0dp width=16dp
+  fill color=#400091EA
+guide gravity=left  distance=16dp
+guide gravity=right distance=16dp
+guide gravity=left  distance=72dp
+guide gravity=left  distance=56dp outside
+
+# Hybrid grid
+grid-lines gravity=top  step=8dp
+grid-lines gravity=left step=8dp
+inset left=72dp right=16dp
+  grid-lines gravity=top step=8dp offset=4dp color=#800091EA
+guide gravity=left  distance=16dp
+guide gravity=right distance=16dp
+guide gravity=left  distance=72dp
+
+# Split-screen aligned 8dp
+grid-lines gravity=top   step=8dp
+grid-lines gravity=left  step=8dp limit=4
+grid-lines gravity=right step=8dp limit=4
+
+# Content card w/ 80dp image
+inset right=96dp bottom=56dp
+  inset height=24dp left=16dp
+    fill color=#400091EA
+  inset width=16dp
+    fill color=#400091EA
+  inset left=16dp top=24dp
+    grid-lines gravity=top step=4dp
+  guide gravity=top distance=24dp
+inset right=0 width=96dp bottom=56dp
+  inset height=16dp right=16dp
+    fill color=#400091EA
+  inset width=16dp right=0
+    fill color=#400091EA
+  guide gravity=top distance=16dp
+inset bottom=0 height=56dp
+  guide gravity=top    distance=8dp thickness=8dp color=#60F50057
+  guide gravity=left   distance=8dp thickness=8dp color=#60F50057
+  guide gravity=right  distance=8dp thickness=8dp color=#60F50057
+  guide gravity=bottom distance=8dp thickness=8dp color=#60F50057
+guide gravity=left  distance=16dp
+guide gravity=right distance=16dp
+image-box gravity=top|right width=80dp height=80dp distance-x=16dp distance-y=16dp
+
+# Dialog bullet list
+grid-lines gravity=top step=4dp color=#800091EA
+guide gravity=left  distance=24dp
+guide gravity=right distance=24dp
+guide gravity=left  distance=48dp

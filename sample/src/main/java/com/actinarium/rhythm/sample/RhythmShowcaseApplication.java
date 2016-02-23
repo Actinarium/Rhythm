@@ -26,6 +26,8 @@ import com.actinarium.rhythm.spec.GridLines;
 import com.actinarium.rhythm.spec.Guide;
 import com.actinarium.rhythm.spec.InsetGroup;
 
+import java.util.List;
+
 /**
  * Application class of Rhythm sample app. For RhythmicFrameLayout and Quick Control notification support, it must
  * implement RhythmControl.Host
@@ -47,139 +49,45 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
         // Initialize this application's Rhythm control
         mRhythmControl = new RhythmControl(this);
 
-        // Initialize inflater that we'll use to inflate overlays from declarative (human-readable) config
-        final OverlayInflater inflater = new OverlayInflater(getResources().getDisplayMetrics());
-
-        // We have a custom layer type with a factory - let's register it within the inflater
-        inflater.registerFactory("image-box", new ImageBox.Factory());
-
-        // Pre-fetch and pre-calculate some values that we're going to use a lot
-        final float density = getResources().getDisplayMetrics().density;
-        final int i8dp = (int) (8 * density);
-        final int i4dp = i8dp / 2;
-        final int i16dp = i8dp * 2;
-        final int i24dp = i8dp * 3;
-        final int i72dp = i8dp * 9;
-
         // Create the groups - that's to control their overlays separately
-        // There may be as many groups as you need, but one at least
-        // Groups, which are attached to the control, are assigned sequential indices starting at 0
+        // There may be as many groups as you need, but you need at least one
+        // Groups attached to the control are assigned sequential indices starting at 0
         RhythmGroup activityBgGroup = mRhythmControl.makeGroup("Activity background");               // index = 0
         RhythmGroup cardOverlayGroup = mRhythmControl.makeGroup("Card overlay");                     // index = 1
         RhythmGroup dialogOverlayGroup = mRhythmControl.makeGroup("Dialog overlay");                 // index = 2
 
-        // Now let's create some overlays. Mix and match!
+        // Initialize inflater that we'll use to inflate overlays from declarative (human-readable) config
+        final OverlayInflater inflater = OverlayInflater.createDefault(this);
 
-        // First, let's create an overlay with standard Material keylines
-        // We're not attaching it anywhere yet, but we'll include it in other overlays
-        RhythmOverlay materialKeylines = inflater.inflateOverlay(
-                "guide gravity=left  distance=16dp\n" +
-                "guide gravity=right distance=16dp\n" +
-                "guide gravity=left  distance=72dp"
-        );
+        // We have a custom layer type with a factory - let's register it within the inflater
+        inflater.registerFactory("image-box", new ImageBox.Factory());
 
-        // Now make a simple 4dp baseline grid with keylines and attach it to the first group
-        new RhythmOverlay()
-                .setTitle("Baseline grid w/keylines")
-                // todo: add support for variables and references
-                .addLayer(inflater.inflateLayer("grid-lines gravity=top step=4dp color=#800091EA"))
-                .addLayersFrom(materialKeylines)
-                .addToGroup(activityBgGroup);
+        // Inflate everything from /res/raw/overlay_config.
+        List<RhythmOverlay> overlays = inflater.inflate(R.raw.overlay_config);
 
-        // Another overlay: standard 8dp grid with the same keylines
-        RhythmOverlay standardGrid = inflater.inflateOverlay(
-                "grid-lines gravity=top  step=8dp\n" +
-                "grid-lines gravity=left step=8dp"
-        )
-                .addLayersFrom(materialKeylines)
-                .addToGroup(activityBgGroup);
+        // First 5 overlays are for activity bg group
+        activityBgGroup.addOverlays(overlays.subList(0, 5));
+        // Overlay #5 goes to the card group
+        cardOverlayGroup.addOverlay(overlays.get(5));
+        // And overlay #6 goes to the dialog group
+        dialogOverlayGroup.addOverlay(overlays.get(6));
 
-        // Avatar list keylines: standard grid plus some 16dp-wide fills for margins around the avatar
-        RhythmOverlay avatarList = new RhythmOverlay()
-                .setTitle("Avatar list keylines")
-                .addLayersFrom(standardGrid);
+        // Just FYI, it's also possible to create overlays programmatically, although it's pretty cumbersome.
+        // Here's how we would build a hybrid grid identical to the one on /res/raw/overlay_config lines 25-32:
+        float density = getResources().getDisplayMetrics().density;
+        //noinspection unused
+        RhythmOverlay unusedOverlay = new RhythmOverlay(5)
+                .addLayer(new GridLines(Gravity.TOP, (int) (4 * density)).setColor(GridLines.DEFAULT_GRID_COLOR))
+                .addLayer(new InsetGroup(1).addLayer(
+                        new GridLines(Gravity.TOP, (int) (8 * density))
+                                .setOffset((int) (4 * density))
+                                .setColor(GridLines.DEFAULT_GRID_COLOR)))
+                .addLayer(new Guide(Gravity.LEFT, (int) (16 * density)))
+                .addLayer(new Guide(Gravity.RIGHT, (int) (16 * density)))
+                .addLayer(new Guide(Gravity.LEFT, (int) (72 * density)));
 
-        inflater.inflateInto(avatarList,
-                "inset no-clip left=0dp width=16dp\n" +
-                "  fill color=#400091EA\n" +
-                "inset no-clip left=56dp width=16dp\n" +
-                "  fill color=#400091EA\n" +
-                "inset no-clip right=0dp width=16dp\n" +
-                "  fill color=#400091EA"
-        );
-        activityBgGroup.addOverlay(avatarList);         // another way to call avatarList.addToGroup(activityBgGroup);
-
-        // Now for something more interesting
-
-        // Both 8dp and baseline grid, but draw baselines only within the 72dp left keyline and 16dp right keyline.
-        // Note that we're not drawing a baseline each 4dp, but rather each 8dp starting from 4dp offset -
-        // that's because we already have a 8dp grid, so why overdraw?
-        new RhythmOverlay()
-                .setTitle("Standard w/ baseline")
-                .addLayersFrom(standardGrid)
-                .addLayer(new InsetGroup()                                            // Inset and clip grid lines
-                        .setLeft(i72dp, InsetGroup.UNITS_PX)
-                        .setRight(i16dp, InsetGroup.UNITS_PX)
-                        .addLayer(new GridLines(Gravity.TOP, i8dp)                    // Draw a grid line each 8 dips...
-                                .setOffset(i4dp)                                      // ...starting from 4dp...
-                                .setColor(GridLines.DEFAULT_BASELINE_COLOR)
-                        )
-                )
-                .addToGroup(activityBgGroup);
-
-        // Since some devices are not exactly 8x dip wide (e.g. Nexus 5 is not 8x dip wide in landscape),
-        // let's draw a right-aligned grid on the right half of the screen
-        new RhythmOverlay()
-                .setTitle("Split-screen aligned 8dp")
-                .addLayer(new GridLines(Gravity.TOP, i8dp))
-                .addLayer(new GridLines(Gravity.LEFT, i8dp).setLimit(4))      // 4 lines from the left
-                .addLayer(new GridLines(Gravity.RIGHT, i8dp).setLimit(4))     // 4 lines from the right
-                .addLayersFrom(materialKeylines)
-                .addToGroup(activityBgGroup);
-
-        // Media card overlay, as per the spec: http://bit.ly/1PoQbHb
-        RhythmOverlay cardOverlay = inflater.inflateOverlay(
-                "inset right=96dp bottom=56dp\n" +
-                "  inset height=24dp left=16dp\n" +
-                "    fill color=#400091EA\n" +
-                "  inset width=16dp\n" +
-                "    fill color=#400091EA\n" +
-                "  inset left=16dp top=24dp\n" +
-                "    grid-lines gravity=top step=4dp\n" +
-                "  guide gravity=top distance=24dp\n" +
-                "inset right=0 width=96dp bottom=56dp\n" +
-                "  inset height=16dp right=16dp\n" +
-                "    fill color=#400091EA\n" +
-                "  inset width=16dp right=0\n" +
-                "    fill color=#400091EA\n" +
-                "  guide gravity=top distance=16dp\n" +
-                "inset bottom=0 height=56dp\n" +
-                "  guide gravity=top    distance=8dp thickness=8dp color=#60F50057\n" +
-                "  guide gravity=left   distance=8dp thickness=8dp color=#60F50057\n" +
-                "  guide gravity=right  distance=8dp thickness=8dp color=#60F50057\n" +
-                "  guide gravity=bottom distance=8dp thickness=8dp color=#60F50057\n" +
-                "guide gravity=left  distance=16dp\n" +
-                "guide gravity=right distance=16dp\n" +
-                "image-box gravity=top|right width=80dp height=80dp distance-x=16dp distance-y=16dp");
-        // Heads up: that last line was for our custom layer!
-
-        cardOverlay
-                .setTitle("Content card w/ 80dp image")
-                .addToGroup(cardOverlayGroup);
-
-        // Make a dialog overlay. Let it be a simple baseline grid with a few keylines corresponding to a bullet list
-        new RhythmOverlay()
-                .setTitle("Baseline w/ 24dp keylines")
-                .addLayer(new GridLines(Gravity.TOP, i4dp).setColor(GridLines.DEFAULT_BASELINE_COLOR))
-                .addLayer(new Guide(Gravity.LEFT, i24dp))
-                .addLayer(new Guide(Gravity.RIGHT, i24dp))
-                .addLayer(new Guide(Gravity.LEFT, i24dp * 2))       // Extra keyline for list inset
-                .addToGroup(dialogOverlayGroup);
-
+        // Show a quick control notification, and we're all set!
         mRhythmControl.showQuickControl(RHYTHM_NOTIFICATION_ID);
-
-        // for debug purposes
-        activityBgGroup.selectOverlay(2);
     }
 
     @Override

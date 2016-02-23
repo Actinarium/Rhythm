@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,6 +92,20 @@ public final class RhythmGroup {
      */
     public RhythmGroup addOverlay(RhythmOverlay overlay) {
         mOverlays.add(overlay);
+        if (mCurrentOverlayIndex == NO_OVERLAY) {
+            selectOverlay(0);
+        }
+        return this;
+    }
+
+    /**
+     * Add multiple Rhythm overlays to this group
+     *
+     * @param overlays The Rhythm overlays to add
+     * @return this for chaining
+     */
+    public RhythmGroup addOverlays(Collection<RhythmOverlay> overlays) {
+        mOverlays.addAll(overlays);
         if (mCurrentOverlayIndex == NO_OVERLAY) {
             selectOverlay(0);
         }
