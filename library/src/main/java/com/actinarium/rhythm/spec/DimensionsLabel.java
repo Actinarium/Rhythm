@@ -16,6 +16,7 @@
 
 package com.actinarium.rhythm.spec;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -55,6 +56,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
     protected static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
     protected float mScaleFactor;
+    @SuppressLint("RtlHardcoded")
     protected int mGravity = Gravity.BOTTOM | Gravity.RIGHT;
     protected Paint mBackgroundPaint;
     protected TextPaint mTextPaint;
@@ -205,6 +207,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
 
         public static final String LAYER_TYPE = "dimensions-label";
 
+        @SuppressLint("RtlHardcoded")
         @Override
         public DimensionsLabel getForConfig(LayerConfig config) {
             DimensionsLabel label = new DimensionsLabel();

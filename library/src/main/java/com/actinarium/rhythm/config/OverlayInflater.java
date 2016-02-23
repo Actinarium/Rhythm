@@ -118,7 +118,7 @@ public class OverlayInflater {
      * @see #inflateLayer(String)
      */
     public void inflateInto(RhythmSpecLayerParent parent, String configString) {
-        // initialize stacks for parents and indents. Since there's no adequate stack impls out there for API 8+, make own.
+        // initialize stacks for parents and indents. Since there's no adequate stack implementations out there for API 8+, make own.
         // Assume there rarely will be more than 4-deep hierarchy
         int size = 4;
         int[] indents = new int[size];

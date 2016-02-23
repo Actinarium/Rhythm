@@ -37,6 +37,15 @@ public class RhythmOverlay extends AbstractSpecLayerGroup<RhythmOverlay> {
     }
 
     /**
+     * Create a new overlay with initial capacity
+     *
+     * @param initialCapacity anticipated number of child layers
+     */
+    public RhythmOverlay(int initialCapacity) {
+        super(initialCapacity);
+    }
+
+    /**
      * Set the title for this overlay. The title is only displayed in Rhythm control notification &mdash; you don't need
      * it in programmatically created anonymous overlays.
      *

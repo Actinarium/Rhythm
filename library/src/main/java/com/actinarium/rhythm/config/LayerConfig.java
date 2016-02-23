@@ -16,6 +16,7 @@
 
 package com.actinarium.rhythm.config;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntDef;
@@ -41,7 +42,7 @@ import java.util.regex.Pattern;
 public class LayerConfig {
 
     public static final int UNITS_NULL = -1;
-    public static final int UNITS_INTEGER = 0;
+    public static final int UNITS_NUMBER = 0;
     public static final int UNITS_PERCENT = 1;
     public static final int UNITS_PX = 2;
     public static final int UNITS_DP = 3;
@@ -217,6 +218,7 @@ public class LayerConfig {
      * @return gravity constant
      * @see #getLayerGravity(String, int)
      */
+    @SuppressLint("RtlHardcoded")
     public int getGravity(String key, int defaultValue) {
         String gravityArg = mArguments.get(key);
         if (gravityArg == null) {
@@ -265,6 +267,7 @@ public class LayerConfig {
      * @return gravity constant
      * @see #getGravity(String, int)
      */
+    @SuppressLint("RtlHardcoded")
     @LayerGravity
     public int getLayerGravity(String key, @LayerGravity int defaultValue) {
         String gravityArg = mArguments.get(key);
@@ -309,8 +312,8 @@ public class LayerConfig {
         } else if (value.endsWith("mm")) {
             return UNITS_MM;
         } else {
-            // assume integer, try to parse as integer
-            return UNITS_INTEGER;
+            // assume raw number, try to parse as float
+            return UNITS_NUMBER;
         }
     }
 
@@ -411,11 +414,11 @@ public class LayerConfig {
      *
      * @param value   raw dimension value, e.g. <code>24f</code>
      * @param units   dimension units, one of {@link #UNITS_PX}, {@link #UNITS_DP}, {@link #UNITS_SP}, {@link
-     *                #UNITS_PT}, {@link #UNITS_IN}, {@link #UNITS_MM}, {@link #UNITS_INTEGER}, {@link #UNITS_NULL}, or
+     *                #UNITS_PT}, {@link #UNITS_IN}, {@link #UNITS_MM}, {@link #UNITS_NUMBER}, {@link #UNITS_NULL}, or
      *                {@link #UNITS_PERCENT}
      * @param metrics display metrics to convert complex dimension types that depend on density (dp, sp etc) into
      *                pixels, can be null if type is one of {@link #UNITS_PX}, {@link #UNITS_PERCENT}, {@link
-     *                #UNITS_INTEGER}, or {@link #UNITS_NULL}
+     *                #UNITS_NUMBER}, or {@link #UNITS_NULL}
      * @return dimension value in pixels
      */
     public static float getDimensionPixelRaw(float value, @DimensionUnits int units, DisplayMetrics metrics) {
@@ -427,7 +430,7 @@ public class LayerConfig {
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, metrics);
             case UNITS_PX:
             case UNITS_PERCENT:
-            case UNITS_INTEGER:
+            case UNITS_NUMBER:
             case UNITS_NULL:
                 return value;
             case UNITS_SP:
@@ -474,7 +477,7 @@ public class LayerConfig {
      * Dimension argument units
      */
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({UNITS_NULL, UNITS_INTEGER, UNITS_PERCENT, UNITS_PX, UNITS_DP, UNITS_SP, UNITS_MM, UNITS_PT, UNITS_IN})
+    @IntDef({UNITS_NULL, UNITS_NUMBER, UNITS_PERCENT, UNITS_PX, UNITS_DP, UNITS_SP, UNITS_MM, UNITS_PT, UNITS_IN})
     public @interface DimensionUnits {
     }
 

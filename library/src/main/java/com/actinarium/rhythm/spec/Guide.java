@@ -16,6 +16,7 @@
 
 package com.actinarium.rhythm.spec;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -120,6 +121,7 @@ public class Guide implements RhythmSpecLayer {
         return this;
     }
 
+    @SuppressLint("RtlHardcoded")
     @Override
     public void draw(Canvas canvas, Rect drawableBounds) {
         if (mGravity == Gravity.LEFT) {

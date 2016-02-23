@@ -16,6 +16,7 @@
 
 package com.actinarium.rhythm.spec;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -129,6 +130,7 @@ public class GridLines implements RhythmSpecLayer {
         return this;
     }
 
+    @SuppressLint("RtlHardcoded")
     @Override
     public void draw(Canvas canvas, Rect drawableBounds) {
         // Depending on gravity the orientation, the order of drawing, and the starting point are different
