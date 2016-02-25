@@ -21,12 +21,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-import com.actinarium.rhythm.sample.util.MyBulletSpan;
-import com.actinarium.rhythm.sample.util.TextViewUtils;
+import com.actinarium.rhythm.sample.util.ViewUtils;
 
 /**
  * A dialog fragment showcasing how Rhythm works with dialogs as well
@@ -42,29 +40,14 @@ public class FeaturesDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_features, null);
 
-        // Build a bullet list (I still have no idea why it has to be so hard)
+        // Build a bullet list
         String[] bulletPoints = getResources().getStringArray(R.array.bullet_points);
-        // Add an emoji to the last point
-        bulletPoints[bulletPoints.length - 1] += " \uD83D\uDE09";
         final int bulletRadius = getResources().getDimensionPixelSize(R.dimen.bulletRadius);
-        final int bulletLeftPadding = getResources().getDimensionPixelSize(R.dimen.bulletLeftPadding);
-        final int bulletRightPadding = getResources().getDimensionPixelSize(R.dimen.bulletRightPadding);
-        SpannableStringBuilder builder = new SpannableStringBuilder();
-        int spanStart = 0;
-        int spanEnd;
-        for (String bulletPoint : bulletPoints) {
-            builder.append(bulletPoint);
-            spanEnd = builder.length();
-            builder.setSpan(new MyBulletSpan(bulletRadius, bulletLeftPadding, bulletRightPadding), spanStart, spanEnd, 0);
-            spanStart = spanEnd;
-        }
+        final int bulletCenterX = getResources().getDimensionPixelSize(R.dimen.bulletCenterX);
+        final int leadingMargin = getResources().getDimensionPixelSize(R.dimen.bulletLeadingMargin);
+        CharSequence bulletList = ViewUtils.makeBulletList(bulletRadius, bulletCenterX, leadingMargin, bulletPoints);
         TextView textView = (TextView) view.findViewById(R.id.bullet_list);
-        textView.setText(builder);
-
-        // Fix text leading
-        final int step = getResources().getDimensionPixelSize(R.dimen.baselineStep);
-        final int leading20dp = getResources().getDimensionPixelSize(R.dimen.leading20);
-        TextViewUtils.setLeading(textView, step, leading20dp);
+        textView.setText(bulletList);
 
         return new AlertDialog.Builder(getContext())
                 .setTitle(R.string.layer_types)
@@ -73,6 +56,7 @@ public class FeaturesDialogFragment extends DialogFragment {
                 .create();
 
         // - Wait, that's it? Where's the getRhythmControl()? Where's decorate()?
-        // - You don't need it if you use RhythmicFrameLayout to wrap your views. Take a look at dialog_features.xml
+        // - You don't need it if you use RhythmicFrameLayout to wrap your views.
+        // Take a look at /res/layout/dialog_features.xml
     }
 }

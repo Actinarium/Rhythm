@@ -16,9 +16,9 @@
   -->
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            android:layout_height="match_parent">
 
     <!--
     Another, more flexible way to integrate Rhythm into layout is to wrap content with RhythmicFrameLayout
@@ -31,10 +31,10 @@
     <com.actinarium.rhythm.widget.RhythmicFrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:rhythmGroup="2"
+            app:rhythmGroup="3"
             app:overlayPosition="overContent">
 
-        <TextView
+        <com.actinarium.aligned.TextView
                 android:id="@+id/bullet_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,6 +43,9 @@
                 android:paddingTop="8dp"
                 android:paddingLeft="24dp"
                 android:paddingRight="24dp"
+                app:leading="20dp"
+                app:lastLineDescent="4dp"
+                android:breakStrategy="simple"
                 android:hyphenationFrequency="normal"/>
 
     </com.actinarium.rhythm.widget.RhythmicFrameLayout>

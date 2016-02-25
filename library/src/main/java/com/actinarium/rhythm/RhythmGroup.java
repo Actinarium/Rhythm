@@ -120,8 +120,7 @@ public final class RhythmGroup {
      * @return A new {@link RhythmDrawable} controlled by this group.
      */
     public RhythmDrawable makeDrawable() {
-        RhythmDrawable drawable = new RhythmDrawable();
-        drawable.setOverlay(getCurrentOverlay());
+        RhythmDrawable drawable = new RhythmDrawable(getCurrentOverlay());
         mDrawables.add(new WeakReference<>(drawable));
         return drawable;
     }

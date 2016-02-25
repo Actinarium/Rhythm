@@ -33,42 +33,44 @@
                 android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:clipToPadding="false">
 
-            <TextView
+            <com.actinarium.aligned.TextView
                     android:id="@+id/content_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                    android:textColor="?colorPrimaryDark"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:paddingTop="24dp"
-                    android:paddingBottom="8dp"
+                    android:textColor="?colorPrimary"
+                    app:firstLineLeading="48dp"
+                    app:leading="32dp"
+                    app:lastLineDescent="12dp"
                     android:text="@string/sample_header"/>
 
-            <TextView
+            <com.actinarium.aligned.TextView
                     android:id="@+id/copy_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
+                    app:leading="20dp"
+                    app:lastLineDescent="8dp"
                     android:text="@string/copy_1"
-                    android:textColorLink="?colorPrimaryDark"
+                    android:textColorLink="?colorPrimary"
+                    android:breakStrategy="high_quality"
                     android:hyphenationFrequency="normal"/>
 
-            <TextView
-                    android:id="@+id/copy_2"
+            <com.actinarium.aligned.TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
+                    app:leading="20dp"
+                    app:lastLineDescent="8dp"
                     android:text="@string/copy_warning"
+                    android:breakStrategy="high_quality"
                     android:hyphenationFrequency="normal"/>
 
             <android.support.v7.widget.CardView
@@ -77,8 +79,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
                     android:minHeight="152dp">
 
                 <LinearLayout
@@ -86,29 +86,28 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_marginLeft="16dp"
-                        android:layout_marginBottom="55dp"
                         android:layout_marginRight="104dp"
                         android:orientation="vertical">
 
-                    <TextView
-                            android:id="@+id/card_title"
+                    <com.actinarium.aligned.TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingTop="4dp"
-                            android:minHeight="36dp"
                             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                             android:textColor="?android:textColorPrimary"
+                            app:leading="28dp"
+                            app:lastLineDescent="4dp"
                             android:text="@string/card_header"/>
 
-                    <TextView
-                            android:id="@+id/card_copy"
+                    <com.actinarium.aligned.TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="-4dp"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                             android:textColor="?android:textColorSecondary"
                             android:textSize="14sp"
                             android:text="@string/card_text"
+                            app:leading="20dp"
+                            app:lastLineDescent="8dp"
+                            android:breakStrategy="balanced"
                             android:hyphenationFrequency="full"/>
 
                 </LinearLayout>
@@ -119,9 +118,9 @@
                         android:layout_gravity="top|right"
                         android:layout_marginTop="16dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/mallow"
+                        android:src="@drawable/tapet"
                         android:scaleType="fitCenter"
-                        android:contentDescription="A marshmallow with purple wig, resembling a certain copyrighted fiction character"/>
+                        android:contentDescription="Thumbnail image generated by Tapet app"/>
 
                 <LinearLayout
                         android:layout_width="match_parent"
@@ -129,80 +128,60 @@
                         android:layout_gravity="bottom"
                         android:layout_marginLeft="4dp"
                         android:layout_marginRight="4dp"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="2dp">
 
                     <Button
-                            android:id="@+id/agree"
+                            android:id="@+id/toggle_card_overlay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                            android:minWidth="0dp"
-                            android:text="@string/agree"/>
-
-                    <Button
-                            android:id="@+id/disagree"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                            android:text="@string/disagree"/>
+                            android:height="52dp"
+                            android:text="@string/toggle"/>
 
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
-            <TextView
-                    android:id="@+id/copy_3"
+            <com.actinarium.aligned.TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
+                    android:layout_marginTop="8dp"
+                    app:leading="20dp"
+                    app:lastLineDescent="8dp"
                     android:text="@string/copy_2"
+                    android:breakStrategy="high_quality"
                     android:hyphenationFrequency="normal"/>
 
-            <TextView
-                    android:id="@+id/copy_4"
+            <com.actinarium.aligned.TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
+                    app:leading="20dp"
+                    app:lastLineDescent="8dp"
                     android:text="@string/copy_3"
+                    android:breakStrategy="high_quality"
                     android:hyphenationFrequency="normal"/>
 
-            <Button
-                    android:id="@+id/show_dialog"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/Widget.AppCompat.Button.Colored"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginBottom="6dp"
-                    android:text="@string/layer_types"/>
-
-            <TextView
-                    android:id="@+id/copy_5"
+            <com.actinarium.aligned.TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
+                    app:leading="20dp"
+                    app:lastLineDescent="8dp"
                     android:text="@string/copy_4"
+                    android:breakStrategy="high_quality"
                     android:hyphenationFrequency="normal"/>
 
             <LinearLayout
-                    android:id="@+id/mallows"
+                    android:id="@+id/thumbs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:orientation="horizontal"
                     android:clipChildren="false">
 
@@ -212,7 +191,7 @@
                         android:layout_height="64dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
-                        android:src="@drawable/mallow"
+                        android:src="@drawable/tapet"
                         android:scaleType="fitCenter"
                         android:importantForAccessibility="no"/>
 
@@ -222,7 +201,17 @@
                         android:layout_height="64dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
-                        android:src="@drawable/mallow"
+                        android:src="@drawable/tapet"
+                        android:scaleType="fitCenter"
+                        android:importantForAccessibility="no"/>
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="64dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:src="@drawable/tapet"
                         android:scaleType="fitCenter"
                         android:importantForAccessibility="no"/>
 
@@ -232,44 +221,23 @@
                         android:layout_height="64dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
-                        android:src="@drawable/mallow"
-                        android:scaleType="fitCenter"
-                        android:importantForAccessibility="no"/>
-
-                <ImageView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="64dp"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
-                        android:src="@drawable/mallow"
-                        android:scaleType="fitCenter"
-                        android:importantForAccessibility="no"/>
-
-                <ImageView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="64dp"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
-                        android:src="@drawable/mallow"
+                        android:src="@drawable/tapet"
                         android:scaleType="fitCenter"
                         android:importantForAccessibility="no"/>
 
             </LinearLayout>
 
-            <TextView
+            <com.actinarium.aligned.TextView
                     android:id="@+id/copy_6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="14sp"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:paddingBottom="12dp"
+                    app:leading="20dp"
+                    app:lastLineDescent="16dp"
                     android:text="@string/copy_5"
-                    android:textColorLink="?colorPrimaryDark"
+                    android:textColorLink="?colorPrimary"
+                    android:breakStrategy="high_quality"
                     android:hyphenationFrequency="normal"/>
 
         </LinearLayout>

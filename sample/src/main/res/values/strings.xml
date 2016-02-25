@@ -16,39 +16,40 @@
 
 <resources>
     <string name="app_name">Rhythm</string>
-    <string name="app_title">Rhythm showcase</string>
+    <string name="app_title">Rhythm sample app</string>
 
-    <string name="sample_header">Welcome to the Rhythm&#160;library sample app!</string>
-    <string name="copy_1">This app demonstrates the capabilities of the&#160;library and how it can be&#160;used in a real&#160;project.
-       You are welcome to examine its source&#160;code on&#160;<a href="https://github.com/Actinarium/Rhythm/tree/master/sample">GitHub</a>.</string>
+    <string name="sample_header">Hello there!</string>
+    <string name="copy_1">This here is small sample app to show off Rhythm library and inspire you to use it.
+       Don’t forget to check out its <a href="https://github.com/Actinarium/Rhythm/tree/master/sample">source code</a> for complete experience.</string>
 
-    <string name="copy_warning"><b>Heads up!</b> If you see this, and the text in this sample is not aligned nicely to the 4dp baseline grid, please file an issue on GitHub with the screenshot and your device model. Thank you.</string>
+    <string name="copy_warning"><b>Hey!</b> Since you’re already judging, please report if you notice something <i>out of rhythm</i> (i.e. not aligned to 8dp/4dp grid), will you?</string>
 
-    <string name="card_header">Details matter</string>
-    <string name="card_text">— says designer marshmallow. Do you agree with her?</string>
-    <string name="agree">Agree</string>
-    <string name="agree_msg">That’s the spirit!</string>
-    <string name="disagree">Disagree</string>
-    <string name="disagree_msg">Uhm… think again?</string>
+    <string name="card_header">Intermission</string>
+    <string name="card_text">Take a moment to appreciate this beautifully laid out card.</string>
+    <string name="toggle">Toggle overlay</string>
 
-    <string name="copy_2">Open the Notification drawer to access Rhythm Quick Control, which allows&#160;you to cycle through configurations without leaving your current&#160;screen.
-        Go ahead and play&#160;around with overlays for different provided&#160;groups.</string>
+    <string name="copy_2">Pull down the Notification shade to find Rhythm Quick Control. Loop through overlays for Activity background group.
+        Then onto another groups. Knock yourself out!</string>
 
-    <string name="copy_3">As of v0.9, there are three <i>spec layer</i> types available out of the box for you to combine and make various overlays.
-        Click the button to learn more.</string>
+    <string name="copy_3">Yay! 0.9.2 introduces <b>declarative config</b>, making building overlays a breeze.
+        Examine the <font face="monospace">/res/raw/overlay_config</font> to see how, or… Scratch that, try it out right here!</string>
+
+
     <string name="layer_types">Layer types</string>
     <string-array name="bullet_points">
-        <item>Horizontal and vertical grid lines, repeating at a fixed step, with optional offset and margins.
-            Add two grid line layers to make a grid.\n</item>
-        <item>Guides of arbitrary color and thickness, to make keylines and highlights.\n</item>
-        <item>Dimensions label, to inspect view’s dimensions at glance.\n</item>
-        <item>More spec layer types coming soon; meanwhile feel free to create your custom ones and show them to me!</item>
+        <item>Horizontal and vertical grid lines, repeating at a fixed step. Combine two grid line layers to make a square grid.</item>
+        <item>Guides at arbitrary distance from specified view edge.</item>
+        <item>Inset groups to clip and offset nested layers.</item>
+        <item>Fill layers that can paint rectangular areas with uniform color to highlight margins.</item>
+        <item>Dimensions labels, to inspect views’ dimensions at glance.</item>
+        <item>More spec layer types coming soon!</item>
     </string-array>
     <string name="got_it">Got it</string>
 
     <string name="copy_4">While controlling overlays from the notification is convenient, sometimes you simply don’t need it.
         With Rhythm you can explicitly create unlinked groups, new drawables and overlays, and assign them programmatically (see the source).</string>
 
-    <string name="copy_5">It’s not much yet, but if you already love this library and pictured how it would help you <i>tremendously</i> with
-        your next project, motor over to <a href="https://github.com/Actinarium/Rhythm">GitHub</a> to learn how you can support the developer. &#9829;</string>
+    <string name="copy_5">Thank you for following me to the end. If my calculations are correct, you should be <i>in love</i> with this library already, so why not support the developer?
+        If you’re feeling generous, you can gift me a game on Steam, but simply telling your fellow developers about Rhythm or adding me to your circles is also awesome!
+        Check out <a href="https://github.com/Actinarium/Rhythm">GitHub</a> to find out how you can help. &#9829;</string>
 </resources>

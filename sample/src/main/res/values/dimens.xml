@@ -17,11 +17,7 @@
 <resources>
     <dimen name="actionBarElevation">4dp</dimen>
 
-    <dimen name="bulletRadius">2dp</dimen>
-    <dimen name="bulletLeftPadding">6dp</dimen>
-    <dimen name="bulletRightPadding">14dp</dimen>
-
-    <dimen name="baselineStep">4dp</dimen>
-    <dimen name="leading20">20sp</dimen>
-    <dimen name="leading32">32sp</dimen>
+    <dimen name="bulletRadius">2sp</dimen>
+    <dimen name="bulletCenterX">8dp</dimen>
+    <dimen name="bulletLeadingMargin">16dp</dimen>
 </resources>

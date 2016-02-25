@@ -22,6 +22,8 @@ import com.actinarium.rhythm.RhythmControl;
 import com.actinarium.rhythm.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.config.OverlayInflater;
+import com.actinarium.rhythm.sample.customlayers.ImageBox;
+import com.actinarium.rhythm.sample.customlayers.LayoutBounds;
 import com.actinarium.rhythm.spec.GridLines;
 import com.actinarium.rhythm.spec.Guide;
 import com.actinarium.rhythm.spec.InsetGroup;
@@ -34,10 +36,12 @@ import java.util.List;
  *
  * @author Paul Danyliuk
  */
-public class RhythmShowcaseApplication extends Application implements RhythmControl.Host {
+public class RhythmSampleApplication extends Application implements RhythmControl.Host {
 
     public static final int ACTIVITY_OVERLAY_GROUP = 0;
     public static final int CARD_OVERLAY_GROUP = 1;
+    public static final int TEXT_OVERLAY_GROUP = 2;
+    public static final int DIALOG_OVERLAY_GROUP = 3;
 
     private RhythmControl mRhythmControl;
     private static final int RHYTHM_NOTIFICATION_ID = -2;
@@ -46,21 +50,23 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
     public void onCreate() {
         super.onCreate();
 
-        // Initialize this application's Rhythm control
+        // Initialize this application's Rhythm control. That's for the notification
         mRhythmControl = new RhythmControl(this);
 
         // Create the groups - that's to control their overlays separately
         // There may be as many groups as you need, but you need at least one
         // Groups attached to the control are assigned sequential indices starting at 0
         RhythmGroup activityBgGroup = mRhythmControl.makeGroup("Activity background");               // index = 0
-        RhythmGroup cardOverlayGroup = mRhythmControl.makeGroup("Card overlay");                     // index = 1
-        RhythmGroup dialogOverlayGroup = mRhythmControl.makeGroup("Dialog overlay");                 // index = 2
+        RhythmGroup cardOverlayGroup = mRhythmControl.makeGroup("Intermission card");                // index = 1
+        RhythmGroup textOverlayGroup = mRhythmControl.makeGroup("All text labels");                  // index = 2
+        RhythmGroup dialogOverlayGroup = mRhythmControl.makeGroup("Help dialog");                    // index = 3
 
         // Initialize inflater that we'll use to inflate overlays from declarative (human-readable) config
         final OverlayInflater inflater = OverlayInflater.createDefault(this);
 
-        // We have a custom layer type with a factory - let's register it within the inflater
-        inflater.registerFactory("image-box", new ImageBox.Factory());
+        // We have a few custom layer types with a factory - let's register them within the inflater
+        inflater.registerFactory(ImageBox.Factory.LAYER_TYPE, new ImageBox.Factory());
+        inflater.registerFactory(LayoutBounds.Factory.LAYER_TYPE, new LayoutBounds.Factory());
 
         // Inflate everything from /res/raw/overlay_config.
         List<RhythmOverlay> overlays = inflater.inflate(R.raw.overlay_config);
@@ -69,10 +75,12 @@ public class RhythmShowcaseApplication extends Application implements RhythmCont
         activityBgGroup.addOverlays(overlays.subList(0, 5));
         // Overlay #5 goes to the card group
         cardOverlayGroup.addOverlay(overlays.get(5));
-        // And overlay #6 goes to the dialog group
-        dialogOverlayGroup.addOverlay(overlays.get(6));
+        // Overlay #6 goes to text views group
+        textOverlayGroup.addOverlay(overlays.get(6));
+        // And overlay #7 goes to the dialog group
+        dialogOverlayGroup.addOverlay(overlays.get(7));
 
-        // Just FYI, it's also possible to create overlays programmatically, although it's pretty cumbersome.
+        // Just FYI, it's also possible to create overlays imperatively, although it's pretty cumbersome.
         // Here's how we would build a hybrid grid identical to the one on /res/raw/overlay_config lines 25-32:
         float density = getResources().getDisplayMetrics().density;
         //noinspection unused

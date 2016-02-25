@@ -30,37 +30,27 @@ import android.text.style.LeadingMarginSpan;
  *
  * @author Paul Danyliuk
  */
-public class MyBulletSpan implements LeadingMarginSpan {
+public class BulletSpan implements LeadingMarginSpan {
     private final int mBulletRadius;
-    private final int mBulletLeftPadding;
-    private final int mBulletRightPadding;
+    private final int mBulletCenterX;
+    private final int mLeadingMargin;
     private final boolean mWantColor;
     private final int mColor;
 
     private static Path sBulletPath = null;
-    private static final int STANDARD_BULLET_RADIUS = 4;
-    private static final int STANDARD_GAP_WIDTH = 8;
 
-    public MyBulletSpan() {
-        mBulletRadius = STANDARD_BULLET_RADIUS;
-        mBulletLeftPadding = STANDARD_GAP_WIDTH;
-        mBulletRightPadding = STANDARD_GAP_WIDTH;
-        mWantColor = false;
-        mColor = 0;
-    }
-
-    public MyBulletSpan(int bulletRadius, int bulletLeftPadding, int bulletRightPadding) {
+    public BulletSpan(int bulletRadius, int bulletCenterX, int leadingMargin) {
         mBulletRadius = bulletRadius;
-        mBulletLeftPadding = bulletLeftPadding;
-        mBulletRightPadding = bulletRightPadding;
+        mBulletCenterX = bulletCenterX;
+        mLeadingMargin = leadingMargin;
         mWantColor = false;
         mColor = 0;
     }
 
-    public MyBulletSpan(Parcel src) {
+    public BulletSpan(Parcel src) {
         mBulletRadius = src.readInt();
-        mBulletLeftPadding = src.readInt();
-        mBulletRightPadding = src.readInt();
+        mBulletCenterX = src.readInt();
+        mLeadingMargin = src.readInt();
         mWantColor = src.readInt() != 0;
         mColor = src.readInt();
     }
@@ -71,14 +61,14 @@ public class MyBulletSpan implements LeadingMarginSpan {
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(mBulletRadius);
-        dest.writeInt(mBulletLeftPadding);
-        dest.writeInt(mBulletRightPadding);
+        dest.writeInt(mBulletCenterX);
+        dest.writeInt(mLeadingMargin);
         dest.writeInt(mWantColor ? 1 : 0);
         dest.writeInt(mColor);
     }
 
     public int getLeadingMargin(boolean first) {
-        return 2 * mBulletRadius + mBulletLeftPadding + mBulletRightPadding;
+        return mLeadingMargin;
     }
 
     public void drawLeadingMargin(Canvas c, Paint p, int x, int dir,
@@ -87,10 +77,10 @@ public class MyBulletSpan implements LeadingMarginSpan {
                                   boolean first, Layout l) {
         if (((Spanned) text).getSpanStart(this) == start) {
             Paint.Style style = p.getStyle();
-            int oldcolor = 0;
+            int oldColor = 0;
 
             if (mWantColor) {
-                oldcolor = p.getColor();
+                oldColor = p.getColor();
                 p.setColor(mColor);
             }
 
@@ -103,15 +93,15 @@ public class MyBulletSpan implements LeadingMarginSpan {
                 }
 
                 c.save();
-                c.translate(x + dir * mBulletRadius + mBulletLeftPadding, (top + bottom) / 2.0f);
+                c.translate(x + dir * mBulletCenterX, (top + bottom) / 2.0f);
                 c.drawPath(sBulletPath, p);
                 c.restore();
             } else {
-                c.drawCircle(x + dir * mBulletRadius + mBulletLeftPadding, (top + bottom) / 2.0f, mBulletRadius, p);
+                c.drawCircle(x + dir * mBulletCenterX, (top + bottom) / 2.0f, mBulletRadius, p);
             }
 
             if (mWantColor) {
-                p.setColor(oldcolor);
+                p.setColor(oldColor);
             }
 
             p.setStyle(style);

@@ -21,6 +21,7 @@ import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
@@ -43,6 +44,16 @@ public class RhythmDrawable extends Drawable {
 
     protected RhythmOverlay mOverlay;
     protected Drawable mDecorated;
+
+    /**
+     * Create a Rhythm drawable for given Rhythm overlay. You can then change the displayed overlay via {@link
+     * #setOverlay(RhythmOverlay)} method.
+     *
+     * @param overlay Rhythm overlay to render into this drawable, can be <code>null</code>.
+     */
+    public RhythmDrawable(@Nullable RhythmOverlay overlay) {
+        mOverlay = overlay;
+    }
 
     @Override
     public void draw(Canvas canvas) {
@@ -103,7 +114,7 @@ public class RhythmDrawable extends Drawable {
 
     @Override
     public void setAlpha(int alpha) {
-        // No-op for the overlay, for simplicity reasons - propagate to decorated drawable only
+        // No-op for the overlay for simplicity reasons - propagate to decorated drawable only
         if (mDecorated != null) {
             mDecorated.setAlpha(alpha);
         }
@@ -111,7 +122,7 @@ public class RhythmDrawable extends Drawable {
 
     @Override
     public void setColorFilter(ColorFilter colorFilter) {
-        // No-op for the overlay, for simplicity reasons - propagate to decorated drawable only
+        // No-op for the overlay for simplicity reasons - propagate to decorated drawable only
         if (mDecorated != null) {
             mDecorated.setColorFilter(colorFilter);
         }
@@ -119,7 +130,8 @@ public class RhythmDrawable extends Drawable {
 
     @Override
     public int getOpacity() {
-        return PixelFormat.TRANSLUCENT;
+        final int overlayOpacity = mOverlay == null ? PixelFormat.TRANSPARENT : PixelFormat.TRANSLUCENT;
+        return mDecorated != null ? Drawable.resolveOpacity(mDecorated.getOpacity(), overlayOpacity) : overlayOpacity;
     }
 
     @Override
@@ -137,5 +149,23 @@ public class RhythmDrawable extends Drawable {
         return mDecorated != null ? mDecorated.getState() : super.getState();
     }
 
-    // todo: evaluate if any other Drawable methods should be decorated
+    @Override
+    public boolean getPadding(@NonNull Rect padding) {
+        if (mDecorated == null) {
+            padding.set(0, 0, 0, 0);
+            return false;
+        } else {
+            return mDecorated.getPadding(padding);
+        }
+    }
+
+    @Override
+    protected boolean onStateChange(int[] state) {
+        return mDecorated != null && mDecorated.setState(state);
+    }
+
+    @Override
+    protected boolean onLevelChange(int level) {
+        return mDecorated != null && mDecorated.setLevel(level);
+    }
 }

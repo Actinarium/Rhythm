@@ -31,22 +31,23 @@ import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.actinarium.rhythm.RhythmControl;
 import com.actinarium.rhythm.RhythmDrawable;
 import com.actinarium.rhythm.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
-import com.actinarium.rhythm.sample.util.TextViewUtils;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.spec.Guide;
 
-import static com.actinarium.rhythm.sample.RhythmShowcaseApplication.ACTIVITY_OVERLAY_GROUP;
-import static com.actinarium.rhythm.sample.RhythmShowcaseApplication.CARD_OVERLAY_GROUP;
+import static com.actinarium.rhythm.sample.RhythmSampleApplication.ACTIVITY_OVERLAY_GROUP;
+import static com.actinarium.rhythm.sample.RhythmSampleApplication.CARD_OVERLAY_GROUP;
+import static com.actinarium.rhythm.sample.RhythmSampleApplication.TEXT_OVERLAY_GROUP;
 
 public class MainActivity extends AppCompatActivity {
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,27 +56,57 @@ public class MainActivity extends AppCompatActivity {
         // Rhythm-unrelated init routines
         setupToolbar();
         setupRecentsIcon();
-        setupInteractivity();
-        fixTextLeading();
+        // Make links clickable
+        ((TextView) findViewById(R.id.copy_1)).setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.copy_6)).setMovementMethod(LinkMovementMethod.getInstance());
 
         // Find required layouts
         LinearLayout contentView = (LinearLayout) findViewById(R.id.content);
         CardView cardView = (CardView) findViewById(R.id.card);
-        LinearLayout mallowsView = (LinearLayout) findViewById(R.id.mallows);
+        Button toggleCardOverlay = (Button) findViewById(R.id.toggle_card_overlay);
+        LinearLayout mallowsView = (LinearLayout) findViewById(R.id.thumbs);
 
         // Setup Rhythm
         // First let's attach the activity and the card to the groups defined in app's RhythmControl
-        RhythmControl rhythmControl = ((RhythmShowcaseApplication) getApplication()).getRhythmControl();
+        final RhythmControl rhythmControl = ((RhythmSampleApplication) getApplication()).getRhythmControl();
+        final RhythmGroup cardOverlayGroup = rhythmControl.getGroup(CARD_OVERLAY_GROUP);
+        final RhythmGroup activityOverlayGroup = rhythmControl.getGroup(ACTIVITY_OVERLAY_GROUP);
+        final RhythmGroup textOverlayGroup = rhythmControl.getGroup(TEXT_OVERLAY_GROUP);
 
-        // Decorate the provided views' backgrounds (any views) - draw overlays UNDER content
-        rhythmControl.getGroup(ACTIVITY_OVERLAY_GROUP).decorate(contentView);
-        // Decorate the provided views' foregrounds (only for FrameLayouts) - draw overlays OVER content
-        rhythmControl.getGroup(CARD_OVERLAY_GROUP).decorateForeground(cardView);
+        // Decorate the background of our topmost scrollable layout (LinearLayout) to draw overlays from the 1st group
+        // The decorate() method works with all views and draws overlay UNDER content
+        activityOverlayGroup.decorate(contentView);
 
-        // Now let's create an unlinked group (i.e. not attached to the control) and draw some dimensions over mallows
-        // Note that when not using this group/overlay in notification, titles don't really matter, so leave them null
+        // Decorate the foreground of our intermission card with the overlay from the 2nd group
+        // If you have FrameLayout or its child classes, you can use decorateForeground() to draw overlays OVER content
+        cardOverlayGroup.decorateForeground(cardView);
+
+        // Decorate all text views with overlays attached to the 3rd group
+        for (int i = 0, count = contentView.getChildCount(); i < count; i++) {
+            final View child = contentView.getChildAt(i);
+            if (child instanceof com.actinarium.aligned.TextView) {
+                textOverlayGroup.decorate(child);
+            }
+        }
+
+        // Make one of the card buttons toggle the card's overlay
+        toggleCardOverlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardOverlayGroup.selectNextOverlay();
+            }
+        });
+
+        // Disable card and text overlays by default
+        cardOverlayGroup.selectOverlay(RhythmGroup.NO_OVERLAY);
+        textOverlayGroup.selectOverlay(RhythmGroup.NO_OVERLAY);
+
+        // Now let's just
+
         RhythmGroup mallowsGroup = new RhythmGroup();
         final int accentColor = getResources().getColor(R.color.accent);
+
+
         RhythmOverlay frameAndDimensions = new RhythmOverlay()
                 .addLayer(new Guide(Gravity.LEFT, 0).setAlignOutside(true).setColor(accentColor))
                 .addLayer(new Guide(Gravity.TOP, 0).setAlignOutside(true).setColor(accentColor))
@@ -91,12 +122,11 @@ public class MainActivity extends AppCompatActivity {
         mallowsView.getChildAt(3).setBackgroundDrawable(drawable);
 
         // Furthermore, you may not even need groups - for full manual transmission make RhythmDrawables explicitly
-        RhythmDrawable totallyExplicitlyCreatedDrawable = new RhythmDrawable();
         RhythmOverlay lastFrameOverlay = new RhythmOverlay()
                 .addLayersFrom(frameAndDimensions)
                 .addLayer(new Guide(Gravity.RIGHT, 0).setAlignOutside(true).setColor(accentColor));
-        totallyExplicitlyCreatedDrawable.setOverlay(lastFrameOverlay);
-        mallowsView.getChildAt(4).setBackgroundDrawable(totallyExplicitlyCreatedDrawable);
+        RhythmDrawable totallyExplicitlyCreatedDrawable = new RhythmDrawable(lastFrameOverlay);
+        mallowsView.getChildAt(3).setBackgroundDrawable(totallyExplicitlyCreatedDrawable);
 
         // Take a look at FeaturesDialogFragment and its layout for RhythmicFrameLayout example
     }
@@ -126,49 +156,5 @@ public class MainActivity extends AppCompatActivity {
             setTaskDescription(td);
             bm.recycle();
         }
-    }
-
-    private void setupInteractivity() {
-        // Make links clickable
-        ((TextView) findViewById(R.id.copy_1)).setMovementMethod(LinkMovementMethod.getInstance());
-        ((TextView) findViewById(R.id.copy_6)).setMovementMethod(LinkMovementMethod.getInstance());
-
-        // Make card buttons responsible
-        findViewById(R.id.agree).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, R.string.agree_msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-        findViewById(R.id.disagree).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, R.string.disagree_msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Show dialog button
-        findViewById(R.id.show_dialog).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FeaturesDialogFragment fragment = new FeaturesDialogFragment();
-                fragment.show(getSupportFragmentManager(), FeaturesDialogFragment.TAG);
-            }
-        });
-    }
-
-    private void fixTextLeading() {
-        final int step = getResources().getDimensionPixelSize(R.dimen.baselineStep);
-        final int leading20dp = getResources().getDimensionPixelSize(R.dimen.leading20);
-        final int leading32dp = getResources().getDimensionPixelSize(R.dimen.leading32);
-        TextViewUtils.setLeading((TextView) findViewById(R.id.content_title), step, leading32dp);
-        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_1), step, leading20dp);
-        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_2), step, leading20dp);
-        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_3), step, leading20dp);
-        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_4), step, leading20dp);
-        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_5), step, leading20dp);
-        TextViewUtils.setLeading((TextView) findViewById(R.id.copy_6), step, leading20dp);
-        TextViewUtils.setLeading((TextView) findViewById(R.id.card_title), step, leading20dp);
-        TextViewUtils.setLeading((TextView) findViewById(R.id.card_copy), step, leading20dp);
     }
 }

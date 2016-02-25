@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.sample;
+package com.actinarium.rhythm.sample.customlayers;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -44,7 +44,7 @@ public class ImageBox implements RhythmSpecLayer {
     protected Paint mPaint;
     protected DimensionsLabel mDimensionsLabel;
 
-    private static final int COLOR = 0x20000000;
+    private static final int COLOR = 0x40000000;
 
     public ImageBox(int width, int height, int distanceX, int distanceY, int gravity, float scaleFactor) {
         mWidth = width;
@@ -97,6 +97,8 @@ public class ImageBox implements RhythmSpecLayer {
      * object
      */
     public static class Factory implements SpecLayerFactory<ImageBox> {
+
+        public static final String LAYER_TYPE = "image-box";
 
         @Override
         public ImageBox getForConfig(LayerConfig config) {
