@@ -28,7 +28,7 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.config.LayerConfig;
-import com.actinarium.rhythm.config.SpecLayerFactory;
+import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 import java.text.DecimalFormat;
 
@@ -203,7 +203,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
      * A factory that creates new DimensionsLabel layers from config lines like <code>dimensions-label gravity=top|left
      * text-color=black text-size=8sp</code>
      */
-    public static class Factory implements SpecLayerFactory<DimensionsLabel> {
+    public static class Factory implements RhythmSpecLayerFactory<DimensionsLabel> {
 
         public static final String LAYER_TYPE = "dimensions-label";
 

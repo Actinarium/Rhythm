@@ -23,7 +23,7 @@ import android.graphics.Rect;
 import android.view.Gravity;
 import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.config.RhythmInflationException;
-import com.actinarium.rhythm.config.SpecLayerFactory;
+import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.RhythmSpecLayer;
 
@@ -96,7 +96,7 @@ public class ImageBox implements RhythmSpecLayer {
      * A factory to add inflater support for this custom layer. See how you can get various values from the LayerConfig
      * object
      */
-    public static class Factory implements SpecLayerFactory<ImageBox> {
+    public static class Factory implements RhythmSpecLayerFactory<ImageBox> {
 
         public static final String LAYER_TYPE = "image-box";
 

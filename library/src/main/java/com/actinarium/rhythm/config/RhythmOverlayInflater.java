@@ -48,14 +48,14 @@ import java.util.regex.Pattern;
  *
  * @author Paul Danyliuk
  */
-public class OverlayInflater {
+public class RhythmOverlayInflater {
 
     private static final int INITIAL_FACTORIES_CAPACITY = 8;
     private static final Pattern ARGUMENTS_PATTERN = Pattern.compile("([^\\s=]+)(?:=([^\\s]+))?");
     private static final int NOT_STARTED = -1;
 
     private Context mContext;
-    private Map<String, SpecLayerFactory> mFactories;
+    private Map<String, RhythmSpecLayerFactory> mFactories;
 
     /**
      * <p>Create a new instance of default overlay inflater. It comes pre-configured to inflate all bundled {@link
@@ -64,7 +64,7 @@ public class OverlayInflater {
      * lines &mdash; if you don't want this behavior (e.g. if you want to mutate the inflated layers individually
      * afterwards), create an empty inflater and register the factories yourself like this:
      * <pre><code>
-     * OverlayInflater inflater = createEmpty(context);
+     * RhythmOverlayInflater inflater = createEmpty(context);
      * inflater.registerFactory(GridLines.Factory.LAYER_TYPE, new GridLines.Factory());
      * inflater.registerFactory(Guide.Factory.LAYER_TYPE, new Guide.Factory());
      * inflater.registerFactory(Fill.Factory.LAYER_TYPE, new Fill.Factory());
@@ -76,8 +76,8 @@ public class OverlayInflater {
      * @return a new overlay inflater instance configured to inflate bundled spec layers
      * @see #createEmpty(Context)
      */
-    public static OverlayInflater createDefault(Context context) {
-        final OverlayInflater inflater = createEmpty(context);
+    public static RhythmOverlayInflater createDefault(Context context) {
+        final RhythmOverlayInflater inflater = createEmpty(context);
 
         // Register bundled spec layers. Wrap guide, fill, and grid line factory in a caching decorator
         inflater.mFactories.put(GridLines.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new GridLines.Factory()));
@@ -91,13 +91,13 @@ public class OverlayInflater {
 
     /**
      * Create a new instance of overlay inflater with no factories registered. You should register all the required
-     * factories by calling {@link #registerFactory(String, SpecLayerFactory)} method.
+     * factories by calling {@link #registerFactory(String, RhythmSpecLayerFactory)} method.
      *
      * @param context Context
      * @return a new overlay inflater instance that is not configured to inflate any spec layer types
      */
-    public static OverlayInflater createEmpty(Context context) {
-        final OverlayInflater inflater = new OverlayInflater();
+    public static RhythmOverlayInflater createEmpty(Context context) {
+        final RhythmOverlayInflater inflater = new RhythmOverlayInflater();
         inflater.mContext = context;
         inflater.mFactories = new HashMap<>(INITIAL_FACTORIES_CAPACITY);
         return inflater;
@@ -106,7 +106,7 @@ public class OverlayInflater {
     /**
      * Private constructor. Use {@link #createDefault(Context)} or {@link #createEmpty(Context)} instead
      */
-    private OverlayInflater() {}
+    private RhythmOverlayInflater() {}
 
     /**
      * Register a factory for provided layer type. Use this method to register factories for your custom spec layers or
@@ -116,7 +116,7 @@ public class OverlayInflater {
      * @param factory   a factory object that will inflate config line into a layer
      * @return this for chaining
      */
-    public OverlayInflater registerFactory(@NonNull String layerType, @NonNull SpecLayerFactory factory) {
+    public RhythmOverlayInflater registerFactory(@NonNull String layerType, @NonNull RhythmSpecLayerFactory factory) {
         mFactories.put(layerType, factory);
         return this;
     }
@@ -124,14 +124,14 @@ public class OverlayInflater {
     /**
      * Add an alias for arbitrary layer type. This will make multiple layer type strings map to the same factory. For
      * custom layers, a slightly more efficient way would be to simply call {@link #registerFactory(String,
-     * SpecLayerFactory)} multiple times with different strings and the same factory objects to avoid lookups.
+     * RhythmSpecLayerFactory)} multiple times with different strings and the same factory objects to avoid lookups.
      *
      * @param existingLayerType layer type string for layer to alias (used for lookup)
      * @param aliasLayerType    layer type string to map to the same factory
      * @return this for chaining
      */
-    public OverlayInflater addAlias(@NonNull String existingLayerType, @NonNull String aliasLayerType) {
-        SpecLayerFactory factory = mFactories.get(existingLayerType);
+    public RhythmOverlayInflater addAlias(@NonNull String existingLayerType, @NonNull String aliasLayerType) {
+        RhythmSpecLayerFactory factory = mFactories.get(existingLayerType);
         if (factory != null) {
             mFactories.put(aliasLayerType, factory);
         } else {
@@ -295,7 +295,7 @@ public class OverlayInflater {
      */
     public RhythmSpecLayer inflateLayer(LayerConfig config) {
         config.setDisplayMetrics(mContext.getResources().getDisplayMetrics());
-        SpecLayerFactory factory = mFactories.get(config.getLayerType());
+        RhythmSpecLayerFactory factory = mFactories.get(config.getLayerType());
         if (factory == null) {
             throw new RhythmInflationException("No factory registered for type \"" + config.getLayerType() + "\"");
         }
@@ -307,9 +307,9 @@ public class OverlayInflater {
      *
      * @param configString configuration string, indented with spaces if required, starting with layer title and
      *                     containing args or key=value pairs
-     * @return layer config object to feed to {@link SpecLayerFactory#getForConfig(LayerConfig)}. <b>Note:</b> does not
-     * have {@link DisplayMetrics} injected into it - you have to do it yourself before querying complex dimensions from
-     * this layer config object.
+     * @return layer config object to feed to {@link RhythmSpecLayerFactory#getForConfig(LayerConfig)}. <b>Note:</b>
+     * does not have {@link DisplayMetrics} injected into it - you have to do it yourself before querying complex
+     * dimensions from this layer config object.
      */
     public static LayerConfig parseConfig(String configString) {
         // Let's just iterate over the first chars to get indent and layer type, and parse the arguments with regex

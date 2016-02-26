@@ -25,7 +25,7 @@ import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.config.RhythmInflationException;
-import com.actinarium.rhythm.config.SpecLayerFactory;
+import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
  * A layer that draws a horizontal or vertical full-bleed guide at the specified distance from the specified edge of a
@@ -147,7 +147,7 @@ public class Guide implements RhythmSpecLayer {
      * A factory that creates new Guides from config lines like <code>guide gravity=left distance=16dp thickness=3px
      * outside</code>
      */
-    public static class Factory implements SpecLayerFactory<Guide> {
+    public static class Factory implements RhythmSpecLayerFactory<Guide> {
 
         public static final String LAYER_TYPE = "guide";
 

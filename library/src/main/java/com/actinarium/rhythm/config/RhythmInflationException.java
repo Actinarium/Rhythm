@@ -17,7 +17,8 @@
 package com.actinarium.rhythm.config;
 
 /**
- * An exception to be thrown when {@link OverlayInflater} or {@link SpecLayerFactory} cannot inflate declarative config
+ * An exception to be thrown when {@link RhythmOverlayInflater} or {@link RhythmSpecLayerFactory} cannot inflate
+ * declarative config
  *
  * @author Paul Danyliuk
  */

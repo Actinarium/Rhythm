@@ -20,15 +20,15 @@ import com.actinarium.rhythm.RhythmSpecLayer;
 
 /**
  * Interface for a factory that can instantiate a {@link RhythmSpecLayer} implementation from provided {@link
- * LayerConfig}. These factories are used by {@link OverlayInflater} to inflate declarative config into respective
- * overlays. If you make a custom spec layer, you should also create a corresponding <code>SpecLayerFactory</code> and
- * register it within {@link OverlayInflater#registerFactory(String, SpecLayerFactory)} method.<br>Concrete factories
- * may implement some sort of caching and provide the same {@link RhythmSpecLayer} instances for equal {@link
- * LayerConfig}s if they can be reused, but it's not mandatory.
+ * LayerConfig}. These factories are used by {@link RhythmOverlayInflater} to inflate declarative config into respective
+ * overlays. If you make a custom spec layer, you should also create a corresponding <code>RhythmSpecLayerFactory</code>
+ * and register it within {@link RhythmOverlayInflater#registerFactory(String, RhythmSpecLayerFactory)}
+ * method.<br>Concrete factories may implement some sort of caching and provide the same {@link RhythmSpecLayer}
+ * instances for equal {@link LayerConfig}s if they can be reused, but it's not mandatory.
  *
  * @author Paul Danyliuk
  */
-public interface SpecLayerFactory<T extends RhythmSpecLayer> {
+public interface RhythmSpecLayerFactory<T extends RhythmSpecLayer> {
 
     /**
      * Create and configure a spec layer based on provided configuration, or get previously created one from cache if it

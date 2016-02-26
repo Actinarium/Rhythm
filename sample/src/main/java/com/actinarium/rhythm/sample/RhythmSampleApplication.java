@@ -21,7 +21,7 @@ import android.view.Gravity;
 import com.actinarium.rhythm.RhythmControl;
 import com.actinarium.rhythm.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
-import com.actinarium.rhythm.config.OverlayInflater;
+import com.actinarium.rhythm.config.RhythmOverlayInflater;
 import com.actinarium.rhythm.sample.customlayers.ImageBox;
 import com.actinarium.rhythm.sample.customlayers.LayoutBounds;
 import com.actinarium.rhythm.spec.GridLines;
@@ -62,7 +62,7 @@ public class RhythmSampleApplication extends Application implements RhythmContro
         RhythmGroup dialogOverlayGroup = mRhythmControl.makeGroup("Help dialog");                    // index = 3
 
         // Initialize inflater that we'll use to inflate overlays from declarative (human-readable) config
-        final OverlayInflater inflater = OverlayInflater.createDefault(this);
+        final RhythmOverlayInflater inflater = RhythmOverlayInflater.createDefault(this);
 
         // We have a few custom layer types with a factory - let's register them within the inflater
         inflater.registerFactory(ImageBox.Factory.LAYER_TYPE, new ImageBox.Factory());

@@ -25,7 +25,7 @@ import android.graphics.Region;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.config.RhythmInflationException;
-import com.actinarium.rhythm.config.SpecLayerFactory;
+import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
  * A simple custom layer that draws layout bounds, similarly to "Draw layout bounds" in Developer options
@@ -72,7 +72,7 @@ public class LayoutBounds implements RhythmSpecLayer {
         canvas.restore();
     }
 
-    public static class Factory implements SpecLayerFactory<LayoutBounds> {
+    public static class Factory implements RhythmSpecLayerFactory<LayoutBounds> {
 
         public static final String LAYER_TYPE = "layout-bounds";
 

@@ -25,7 +25,7 @@ import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.config.RhythmInflationException;
-import com.actinarium.rhythm.config.SpecLayerFactory;
+import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
  * A spec layer for horizontal <b>or</b> vertical grid lines (not both at once!), repeating at a fixed step. Horizontal
@@ -170,7 +170,7 @@ public class GridLines implements RhythmSpecLayer {
      * A factory that creates new GridLines layers from config lines like <code>grid-lines gravity=left step=4dp
      * thickness=1px color=#00FFFF</code>
      */
-    public static class Factory implements SpecLayerFactory<GridLines> {
+    public static class Factory implements RhythmSpecLayerFactory<GridLines> {
 
         public static final String LAYER_TYPE = "grid-lines";
 

@@ -21,7 +21,7 @@ import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import com.actinarium.rhythm.AbstractSpecLayerGroup;
 import com.actinarium.rhythm.config.LayerConfig;
-import com.actinarium.rhythm.config.SpecLayerFactory;
+import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -260,7 +260,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
     /**
      * A factory that creates new InsetGroups from config lines like <code>inset no-clip top=24dp width=50%</code>
      */
-    public static class Factory implements SpecLayerFactory<InsetGroup> {
+    public static class Factory implements RhythmSpecLayerFactory<InsetGroup> {
 
         public static final String LAYER_TYPE = "inset";
 

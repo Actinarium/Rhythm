@@ -22,7 +22,7 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.config.LayerConfig;
-import com.actinarium.rhythm.config.SpecLayerFactory;
+import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
  * A layer that fills all provided area with solid color. You will usually want to use it inside {@link InsetGroup} to
@@ -66,7 +66,7 @@ public class Fill implements RhythmSpecLayer {
     /**
      * A factory that creates new Fill layers from config lines like <code>fill color=#2000FFFF</code>
      */
-    public static class Factory implements SpecLayerFactory<Fill> {
+    public static class Factory implements RhythmSpecLayerFactory<Fill> {
 
         public static final String LAYER_TYPE = "fill";
 

@@ -26,12 +26,12 @@ import java.util.Map;
  *
  * @author Paul Danyliuk
  */
-public class SimpleCacheFactory<T extends RhythmSpecLayer> implements SpecLayerFactory<T> {
+public class SimpleCacheFactory<T extends RhythmSpecLayer> implements RhythmSpecLayerFactory<T> {
 
-    private SpecLayerFactory<T> mDecoratedFactory;
+    private RhythmSpecLayerFactory<T> mDecoratedFactory;
     private Map<LayerConfig, T> mCache;
 
-    public SimpleCacheFactory(SpecLayerFactory<T> decoratedFactory) {
+    public SimpleCacheFactory(RhythmSpecLayerFactory<T> decoratedFactory) {
         mDecoratedFactory = decoratedFactory;
         mCache = new HashMap<>();
     }
