@@ -16,18 +16,12 @@
 
 package com.actinarium.rhythm.sample;
 
-import android.app.ActivityManager;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -51,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Rhythm-unrelated init routines
         setupToolbar();
-        setupRecentsIcon();
         setupInteractivity(savedInstanceState);
 
         // Find required layouts
@@ -106,21 +99,6 @@ public class MainActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setElevation(getResources().getDimension(R.dimen.actionBarElevation));
         actionBar.setTitle(R.string.app_title);
-    }
-
-    private void setupRecentsIcon() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            TypedValue typedValue = new TypedValue();
-            Resources.Theme theme = getTheme();
-            theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
-            int color = typedValue.data;
-
-            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.arl_rhythm);
-            ActivityManager.TaskDescription td = new ActivityManager.TaskDescription(null, bm, color);
-
-            setTaskDescription(td);
-            bm.recycle();
-        }
     }
 
     private void setupInteractivity(Bundle savedInstanceState) {

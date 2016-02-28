@@ -67,7 +67,8 @@ public class RhythmSandbox {
     public static final List<CharSequence> AMBIGUOUS_AS_LIST = Arrays.asList(AMBIGUOUS);
 
     private static final String DEFAULT_SANDBOX_CONFIG =
-            "grid-lines gravity=top step=4dp color=#800091EA\n" +
+            "grid-lines gravity=left step=8dp\n" +
+            "grid-lines gravity=top  step=4dp color=#800091EA\n" +
                     "inset left=0dp width=16dp\n" +
                     " fill\n" +
                     "inset right=0dp width=16dp\n" +

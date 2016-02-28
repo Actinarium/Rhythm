@@ -16,14 +16,17 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.actinarium.rhythm.sample">
 
     <application
+            android:fullBackupContent="true"
             android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/ic_rhythm_launcher"
             android:label="@string/app_name"
             android:theme="@style/AppTheme"
-            android:name=".RhythmSampleApplication">
+            android:name=".RhythmSampleApplication"
+            tools:ignore="GoogleAppIndexingWarning">
 
         <activity
                 android:name=".MainActivity"

@@ -174,9 +174,8 @@ If you already feel that this library is a godsend that will save you lots of ti
 I’m about to publish a standalone app that’s similar to Rhythm but is even easier to use, and you will make me
 very happy if you try it out.
 
-Also if you’re really generous and want to reward my work, you can buy me something from my [wishlist on Steam][steam].
-I don’t have a PayPal donation pool yet, but I’ll be offering in-app donations and pay-what-you-want features in my
-upcoming apps, so that you can get value for your buck.
+If you’re really generous and want to reward my work, you can gift me something from my [wishlist on Steam][steam].
+Also I’ll be offering in-app donations and pay-what-you-want features in my upcoming apps.
 
 ## License
 
