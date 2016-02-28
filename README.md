@@ -5,6 +5,10 @@ your layouts according to the [principles][mdspec] of beautiful, balanced, _rhyt
 
 If you are passionate about carefully crafted layouts and aspiring to #BuildBetterApps, add Rhythm into your toolchain.
 
+**Attention!** The library has been updated recently, and the new version comes with significant API changes.
+The documentation will be updated soon, meanwhile if you’re ready to embrace the new functionality, such as
+**declarative configuration** and inset groups, use the sample as a reference.
+
 ![Rhythm][heroimg]
 
 **Key features:**
@@ -27,7 +31,7 @@ If you are passionate about carefully crafted layouts and aspiring to #BuildBett
 * Open source, open for forks, pull requests, and suggestions².
 
 Sample application available: [APK][apk] or:
-[![Get it on Google Play](https://developer.android.com/images/brand/en_generic_rgb_wo_45.png)][playstore]
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png)][playstore]
 
 **Important note:** this is a pre-release version of Rhythm. Things may break and APIs may change.
 See [Plans for the future](#plans-for-the-future) for more info.
@@ -192,7 +196,7 @@ in the notification. This will be addressed in v1.0. The drawing itself works fi
 [apk]: https://raw.githubusercontent.com/Actinarium/Rhythm/master/sample/sample-release.apk
 [playstore]: https://play.google.com/store/apps/details?id=com.actinarium.rhythm.sample
 [samplesrc]: https://github.com/Actinarium/Rhythm/tree/master/sample
-[appsrc]: https://github.com/Actinarium/Rhythm/blob/master/sample/src/main/java/com/actinarium/rhythm/sample/RhythmShowcaseApplication.java
+[appsrc]: https://github.com/Actinarium/Rhythm/blob/master/sample/src/main/java/com/actinarium/rhythm/sample/RhythmSampleApplication.java
 [gplus]: https://plus.google.com/u/0/+PaulDanyliuk/posts
 [twitter]: https://twitter.com/actinarium
 [steam]: http://steamcommunity.com/id/actine/wishlist
