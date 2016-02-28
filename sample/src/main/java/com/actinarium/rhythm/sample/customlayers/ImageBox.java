@@ -26,10 +26,13 @@ import com.actinarium.rhythm.config.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.RhythmSpecLayer;
+import com.actinarium.rhythm.spec.InsetGroup;
 
 /**
  * An example of a custom spec layer drawing a translucent overlay of specified width and height, gravity and margin,
- * with dimensions label in the center
+ * with dimensions label in the center. In fact, due to the introduction of a more universal {@link InsetGroup}, this
+ * spec layer could be significantly simplified, but all the w/h/gravity/distance parameters are purposefully kept to
+ * provide an example of a more complex custom layer with a rather complex {@link Factory}
  *
  * @author Paul Danyliuk
  */

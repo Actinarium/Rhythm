@@ -63,9 +63,3 @@ image-box gravity=top|right width=80dp height=80dp distance-x=16dp distance-y=16
 # Text view size & bounds
 layout-bounds crosshair-size=16dp
 dimensions-label gravity=bottom|right text-size=12dp
-
-# Dialog bullet list
-grid-lines gravity=top step=4dp color=#800091EA
-guide gravity=left  distance=24dp
-guide gravity=right distance=24dp
-guide gravity=left  distance=40dp

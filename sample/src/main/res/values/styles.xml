@@ -16,12 +16,13 @@
 
 <resources>
 
-    <color name="windowBackground">#F5F5F5</color>
+    <color name="windowBackground">#F8F8F8</color>
     <color name="accent">#7FD2F6</color>
+    <color name="hairline">#1f000000</color>
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">#105aae</item>
+        <item name="colorPrimary">#105AAE</item>
         <item name="colorPrimaryDark">#0D47A1</item>
         <item name="colorAccent">@color/accent</item>
         <item name="android:windowBackground">@color/windowBackground</item>

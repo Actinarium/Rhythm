@@ -45,7 +45,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author Paul Danyliuk
  * @version $Id$
  */
-public class RhythmicFrameLayout extends FrameLayout {
+public class RhythmFrameLayout extends FrameLayout {
 
     /**
      * Use this value to indicate that this view is not connected to any {@link RhythmGroup} and shouldn’t display any
@@ -93,24 +93,24 @@ public class RhythmicFrameLayout extends FrameLayout {
 
     // Constructors
 
-    public RhythmicFrameLayout(Context context) {
+    public RhythmFrameLayout(Context context) {
         super(context);
         mRhythmGroupIndex = NO_GROUP;
         mOverlayPosition = OVERLAY_POSITION_UNDER_CONTENT;
     }
 
-    public RhythmicFrameLayout(Context context, AttributeSet attrs) {
+    public RhythmFrameLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         initFromAttrs(context, attrs, 0, 0);
     }
 
-    public RhythmicFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RhythmFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initFromAttrs(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public RhythmicFrameLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public RhythmFrameLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initFromAttrs(context, attrs, defStyleAttr, defStyleRes);
     }
@@ -118,9 +118,9 @@ public class RhythmicFrameLayout extends FrameLayout {
     private void initFromAttrs(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray array = context
                 .getTheme()
-                .obtainStyledAttributes(attrs, R.styleable.RhythmicFrameLayout, defStyleAttr, defStyleRes);
+                .obtainStyledAttributes(attrs, R.styleable.RhythmFrameLayout, defStyleAttr, defStyleRes);
         try {
-            int position = array.getInteger(R.styleable.RhythmicFrameLayout_overlayPosition, OVERLAY_POSITION_UNDER_CONTENT);
+            int position = array.getInteger(R.styleable.RhythmFrameLayout_overlayPosition, OVERLAY_POSITION_UNDER_CONTENT);
             if (position == OVERLAY_POSITION_UNDER_BACKGROUND
                     || position == OVERLAY_POSITION_UNDER_CONTENT
                     || position == OVERLAY_POSITION_OVER_CONTENT
@@ -131,7 +131,7 @@ public class RhythmicFrameLayout extends FrameLayout {
                 mOverlayPosition = OVERLAY_POSITION_UNDER_CONTENT;
             }
 
-            mRhythmGroupIndex = array.getInteger(R.styleable.RhythmicFrameLayout_rhythmGroup, NO_GROUP);
+            mRhythmGroupIndex = array.getInteger(R.styleable.RhythmFrameLayout_rhythmGroup, NO_GROUP);
         } finally {
             array.recycle();
         }

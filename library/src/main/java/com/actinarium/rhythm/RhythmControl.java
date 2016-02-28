@@ -19,13 +19,13 @@ package com.actinarium.rhythm;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.Nullable;
-import com.actinarium.rhythm.widget.RhythmicFrameLayout;
+import com.actinarium.rhythm.widget.RhythmFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>A controller that interconnects {@link RhythmGroup}s, {@link RhythmicFrameLayout}s, and the Quick Control
+ * <p>A controller that interconnects {@link RhythmGroup}s, {@link RhythmFrameLayout}s, and the Quick Control
  * notification, and should be used as an entry point to accessing Rhythm library programmatically. For proper function
  * a singleton Rhythm control must be accessible from ApplicationContext (i.e. the app’s {@link Application} object must
  * implement {@link Host}).</p><p><b>Note:</b> if you don’t need the notification or <code>RhythmicFrameLayouts</code>,
@@ -163,7 +163,7 @@ public final class RhythmControl {
 
     /**
      * The {@link Application} must implement this interface to provide the singleton {@link RhythmControl} instance
-     * through its method {@link #getRhythmControl()} to {@link RhythmicFrameLayout}s and the Quick Control notification
+     * through its method {@link #getRhythmControl()} to {@link RhythmFrameLayout}s and the Quick Control notification
      */
     public interface Host {
 

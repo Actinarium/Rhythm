@@ -43,7 +43,7 @@ public class RhythmNotificationService extends IntentService {
 
     static final String EXTRA_NOTIFICATION_ID = "com.actinarium.rhythm.extra.NOTIFICATION_ID";
 
-    private static final int NOTIFICATION_ICON_COLOR = 0x6A50A7;
+    private static final int NOTIFICATION_ICON_COLOR = 0x105AAE;
     private static final int NOTIFICATION_ERROR_COLOR = 0xEF4343;
 
     public RhythmNotificationService() {
@@ -142,7 +142,7 @@ public class RhythmNotificationService extends IntentService {
     }
 
     private NotificationCompat.Builder makeCommonNotification(String text) {
-        return new NotificationCompat.Builder(this)
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.arl_rhythm)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -150,6 +150,16 @@ public class RhythmNotificationService extends IntentService {
                 .setShowWhen(false)
                 .setContentText(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text));
+
+        // Old androids throw an exception when the notification doesn't have content intent
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+            Intent contentAction = new Intent(this, RhythmNotificationService.class);
+            contentAction.setAction(ACTION_NEXT_OVERLAY);
+            PendingIntent piContentAction = PendingIntent.getService(this, 0, contentAction, PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(piContentAction);
+        }
+
+        return builder;
     }
 
     private void handleNextGroup() {

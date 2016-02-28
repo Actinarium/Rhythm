@@ -38,13 +38,13 @@ import java.util.List;
  */
 public class RhythmSampleApplication extends Application implements RhythmControl.Host {
 
-    public static final int ACTIVITY_OVERLAY_GROUP = 0;
+    public static final int CONTENT_OVERLAY_GROUP = 0;
     public static final int CARD_OVERLAY_GROUP = 1;
     public static final int TEXT_OVERLAY_GROUP = 2;
-    public static final int DIALOG_OVERLAY_GROUP = 3;
 
     private RhythmControl mRhythmControl;
     private static final int RHYTHM_NOTIFICATION_ID = -2;
+    private RhythmOverlayInflater mRhythmOverlayInflater;
 
     @Override
     public void onCreate() {
@@ -56,50 +56,55 @@ public class RhythmSampleApplication extends Application implements RhythmContro
         // Create the groups - that's to control their overlays separately
         // There may be as many groups as you need, but you need at least one
         // Groups attached to the control are assigned sequential indices starting at 0
-        RhythmGroup activityBgGroup = mRhythmControl.makeGroup("Activity background");               // index = 0
+        RhythmGroup contentBgGroup = mRhythmControl.makeGroup("All content background");             // index = 0
         RhythmGroup cardOverlayGroup = mRhythmControl.makeGroup("Intermission card");                // index = 1
         RhythmGroup textOverlayGroup = mRhythmControl.makeGroup("All text labels");                  // index = 2
-        RhythmGroup dialogOverlayGroup = mRhythmControl.makeGroup("Help dialog");                    // index = 3
 
         // Initialize inflater that we'll use to inflate overlays from declarative (human-readable) config
-        final RhythmOverlayInflater inflater = RhythmOverlayInflater.createDefault(this);
+        mRhythmOverlayInflater = RhythmOverlayInflater.createDefault(this);
 
-        // We have a few custom layer types with a factory - let's register them within the inflater
-        inflater.registerFactory(ImageBox.Factory.LAYER_TYPE, new ImageBox.Factory());
-        inflater.registerFactory(LayoutBounds.Factory.LAYER_TYPE, new LayoutBounds.Factory());
+        // Register the factories for our custom layers so that we can inflate them from text config
+        mRhythmOverlayInflater.registerFactory(ImageBox.Factory.LAYER_TYPE, new ImageBox.Factory());
+        mRhythmOverlayInflater.registerFactory(LayoutBounds.Factory.LAYER_TYPE, new LayoutBounds.Factory());
 
         // Inflate everything from /res/raw/overlay_config.
-        List<RhythmOverlay> overlays = inflater.inflate(R.raw.overlay_config);
+        List<RhythmOverlay> overlays = mRhythmOverlayInflater.inflate(R.raw.overlay_config);
 
-        // First 5 overlays are for activity bg group
-        activityBgGroup.addOverlays(overlays.subList(0, 5));
+        // Overlays 0..4 are for content bg group
+        contentBgGroup.addOverlays(overlays.subList(0, 5));
         // Overlay #5 goes to the card group
         cardOverlayGroup.addOverlay(overlays.get(5));
-        // Overlay #6 goes to text views group
+        // And the last overlay goes to text views group
         textOverlayGroup.addOverlay(overlays.get(6));
-        // And overlay #7 goes to the dialog group
-        dialogOverlayGroup.addOverlay(overlays.get(7));
 
-        // Just FYI, it's also possible to create overlays imperatively, although it's pretty cumbersome.
+        // It's also possible to create overlays imperatively, but it's cumbersome and DISCOURAGED. Use inflater instead
         // Here's how we would build a hybrid grid identical to the one on /res/raw/overlay_config lines 25-32:
-        float density = getResources().getDisplayMetrics().density;
-        //noinspection unused
+        float density = getResources().getDisplayMetrics().density;     // we need this to convert dp to px ourselves...
         RhythmOverlay unusedOverlay = new RhythmOverlay(5)
                 .addLayer(new GridLines(Gravity.TOP, (int) (4 * density)).setColor(GridLines.DEFAULT_GRID_COLOR))
-                .addLayer(new InsetGroup(1).addLayer(
-                        new GridLines(Gravity.TOP, (int) (8 * density))
+                .addLayer(new InsetGroup(1)
+                        .addLayer(new GridLines(Gravity.TOP, (int) (8 * density))
                                 .setOffset((int) (4 * density))
                                 .setColor(GridLines.DEFAULT_GRID_COLOR)))
                 .addLayer(new Guide(Gravity.LEFT, (int) (16 * density)))
                 .addLayer(new Guide(Gravity.RIGHT, (int) (16 * density)))
                 .addLayer(new Guide(Gravity.LEFT, (int) (72 * density)));
 
-        // Show a quick control notification, and we're all set!
+        // By default, if a group has overlays, the first one is initially selected.
+        // Let's hide overlays from these two groups and let you figure out how to enable them back via the notification
+        cardOverlayGroup.selectOverlay(RhythmGroup.NO_OVERLAY);
+        textOverlayGroup.selectOverlay(RhythmGroup.NO_OVERLAY);
+
+        // Show the notification, and we're all set!
         mRhythmControl.showQuickControl(RHYTHM_NOTIFICATION_ID);
     }
 
     @Override
     public RhythmControl getRhythmControl() {
         return mRhythmControl;
+    }
+
+    public RhythmOverlayInflater getRhythmOverlayInflater() {
+        return mRhythmOverlayInflater;
     }
 }

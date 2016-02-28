@@ -35,7 +35,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A container for arguments parsed from layer configuration line
+ * A container for arguments parsed from layer configuration line. The arguments are stored as a String->String key-value
+ * map and parsed as required types when requested by <code>get*()</code> methods, so if you need to request the same
+ * parameter multiple times, storing it in a variable may be a good idea.
  *
  * @author Paul Danyliuk
  */

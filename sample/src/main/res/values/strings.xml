@@ -14,42 +14,46 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Rhythm</string>
     <string name="app_title">Rhythm sample app</string>
 
     <string name="sample_header">Hello there!</string>
-    <string name="copy_1">This here is small sample app to show off Rhythm library and inspire you to use it.
-       Don’t forget to check out its <a href="https://github.com/Actinarium/Rhythm/tree/master/sample">source code</a> for complete experience.</string>
-
-    <string name="copy_warning"><b>Hey!</b> Since you’re already judging, please report if you notice something <i>out of rhythm</i> (i.e. not aligned to 8dp/4dp grid), will you?</string>
+    <string name="copy_1">This here is a sample app to show off my Rhythm library and inspire you to use it.
+        It’s a small library that allows you to define custom overlays (grids, keylines, and more) and draw them over your views,
+        therefore helping you to build pixel-perfect Material Design layouts.</string>
+    <string name="copy_2">After playing around with the sample check out its <a href="https://github.com/Actinarium/Rhythm/tree/master/sample">source code</a> for complete experience.</string>
+    <string name="copy_3"><b>Hey!</b> Since you’re already judging, please report if you notice something <i>out of rhythm</i> (i.e. not aligned to 8dp/4dp grid) in this sample, will you?</string>
 
     <string name="card_header">Intermission</string>
     <string name="card_text">Take a moment to appreciate this beautifully laid out card.</string>
     <string name="toggle">Toggle overlay</string>
 
-    <string name="copy_2">Pull down the Notification shade to find Rhythm Quick Control. Loop through overlays for Activity background group.
-        Then onto another groups. Knock yourself out!</string>
+    <string name="copy_4">Pull down the notification shade to find Rhythm Quick Control. You can switch overlays for registered groups at runtime.
+        Try this now, change overlay for every group, and see if you can find layout bounds.</string>
 
-    <string name="copy_3">Yay! 0.9.2 introduces <b>declarative config</b>, making building overlays a breeze.
-        Examine the <font face="monospace">/res/raw/overlay_config</font> to see how, or… Scratch that, try it out right here!</string>
+    <string name="copy_5">Rhythm 0.9.2 introduces <b>declarative config</b>, making building overlays a breeze.
+        Examine the <font face="monospace">/res/raw/overlay_config</font>, or try it out right here!</string>
 
+    <string name="sandbox_header">Rhythm sandbox</string>
+    <!-- Just a Lorem Ipsum by http://www.cupcakeipsum.com/ -->
+    <string name="sandbox_text" translatable="false">Marshmallow candy wafer muffin cookie oat cake sesame snaps.
+        Bear claw cake icing gingerbread oat cake bear claw lemon drops bonbon.
+        Icing tart marzipan danish sesame snaps powder cupcake. Sweet powder carrot cake chocolate toffee.
+        Candy canes carrot cake danish marzipan tootsie roll cupcake. Lollipop gingerbread sweet cake jelly.
+        Jelly beans biscuit brownie dragée marshmallow dessert sesame snaps donut candy. Brownie carrot cake sesame snaps.</string>
 
-    <string name="layer_types">Layer types</string>
-    <string-array name="bullet_points">
-        <item>Horizontal and vertical grid lines, repeating at a fixed step. Combine two grid line layers to make a square grid.</item>
-        <item>Guides at arbitrary distance from specified view edge.</item>
-        <item>Inset groups to clip and offset nested layers.</item>
-        <item>Fill layers that can paint rectangular areas with uniform color to highlight margins.</item>
-        <item>Dimensions labels, to inspect views’ dimensions at glance.</item>
-        <item>More spec layer types coming soon!</item>
-    </string-array>
-    <string name="got_it">Got it</string>
+    <string name="type_config_here">Type configuration here</string>
+    <string name="validation_config_dialog_title">Configuration has issues</string>
+    <string name="validation_config_empty">Configuration is empty</string>
+    <string name="validation_config_line">Line <xliff:g id="line_number" example="3">%d</xliff:g>: <xliff:g id="error_message" example="Unknown layer type">%s</xliff:g></string>
+    <string name="validation_config_line_unexpected">Line <xliff:g id="line_number" example="3">%d</xliff:g> [unexpected]: <xliff:g id="error_message" example="Unknown layer type">%s</xliff:g></string>
+    <string name="apply">Try me</string>
+    <string name="ok">OK</string>
 
-    <string name="copy_4">While controlling overlays from the notification is convenient, sometimes you simply don’t need it.
-        With Rhythm you can explicitly create unlinked groups, new drawables and overlays, and assign them programmatically (see the source).</string>
-
-    <string name="copy_5">Thank you for following me to the end. If my calculations are correct, you should be <i>in love</i> with this library already, so why not support the developer?
-        If you’re feeling generous, you can gift me a game on Steam, but simply telling your fellow developers about Rhythm or adding me to your circles is also awesome!
-        Check out <a href="https://github.com/Actinarium/Rhythm">GitHub</a> to find out how you can help. &#9829;</string>
+    <string name="copy_6">Thanks for reading this far.
+        If you like my library and it can save you a lot of time, please consider adding me on <a href="https://plus.google.com/u/0/+PaulDanyliuk/posts">Google+</a>.
+        I’m about to publish exciting things very soon, and I’ll be delighted if you check them out.
+        Also you can gift me a game on <a href="http://steamcommunity.com/id/actine/wishlist">Steam</a> if you’re feeling extra generous or having a spare one in your library.
+        Check out <a href="https://github.com/Actinarium/Rhythm">GitHub</a> to learn how else you can support the developer. &#9829;</string>
 </resources>

@@ -17,7 +17,7 @@
 
 <resources>
 
-    <declare-styleable name="RhythmicFrameLayout">
+    <declare-styleable name="RhythmFrameLayout">
         <attr name="rhythmGroup" format="integer">
             <enum name="noGroup" value="-1" />
         </attr>
