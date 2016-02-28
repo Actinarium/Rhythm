@@ -17,20 +17,19 @@ The documentation will be updated soon, meanwhile if you’re ready to embrace t
   Highly customizable grids and guides, possibility to draw your own overlays, and more!  
   Make as many different overlays and assign them to as many views as you need.
 * Saving lots of time.  
-  Define your overlays once and control everything via the Quick Control notification¹ without leaving your current screen.
-  No need to rebuild too!  
+  Define your overlays once and control everything via the Quick Control notification¹ without leaving your current screen or having to recompile.
 * Adaptable.  
   Inject Rhythm into your existing views with a single line of code without changing view hierarchy, or wrap layouts
-  with `RhythmicFrameLayout` for finer control.
+  with `RhythmFrameLayout` for finer control.
   Furthermore, Rhythm is built on Drawables, which you can obtain and use in any way imaginable.  
 * Suitable for dialogs and scrolling content.
 * Built with performance in mind.
 * Code thoroughly documented.
 * API 8+¹.
 * Crafted by a design-minded developer, for design-minded developers.
-* Open source, open for forks, pull requests, and suggestions².
+* Open source, open for forks, pull requests, and suggestions.
 
-Sample application available: [APK][apk] or: <a href="https://play.google.com/store/apps/details?id=com.actinarium.rhythm.sample&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="60" /></a>
+Sample application available: [APK][apk] or: <a href="https://play.google.com/store/apps/details?id=com.actinarium.rhythm.sample&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="48" /></a>
 
 **Important note:** this is a pre-release version of Rhythm. Things may break and APIs may change.
 See [Plans for the future](#plans-for-the-future) for more info.
@@ -38,7 +37,7 @@ See [Plans for the future](#plans-for-the-future) for more info.
 ## Setup
 
 The most definitive guide so far is the [sample source][samplesrc], particularly the configuration [here][appsrc].
-While a better guide is being prepared, enjoy thoroughly documented code :stuck_out_tongue:
+While a better guide is being prepared, enjoy thoroughly documented code.
 
 ### Get Rhythm
 
@@ -55,8 +54,9 @@ Maven repository.
 
 To set up Rhythm in an intended way—that is, with Quick Control notification, do the following in your `Application` class.
 
-**Note:** While currently overlays are configured imperatively like this (i.e. with lots of code),
-it is already [planned](#plans-for-the-future) to add declarative configs (e.g. with JSON or such) in v1.0.
+**Note:** ~~While currently overlays are configured imperatively like this (i.e. with lots of code),
+it is already [planned](#plans-for-the-future) to add declarative configs (e.g. with JSON or such) in v1.0.~~
+declarative configs are available as of v0.9.2.
 
 ```java
 // Implement RhythmControl.Host - otherwise Rhythm components won't be able to access Rhythm control
@@ -167,16 +167,16 @@ Here are another changes planned for v1.0:
 6. Make exhaustive documentation, depending on demand.
 7. Make a better sample.
 
-## Support the developer
+## A personal appeal
 
-If you find this library useful and want to reward my work, here’s how you can do it:
+If you already feel that this library is a godsend that will save you lots of time, please consider adding me on
+[Google+][gplus] and/or [Twitter][twitter] to be the first to know about my upcoming projects and apps.
+I’m about to publish a standalone app that’s similar to Rhythm but is even easier to use, and you will make me
+very happy if you try it out.
 
-1. The biggest joy is seeing one’s product being used and loved, so that alone is a reward :smile:
-2. Add me on [Google+][gplus] to be the first to know about my new projects and apps.
-3. Also follow me on [Twitter][twitter]. I rarely write there, but that might change soon.
-4. Normally I wouldn’t ask for donations, but I quit my job to become a full-time indie developer, and I’d really want
-   to keep most of my creations free or very humbly priced for as long as possible.
-   I haven’t set up a donation pool yet, but you can buy me something from my [wishlist on Steam][steam].
+Also if you’re really generous and want to reward my work, you can buy me something from my [wishlist on Steam][steam].
+I don’t have a PayPal donation pool yet, but I’ll be offering in-app donations and pay-what-you-want features in my
+upcoming apps, so that you can get value for your buck.
 
 ## License
 
@@ -184,10 +184,11 @@ The library is licensed under Apache 2.0 License, meaning that you can freely us
 
 The full license text is [here][license].
 
+Android, Google Play and the Google Play logo are trademarks of Google Inc.
+
 ---
 ¹ — Controlling overlays on the go is available for Android 4.1+ only, since it relies on action buttons
-in the notification. This will be addressed in v1.0. The drawing itself works fine.  
-² — Just a friendly reminder that the library is not a kitchen sink :)
+in the notification. This will be addressed in v1.0. The drawing itself works fine.
 
 [mdspec]: http://www.google.com/design/spec/layout/metrics-keylines.html
 [bintray]: https://bintray.com/actinarium/maven/rhythm
