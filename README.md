@@ -30,8 +30,7 @@ The documentation will be updated soon, meanwhile if you’re ready to embrace t
 * Crafted by a design-minded developer, for design-minded developers.
 * Open source, open for forks, pull requests, and suggestions².
 
-Sample application available: [APK][apk] or:
-[![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png)][playstore]
+Sample application available: [APK][apk] or: <a href="https://play.google.com/store/apps/details?id=com.actinarium.rhythm.sample&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="60" /></a>
 
 **Important note:** this is a pre-release version of Rhythm. Things may break and APIs may change.
 See [Plans for the future](#plans-for-the-future) for more info.
