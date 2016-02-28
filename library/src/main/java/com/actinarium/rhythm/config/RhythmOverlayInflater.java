@@ -62,7 +62,7 @@ public class RhythmOverlayInflater {
      * RhythmSpecLayer} types, and you can add custom factories for your custom spec layers.</p><p>By default, {@link
      * GridLines}, {@link Guide}, and {@link Fill} layer instances are cached and reused for the same configuration
      * lines &mdash; if you don't want this behavior (e.g. if you want to mutate the inflated layers individually
-     * afterwards), create an empty inflater and register the factories yourself like this:
+     * afterwards), create an empty inflater and register the factories yourself like this:</p>
      * <pre><code>
      * RhythmOverlayInflater inflater = createEmpty(context);
      * inflater.registerFactory(GridLines.Factory.LAYER_TYPE, new GridLines.Factory());
@@ -70,7 +70,7 @@ public class RhythmOverlayInflater {
      * inflater.registerFactory(Fill.Factory.LAYER_TYPE, new Fill.Factory());
      * inflater.registerFactory(InsetGroup.Factory.LAYER_TYPE, new InsetGroup.Factory());
      * inflater.registerFactory(DimensionsLabel.Factory.LAYER_TYPE, new DimensionsLabel.Factory());
-     * </code></pre></p>
+     * </code></pre>
      *
      * @param context Context
      * @return a new overlay inflater instance configured to inflate bundled spec layers
