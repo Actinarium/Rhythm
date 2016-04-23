@@ -32,7 +32,7 @@
     <string name="copy_4">Pull down the notification shade to find Rhythm Quick Control. You can switch overlays for registered groups at runtime.
         Try this now, change overlay for every group, and see if you can find layout bounds.</string>
 
-    <string name="copy_5">Rhythm 0.9.2 introduces <b>declarative config</b>, making building overlays a breeze.
+    <string name="copy_5">Rhythm 0.9.5 introduces <b>declarative config</b>, making building overlays a breeze.
         Examine the <font face="monospace">/res/raw/overlay_config</font>, or try it out right here!</string>
 
     <string name="sandbox_header">Rhythm sandbox</string>

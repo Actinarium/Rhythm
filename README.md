@@ -56,7 +56,7 @@ To set up Rhythm in an intended way—that is, with Quick Control notification, 
 
 **Note:** ~~While currently overlays are configured imperatively like this (i.e. with lots of code),
 it is already [planned](#plans-for-the-future) to add declarative configs (e.g. with JSON or such) in v1.0.~~
-declarative configs are available as of v0.9.2.
+declarative configs are available as of v0.9.5.
 
 ```java
 // Implement RhythmControl.Host - otherwise Rhythm components won't be able to access Rhythm control
