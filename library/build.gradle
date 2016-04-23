@@ -108,6 +108,6 @@ uploadArchives {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:23.2.0'
-    javadocDeps 'com.android.support:support-v4:23.2.0'
+    compile 'com.android.support:support-v4:23.3.0'
+    javadocDeps 'com.android.support:support-v4:23.3.0'
 }
