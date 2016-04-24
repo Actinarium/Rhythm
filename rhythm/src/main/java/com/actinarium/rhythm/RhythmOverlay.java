@@ -69,8 +69,8 @@ public class RhythmOverlay extends AbstractSpecLayerGroup<RhythmOverlay> {
     /**
      * <p>Add all layers to this overlay from another. Convenient if you have a common set of layers that you wish to
      * include in multiple overlays, or want to create an overlay that combines a few others.</p> <p><b>Warning:</b> for
-     * simplicity and performance reasons, not copies but the same layer objects are used &mdash; keep this in mind if
-     * you plan to mutate them (advice: don’t mutate layers after adding to an overlay!)</p>
+     * simplicity and performance reasons the same layer objects are used, therefore it’s strongly advised that you
+     * don’t mutate them after adding.</p>
      *
      * @param source Existing overlay to add all layers from
      * @return this for chaining
@@ -80,19 +80,8 @@ public class RhythmOverlay extends AbstractSpecLayerGroup<RhythmOverlay> {
         return this;
     }
 
-    /**
-     * A shorthand for {@link RhythmGroup#addOverlay(RhythmOverlay)}
-     *
-     * @param group Rhythm group to add this overlay to
-     * @return this for chaining (e.g. for adding this overlay to other groups as well)
-     */
-    public RhythmOverlay addToGroup(@NonNull RhythmGroup group) {
-        group.addOverlay(this);
-        return this;
-    }
-
     @Override
     public String toString() {
-        return mTitle != null ? mTitle : "Untitled overlay";
+        return mTitle != null ? mTitle : "Untitled overlay@" + Integer.toHexString(hashCode());
     }
 }

@@ -25,8 +25,8 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.actinarium.rhythm.RhythmControl;
-import com.actinarium.rhythm.RhythmGroup;
+import com.actinarium.rhythm.control.RhythmControl;
+import com.actinarium.rhythm.control.RhythmGroup;
 import com.actinarium.rhythm.config.RhythmOverlayInflater;
 
 import static com.actinarium.rhythm.sample.RhythmSampleApplication.CARD_OVERLAY_GROUP;

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm;
+package com.actinarium.rhythm.control;
 
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.FrameLayout;
+import com.actinarium.rhythm.RhythmDrawable;
+import com.actinarium.rhythm.RhythmOverlay;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

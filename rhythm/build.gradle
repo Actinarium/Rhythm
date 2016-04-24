@@ -24,7 +24,7 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 23
-        versionCode 3
+        versionCode project.versionCode
         versionName project.releaseVersion
     }
     buildTypes {
@@ -63,14 +63,20 @@ artifacts {
     archives androidJavadocsJar
 }
 
+afterEvaluate {
+    androidJavadocs.classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompile.classpath.files
+    })
+}
+
 uploadArchives {
     repositories.mavenDeployer {
         pom.groupId = 'com.actinarium.rhythm'
         pom.artifactId = 'rhythm'
         pom.version = project.releaseVersion
         pom.project {
-            name 'Rhythm'
-            description 'A library for Android that draws customizable grids and guides over views, helping to fine tune your layouts'
+            name 'Rhythm Core'
+            description 'Renders grids, guides, and other overlays from declarative configuration into drawables'
             url 'https://github.com/Actinarium/Rhythm'
             inceptionYear '2015'
             licenses {

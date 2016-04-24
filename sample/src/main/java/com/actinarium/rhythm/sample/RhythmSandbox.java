@@ -35,7 +35,7 @@ import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.config.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmOverlayInflater;
 import com.actinarium.rhythm.sample.util.ViewUtils;
-import com.actinarium.rhythm.widget.RhythmFrameLayout;
+import com.actinarium.rhythm.control.RhythmFrameLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;

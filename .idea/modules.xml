@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Rhythm.iml" filepath="$PROJECT_DIR$/Rhythm.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rhythm/rhythm.iml" filepath="$PROJECT_DIR$/rhythm/rhythm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rhythm-control/rhythm-control.iml" filepath="$PROJECT_DIR$/rhythm-control/rhythm-control.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
     </modules>
   </component>

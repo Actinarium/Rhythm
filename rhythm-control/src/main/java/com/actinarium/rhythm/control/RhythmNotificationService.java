@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm;
+package com.actinarium.rhythm.control;
 
 import android.app.Application;
 import android.app.IntentService;
@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
+import com.actinarium.rhythm.RhythmOverlay;
 
 
 /**

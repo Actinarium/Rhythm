@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.widget;
+package com.actinarium.rhythm.control;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -27,10 +27,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
-import com.actinarium.rhythm.R;
-import com.actinarium.rhythm.RhythmControl;
 import com.actinarium.rhythm.RhythmDrawable;
-import com.actinarium.rhythm.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
 
 import java.lang.annotation.Retention;

@@ -15,20 +15,9 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.actinarium.rhythm">
 
-    <declare-styleable name="RhythmFrameLayout">
-        <attr name="rhythmGroup" format="integer">
-            <enum name="noGroup" value="-1" />
-        </attr>
-        <attr name="overlayPosition" format="enum">
-            <enum name="underBackground" value="0" />
-            <enum name="underContent" value="1" />
-            <enum name="overContent" value="2" />
-            <enum name="overForeground" value="3" />
-        </attr>
-    </declare-styleable>
+    <application />
 
-    <public name="RhythmicFrameLayout" type="declare-styleable" />
-
-</resources>
+</manifest>

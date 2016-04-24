@@ -34,9 +34,9 @@ import android.support.annotation.Nullable;
  * views that already have backgrounds. <b>Note:</b> as of this version, decoration logic is very limited for the sake
  * of simplicity, therefore in some cases (e.g. when decorated drawable is a state list or a level list), it may not
  * respond correctly to state and level changes (e.g. pressing a decorated button won’t highlight it). But since
- * decoration is mostly intended for ViewGroups, it’s unlikely that this will be addressed.</p> <p>Normally you
- * shouldn’t extend this class. If you need to perform custom drawing, consider creating a custom {@link
- * RhythmSpecLayer} implementation.</p>
+ * decoration is mostly intended for ViewGroups, it’s unlikely that this should be an issue under normal use.</p>
+ * <p>Normally you shouldn’t extend this class. If you need to perform custom drawing, consider creating a custom {@link
+ * RhythmSpecLayer} implementation instead.</p>
  *
  * @author Paul Danyliuk
  */

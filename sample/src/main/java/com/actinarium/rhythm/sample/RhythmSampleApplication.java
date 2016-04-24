@@ -18,8 +18,8 @@ package com.actinarium.rhythm.sample;
 
 import android.app.Application;
 import android.view.Gravity;
-import com.actinarium.rhythm.RhythmControl;
-import com.actinarium.rhythm.RhythmGroup;
+import com.actinarium.rhythm.control.RhythmControl;
+import com.actinarium.rhythm.control.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.config.RhythmOverlayInflater;
 import com.actinarium.rhythm.sample.customlayers.ImageBox;

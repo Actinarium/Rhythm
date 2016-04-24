@@ -16,7 +16,8 @@
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-project.ext.set("releaseVersion", '0.9.5')
+project.ext.set("releaseVersion", '0.9.6-SNAPSHOT')
+project.ext.set("versionCode", 4)
 
 buildscript {
     repositories {

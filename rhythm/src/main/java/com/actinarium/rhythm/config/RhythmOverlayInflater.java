@@ -106,7 +106,7 @@ public class RhythmOverlayInflater {
     /**
      * Private constructor. Use {@link #createDefault(Context)} or {@link #createEmpty(Context)} instead
      */
-    private RhythmOverlayInflater() {}
+    protected RhythmOverlayInflater() {}
 
     /**
      * Register a factory for provided layer type. Use this method to register factories for your custom spec layers or
@@ -228,7 +228,7 @@ public class RhythmOverlayInflater {
         return inflateOverlay(configStrings);
     }
 
-    private RhythmOverlay inflateOverlay(List<String> lines) {
+    protected RhythmOverlay inflateOverlay(List<String> lines) {
         // initialize stacks for parents and indents. Since there's no adequate stack implementations out there for API 8+, make own.
         // Assume there rarely will be more than 4-deep hierarchy
         int size = 4;

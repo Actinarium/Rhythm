@@ -27,4 +27,5 @@
 
     <string name="arl_no_host_title">Couldn’t connect to Rhythm</string>
     <string name="arl_no_host_text">Check if your Application implements RhythmManager.Host</string>
+
 </resources>

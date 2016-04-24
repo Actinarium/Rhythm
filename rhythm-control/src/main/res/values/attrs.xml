@@ -15,18 +15,20 @@
   ~ limitations under the License.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.actinarium.rhythm">
+<resources>
 
-    <application
-            android:allowBackup="true"
-            android:fullBackupContent="true">
+    <declare-styleable name="RhythmFrameLayout">
+        <attr name="rhythmGroup" format="integer">
+            <enum name="noGroup" value="-1" />
+        </attr>
+        <attr name="overlayPosition" format="enum">
+            <enum name="underBackground" value="0" />
+            <enum name="underContent" value="1" />
+            <enum name="overContent" value="2" />
+            <enum name="overForeground" value="3" />
+        </attr>
+    </declare-styleable>
 
-        <service
-                android:name=".RhythmNotificationService"
-                android:exported="false">
-        </service>
+    <public name="RhythmFrameLayout" type="declare-styleable" />
 
-    </application>
-
-</manifest>
+</resources>

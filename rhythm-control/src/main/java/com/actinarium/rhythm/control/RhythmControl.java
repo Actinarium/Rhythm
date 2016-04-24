@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm;
+package com.actinarium.rhythm.control;
 
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.Nullable;
-import com.actinarium.rhythm.widget.RhythmFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
