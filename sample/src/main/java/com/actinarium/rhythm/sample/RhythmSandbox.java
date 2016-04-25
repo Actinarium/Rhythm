@@ -34,12 +34,16 @@ import com.actinarium.rhythm.RhythmDrawable;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.config.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmOverlayInflater;
-import com.actinarium.rhythm.sample.util.ViewUtils;
 import com.actinarium.rhythm.control.RhythmFrameLayout;
+import com.actinarium.rhythm.sample.util.ViewUtils;
+import com.actinarium.rhythm.spec.DimensionsLabel;
+import com.actinarium.rhythm.spec.Fill;
+import com.actinarium.rhythm.spec.GridLines;
+import com.actinarium.rhythm.spec.InsetGroup;
+import com.actinarium.rhythm.spec.Keyline;
+import com.actinarium.rhythm.spec.RatioKeyline;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A presenter for the Rhythm Sandbox card, where you can try the configuration at runtime
@@ -51,32 +55,28 @@ public class RhythmSandbox {
     /*
      * Words for auto-complete. Not containing words from custom layers
      */
-    public static final CharSequence[] DELIMITED_WITH_SPACE = {
-            "grid-lines", "guide", "inset", "fill", "dimensions-label", "outside", "no-clip", "clip-only"
+    String[] ALL_CONFIG_WORDS = {
+            Keyline.Factory.LAYER_TYPE, GridLines.Factory.LAYER_TYPE, Fill.Factory.LAYER_TYPE,
+            InsetGroup.Factory.LAYER_TYPE, RatioKeyline.Factory.LAYER_TYPE, DimensionsLabel.Factory.LAYER_TYPE,
+            "outside", "no-clip", "clip-only",
+            "from=", "distance=", "step=", "ratio=", "gravity=",
+            "top", "bottom", "left", "right",
+            "top=", "bottom=", "left=", "right=", "width=", "height=",
+            "color=", "color=#",
+            "limit=", "offset=", "thickness=", "text-color=", "text-size="
     };
-    public static final CharSequence[] AMBIGUOUS = {
-            "top", "bottom", "left", "right"
-    };
-    public static final String[] ALL_CONFIG_WORDS = {
-            "grid-lines", "guide", "inset", "fill", "dimensions-label", "outside", "no-clip", "clip-only",
-            "gravity", "color", "distance", "step", "top", "bottom", "left", "right", "width", "height",
-            "limit", "offset", "thickness", "background-color", "text-color", "text-size"};
-
-    // for lookup
-    public static final List<CharSequence> DELIMITED_WITH_SPACE_AS_LIST = Arrays.asList(DELIMITED_WITH_SPACE);
-    public static final List<CharSequence> AMBIGUOUS_AS_LIST = Arrays.asList(AMBIGUOUS);
 
     private static final String DEFAULT_SANDBOX_CONFIG =
-            "grid-lines gravity=left step=8dp\n" +
-            "grid-lines gravity=top  step=4dp color=#800091EA\n" +
-                    "inset left=0dp width=16dp\n" +
-                    " fill\n" +
-                    "inset right=0dp width=16dp\n" +
-                    " fill\n" +
-                    "guide gravity=left  distance=16dp\n" +
-                    "guide gravity=right distance=16dp\n" +
-                    "inset left=16dp\n" +
-                    " guide gravity=top distance=40dp thickness=2dp outside";
+            "grid-lines step=8dp from=left\n" +
+            "grid-lines step=4dp from=top color=#800091EA\n" +
+            "inset left=0dp width=16dp\n" +
+            " fill\n" +
+            "inset right=0dp width=16dp\n" +
+            " fill\n" +
+            "keyline distance=16dp from=left\n" +
+            "keyline distance=16dp from=right\n" +
+            "inset left=16dp\n" +
+            " keyline distance=40dp from=top thickness=2dp outside";
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -226,16 +226,10 @@ public class RhythmSandbox {
         @Override
         public CharSequence terminateToken(CharSequence text) {
             int i = text.length();
-            if (i > 0 && text.charAt(i - 1) == ' ' || text.charAt(i - 1) == '=' || text.charAt(i - 1) == '\n') {
+            if (i > 0 && text.charAt(i - 1) == ' ' || text.charAt(i - 1) == '=' || text.charAt(i - 1) == '\n' || text.charAt(i - 1) == '#') {
                 return text;
             } else {
-                if (DELIMITED_WITH_SPACE_AS_LIST.contains(text)) {
-                    return text + " ";
-                } else if (AMBIGUOUS_AS_LIST.contains(text)) {
-                    return text;
-                } else {
-                    return text + "=";
-                }
+                return text + " ";
             }
         }
     }

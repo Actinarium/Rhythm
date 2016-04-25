@@ -27,8 +27,9 @@ import com.actinarium.rhythm.RhythmSpecLayerParent;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.spec.Fill;
 import com.actinarium.rhythm.spec.GridLines;
-import com.actinarium.rhythm.spec.Guide;
 import com.actinarium.rhythm.spec.InsetGroup;
+import com.actinarium.rhythm.spec.Keyline;
+import com.actinarium.rhythm.spec.RatioKeyline;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -50,23 +51,24 @@ import java.util.regex.Pattern;
  */
 public class RhythmOverlayInflater {
 
-    private static final int INITIAL_FACTORIES_CAPACITY = 8;
-    private static final Pattern ARGUMENTS_PATTERN = Pattern.compile("([^\\s=]+)(?:=([^\\s]+))?");
-    private static final int NOT_STARTED = -1;
+    protected static final int INITIAL_FACTORIES_CAPACITY = 8;
+    protected static final Pattern ARGUMENTS_PATTERN = Pattern.compile("([^\\s=]+)(?:=([^\\s]+))?");
+    protected static final int NOT_STARTED = -1;
 
-    private Context mContext;
-    private Map<String, RhythmSpecLayerFactory> mFactories;
+    protected Context mContext;
+    protected Map<String, RhythmSpecLayerFactory> mFactories;
 
     /**
      * <p>Create a new instance of default overlay inflater. It comes pre-configured to inflate all bundled {@link
      * RhythmSpecLayer} types, and you can add custom factories for your custom spec layers.</p><p>By default, {@link
-     * GridLines}, {@link Guide}, and {@link Fill} layer instances are cached and reused for the same configuration
-     * lines &mdash; if you don't want this behavior (e.g. if you want to mutate the inflated layers individually
-     * afterwards), create an empty inflater and register the factories yourself like this:</p>
+     * GridLines}, {@link Keyline}, {@link RatioKeyline}, and {@link Fill} layer instances are cached and reused for the
+     * same configuration lines &mdash; if you don't want this behavior (e.g. if you want to mutate the inflated layers
+     * individually afterwards), create an empty inflater and register the factories yourself like this:</p>
      * <pre><code>
-     * RhythmOverlayInflater inflater = createEmpty(context);
+     * RhythmOverlayInflater inflater = new RhythmOverlayInflater(context);
      * inflater.registerFactory(GridLines.Factory.LAYER_TYPE, new GridLines.Factory());
-     * inflater.registerFactory(Guide.Factory.LAYER_TYPE, new Guide.Factory());
+     * inflater.registerFactory(Keyline.Factory.LAYER_TYPE, new Keyline.Factory());
+     * inflater.registerFactory(RatioKeyline.Factory.LAYER_TYPE, new RatioKeyline.Factory());
      * inflater.registerFactory(Fill.Factory.LAYER_TYPE, new Fill.Factory());
      * inflater.registerFactory(InsetGroup.Factory.LAYER_TYPE, new InsetGroup.Factory());
      * inflater.registerFactory(DimensionsLabel.Factory.LAYER_TYPE, new DimensionsLabel.Factory());
@@ -74,14 +76,15 @@ public class RhythmOverlayInflater {
      *
      * @param context Context
      * @return a new overlay inflater instance configured to inflate bundled spec layers
-     * @see #createEmpty(Context)
+     * @see #RhythmOverlayInflater(Context)
      */
     public static RhythmOverlayInflater createDefault(Context context) {
-        final RhythmOverlayInflater inflater = createEmpty(context);
+        final RhythmOverlayInflater inflater = new RhythmOverlayInflater(context);
 
         // Register bundled spec layers. Wrap guide, fill, and grid line factory in a caching decorator
         inflater.mFactories.put(GridLines.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new GridLines.Factory()));
-        inflater.mFactories.put(Guide.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new Guide.Factory()));
+        inflater.mFactories.put(Keyline.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new Keyline.Factory()));
+        inflater.mFactories.put(RatioKeyline.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new RatioKeyline.Factory()));
         inflater.mFactories.put(Fill.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new Fill.Factory()));
         inflater.mFactories.put(InsetGroup.Factory.LAYER_TYPE, new InsetGroup.Factory());
         inflater.mFactories.put(DimensionsLabel.Factory.LAYER_TYPE, new DimensionsLabel.Factory());
@@ -90,23 +93,19 @@ public class RhythmOverlayInflater {
     }
 
     /**
-     * Create a new instance of overlay inflater with no factories registered. You should register all the required
-     * factories by calling {@link #registerFactory(String, RhythmSpecLayerFactory)} method.
+     * Create a new instance of overlay inflater with no factories registered. Call this constructor only if you need a
+     * blank inflater that you are going to configure from scratch (i.e. by registering all the required factories with
+     * {@link #registerFactory(String, RhythmSpecLayerFactory)}). If you need an inflater with all bundled
+     * spec layers pre-configured, use {@link #createDefault(Context)} instead.
      *
      * @param context Context
-     * @return a new overlay inflater instance that is not configured to inflate any spec layer types
+     * @return a new blank overlay inflater instance that is not configured to inflate any spec layer types yet
+     * @see #createDefault(Context)
      */
-    public static RhythmOverlayInflater createEmpty(Context context) {
-        final RhythmOverlayInflater inflater = new RhythmOverlayInflater();
-        inflater.mContext = context;
-        inflater.mFactories = new HashMap<>(INITIAL_FACTORIES_CAPACITY);
-        return inflater;
+    public RhythmOverlayInflater(Context context) {
+        mContext = context;
+        mFactories = new HashMap<>(INITIAL_FACTORIES_CAPACITY);
     }
-
-    /**
-     * Private constructor. Use {@link #createDefault(Context)} or {@link #createEmpty(Context)} instead
-     */
-    protected RhythmOverlayInflater() {}
 
     /**
      * Register a factory for provided layer type. Use this method to register factories for your custom spec layers or

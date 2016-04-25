@@ -26,7 +26,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.RhythmSpecLayer.LayerGravity;
+import com.actinarium.rhythm.RhythmSpecLayer.Edge;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -270,8 +270,8 @@ public class LayerConfig {
      * @see #getGravity(String, int)
      */
     @SuppressLint("RtlHardcoded")
-    @LayerGravity
-    public int getLayerGravity(String key, @LayerGravity int defaultValue) {
+    @Edge
+    public int getLayerGravity(String key, @Edge int defaultValue) {
         String gravityArg = mArguments.get(key);
         if ("top".equals(gravityArg)) {
             return Gravity.TOP;

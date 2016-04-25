@@ -216,7 +216,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
             label.mScaleFactor = density;
 
             label.mGravity = config.getGravity("gravity", Gravity.BOTTOM | Gravity.RIGHT);
-            label.mBackgroundPaint.setColor(config.getColor("background-color", DEFAULT_BACKGROUND));
+            label.mBackgroundPaint.setColor(config.getColor("color", DEFAULT_BACKGROUND));
             label.mTextPaint.setColor(config.getColor("text-color", DEFAULT_TEXT_COLOR));
             label.mTextPaint.setTextSize(config.getDimensionPixelExact("text-size", DEFAULT_TEXT_SIZE * density));
 

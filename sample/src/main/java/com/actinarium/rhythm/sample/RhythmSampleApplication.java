@@ -25,7 +25,7 @@ import com.actinarium.rhythm.config.RhythmOverlayInflater;
 import com.actinarium.rhythm.sample.customlayers.ImageBox;
 import com.actinarium.rhythm.sample.customlayers.LayoutBounds;
 import com.actinarium.rhythm.spec.GridLines;
-import com.actinarium.rhythm.spec.Guide;
+import com.actinarium.rhythm.spec.Keyline;
 import com.actinarium.rhythm.spec.InsetGroup;
 
 import java.util.List;
@@ -86,9 +86,9 @@ public class RhythmSampleApplication extends Application implements RhythmContro
                         .addLayer(new GridLines(Gravity.TOP, (int) (8 * density))
                                 .setOffset((int) (4 * density))
                                 .setColor(GridLines.DEFAULT_GRID_COLOR)))
-                .addLayer(new Guide(Gravity.LEFT, (int) (16 * density)))
-                .addLayer(new Guide(Gravity.RIGHT, (int) (16 * density)))
-                .addLayer(new Guide(Gravity.LEFT, (int) (72 * density)));
+                .addLayer(new Keyline(Gravity.LEFT, (int) (16 * density)))
+                .addLayer(new Keyline(Gravity.RIGHT, (int) (16 * density)))
+                .addLayer(new Keyline(Gravity.LEFT, (int) (72 * density)));
 
         // By default, if a group has overlays, the first one is initially selected.
         // Let's hide overlays from these two groups and let you figure out how to enable them back via the notification

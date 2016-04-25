@@ -45,11 +45,11 @@ public interface RhythmSpecLayer {
     void draw(Canvas canvas, Rect drawableBounds);
 
     /**
-     * Type definition for layer gravity, allowing to use only 4 states (2 for horizontal, 2 for vertical orientation)
+     * Type definition for screen edge that a keyline or pattern must be attached to
      */
     @SuppressLint("RtlHardcoded")
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({Gravity.TOP, Gravity.BOTTOM, Gravity.LEFT, Gravity.RIGHT, Gravity.NO_GRAVITY})
-    @interface LayerGravity {
+    @interface Edge {
     }
 }

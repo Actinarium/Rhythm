@@ -30,7 +30,7 @@ public class RhythmOverlay extends AbstractSpecLayerGroup<RhythmOverlay> {
     protected String mTitle;
 
     /**
-     * Create a new untitled overlay
+     * Create a new overlay
      */
     public RhythmOverlay() {
         super();

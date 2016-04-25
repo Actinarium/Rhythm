@@ -41,14 +41,14 @@ public class GridLines implements RhythmSpecLayer {
     /**
      * Default grid line thickness (1px)
      */
-    public static final int DEFAULT_THICKNESS = 1;
+    public static final int DEFAULT_THICKNESS = 1;       // px
 
     protected int mStep;
     protected int mThickness = DEFAULT_THICKNESS;
     protected int mLimit = Integer.MAX_VALUE;
 
     protected int mOffset;
-    @LayerGravity
+    @Edge
     protected int mGravity;
     protected Paint mPaint;
 
@@ -65,7 +65,7 @@ public class GridLines implements RhythmSpecLayer {
      *                half of the view when its width is not an exact multiple of the step.
      * @param step    Grid step, in pixels
      */
-    public GridLines(@LayerGravity int gravity, int step) {
+    public GridLines(@Edge int gravity, int step) {
         mStep = step;
         mGravity = gravity;
 
@@ -178,14 +178,16 @@ public class GridLines implements RhythmSpecLayer {
         public GridLines getForConfig(LayerConfig config) {
             GridLines gridLines = new GridLines();
 
-            gridLines.mGravity = config.getLayerGravity("gravity", Gravity.NO_GRAVITY);
+            gridLines.mGravity = config.getLayerGravity("from", Gravity.NO_GRAVITY);
             if (gridLines.mGravity == Gravity.NO_GRAVITY) {
-                throw new RhythmInflationException("Error when inflating grid-lines: 'gravity' argument missing or invalid");
+                throw new RhythmInflationException("Error in grid-lines config: 'from' argument is mandatory " +
+                        "and must be either 'left', 'right', 'top', 'bottom'");
             }
 
             final int step = config.getDimensionPixelOffset("step", 0);
             if (step <= 0) {
-                throw new RhythmInflationException("Error when inflating grid-lines: 'step' argument is missing or <= 0");
+                throw new RhythmInflationException("Error in grid-lines config: 'step' argument is mandatory " +
+                        "and must be greater than 0 (e.g. 'step=8dp')");
             }
             gridLines.mStep = step;
 

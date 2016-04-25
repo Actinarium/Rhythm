@@ -28,19 +28,19 @@ import com.actinarium.rhythm.config.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
- * A layer that draws a horizontal or vertical full-bleed guide at the specified distance from the specified edge of a
+ * A layer that draws a horizontal or vertical full-bleed keyline at the specified distance from the specified edge of a
  * view. Can be used to draw &ldquo;thin&rdquo; keylines, as well as thick highlights (e.g. margins in avatar list
- * view), although it's recommended to use {@link Fill} inside a {@link InsetGroup} for the latter. The guide is drawn
+ * view), although it's recommended to use {@link Fill} inside a {@link InsetGroup} for the latter. The keyline is drawn
  * towards the specified edge by default (i.e. touching aligned child views), but this can be tweaked using {@link
  * #setAlignOutside(boolean)} method.
  *
  * @author Paul Danyliuk
  */
-public class Guide implements RhythmSpecLayer {
+public class Keyline implements RhythmSpecLayer {
 
     public static final int DEFAULT_KEYLINE_COLOR = 0x60F50057;
     /**
-     * Default guide thickness (3px)
+     * Default keyline thickness (3px)
      */
     public static final int DEFAULT_THICKNESS = 3;
 
@@ -48,23 +48,23 @@ public class Guide implements RhythmSpecLayer {
     public static final boolean ALIGN_OUTSIDE = true;
 
     protected int mThickness = DEFAULT_THICKNESS;
-    @LayerGravity
+    @Edge
     protected int mGravity;
     protected int mDistance;
     protected boolean mAlignOutside;
     protected Paint mPaint;
 
     /**
-     * Create a layer that draws a horizontal or vertical guide (keyline or highlight) at a specified distance from
+     * Create a layer that draws a horizontal or vertical keyline at a specified distance from
      * required edge
      *
-     * @param gravity  Defines the edge of the view this guide must be anchored to. Values ({@link Gravity#LEFT} and
-     *                 {@link Gravity#RIGHT}) will result in a vertical guide, and values ({@link Gravity#TOP} and
-     *                 {@link Gravity#BOTTOM}) will result in a horizontal guide.
-     * @param distance Distance of this guide from the specified edge, in pixels.
+     * @param gravity  Defines the edge of the view this keyline must be anchored to. Values ({@link Gravity#LEFT} and
+     *                 {@link Gravity#RIGHT}) will result in a vertical keyline, and values ({@link Gravity#TOP} and
+     *                 {@link Gravity#BOTTOM}) will result in a horizontal keyline.
+     * @param distance Distance of this keyline from the specified edge, in pixels.
      * @see #setAlignOutside(boolean)
      */
-    public Guide(@LayerGravity int gravity, int distance) {
+    public Keyline(@Edge int gravity, int distance) {
         mGravity = gravity;
         mDistance = distance;
 
@@ -76,7 +76,7 @@ public class Guide implements RhythmSpecLayer {
     /**
      * Minimum constructor for the factory
      */
-    private Guide() {
+    private Keyline() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
     }
@@ -87,36 +87,36 @@ public class Guide implements RhythmSpecLayer {
      * @param color Grid line color, in #AARRGGBB format as usual
      * @return this for chaining
      */
-    public Guide setColor(@ColorInt int color) {
+    public Keyline setColor(@ColorInt int color) {
         mPaint.setColor(color);
         return this;
     }
 
     /**
-     * Set guide thickness
+     * Set keyline thickness
      *
-     * @param thickness Guide thickness, in pixels. For keylines keep thickness around a few pixels, whereas for
+     * @param thickness Keyline thickness, in pixels. For keylines keep thickness around a few pixels, whereas for
      *                  highlights feel free to use as many dips as required.
      * @return this for chaining
      * @see #setAlignOutside(boolean)
      */
-    public Guide setThickness(int thickness) {
+    public Keyline setThickness(int thickness) {
         mThickness = thickness;
         return this;
     }
 
     /**
-     * Set guide alignment. By default, the guide is drawn towards the specified edge, i.e. if the gravity is BOTTOM,
-     * distance is 24px and thickness is 6px, the guide will appear as a horizontal rectangle starting at the 18th and
+     * Set keyline alignment. By default, the keyline is drawn towards the specified edge, i.e. if the gravity is BOTTOM,
+     * distance is 24px and thickness is 6px, the keyline will appear as a horizontal rectangle starting at the 18th and
      * ending at the 23rd pixel row from the bottom. You can use this method to override that behavior and make the
-     * guide face outwards (24th to 29th pixel rows in aforementioned example).
+     * keyline face outwards (24th to 29th pixel rows in aforementioned example).
      *
-     * @param alignOutside either <code>false</code> ({@link #ALIGN_INSIDE}, default) for the guide to extend towards
+     * @param alignOutside either <code>false</code> ({@link #ALIGN_INSIDE}, default) for the keyline to extend towards
      *                     the edge defined by gravity, or <code>true</code> ({@link #ALIGN_OUTSIDE}) to extend away
      *                     from the edge
      * @return this for chaining
      */
-    public Guide setAlignOutside(boolean alignOutside) {
+    public Keyline setAlignOutside(boolean alignOutside) {
         mAlignOutside = alignOutside;
         return this;
     }
@@ -144,32 +144,34 @@ public class Guide implements RhythmSpecLayer {
     }
 
     /**
-     * A factory that creates new Guides from config lines like <code>guide gravity=left distance=16dp thickness=3px
+     * A factory that creates new Keylines from config lines like <code>keyline gravity=left distance=16dp thickness=3px
      * outside</code>
      */
-    public static class Factory implements RhythmSpecLayerFactory<Guide> {
+    public static class Factory implements RhythmSpecLayerFactory<Keyline> {
 
-        public static final String LAYER_TYPE = "guide";
+        public static final String LAYER_TYPE = "keyline";
 
         @Override
-        public Guide getForConfig(LayerConfig config) {
-            Guide guide = new Guide();
+        public Keyline getForConfig(LayerConfig config) {
+            Keyline keyline = new Keyline();
 
-            guide.mGravity = config.getLayerGravity("gravity", Gravity.NO_GRAVITY);
-            if (guide.mGravity == Gravity.NO_GRAVITY) {
-                throw new RhythmInflationException("Error when inflating guide: 'gravity' argument missing or invalid");
+            keyline.mGravity = config.getLayerGravity("from", Gravity.NO_GRAVITY);
+            if (keyline.mGravity == Gravity.NO_GRAVITY) {
+                throw new RhythmInflationException("Error in keyline config: 'from' argument is mandatory " +
+                        "and must be either 'left', 'right', 'top', 'bottom'");
             }
 
             if (!config.hasArgument("distance")) {
-                throw new RhythmInflationException("Error when inflating guide: 'distance' argument is missing");
+                throw new RhythmInflationException("Error in keyline config: 'distance' argument is mandatory " +
+                        "and must be a dimension value (e.g. 8dp)");
             }
-            guide.mDistance = config.getDimensionPixelOffset("distance", 0);
+            keyline.mDistance = config.getDimensionPixelOffset("distance", 0);
 
-            guide.mPaint.setColor(config.getColor("color", DEFAULT_KEYLINE_COLOR));
-            guide.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
-            guide.mAlignOutside = config.getBoolean("outside", ALIGN_INSIDE, ALIGN_OUTSIDE);
+            keyline.mPaint.setColor(config.getColor("color", DEFAULT_KEYLINE_COLOR));
+            keyline.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
+            keyline.mAlignOutside = config.getBoolean("outside", ALIGN_INSIDE, ALIGN_OUTSIDE);
 
-            return guide;
+            return keyline;
         }
     }
 
