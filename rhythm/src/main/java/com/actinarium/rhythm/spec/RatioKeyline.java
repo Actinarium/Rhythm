@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
+ * todo: write the doc
  *
  * @author Paul Danyliuk
  */
@@ -46,26 +46,24 @@ public class RatioKeyline implements RhythmSpecLayer {
     public static final int DEFAULT_TEXT_SIZE = 10;   // dp
     public static final int DEFAULT_THICKNESS = 1;    // dp
 
-    private static final int DEFAULT_LABEL_HEIGHT = 12;  // dp
+    protected static final int DEFAULT_LABEL_HEIGHT = 12;  // dp
 
-    private int mRatioX;
-    private int mRatioY;
-    private int mThickness;
+    protected int mRatioX;
+    protected int mRatioY;
+    protected int mThickness;
 
-    private String mRatioString;
-    private Paint mBackgroundPaint;
-    private TextPaint mTextPaint;
-    private Rect mTempRect;
-    private Path mLabelPath;
+    protected String mRatioString;
+    protected Paint mBackgroundPaint;
+    protected TextPaint mTextPaint;
+    protected Rect mTempRect;
+    protected Path mLabelPath;
 
     // Text adjustment
-    private int mLabelRectWidth;
-    private int mLabelHeight;
-    private int mLabelSideWidth;
+    protected int mLabelRectWidth;
+    protected int mLabelHeight;
+    protected int mLabelSideWidth;
 
-    private Rect mTempThumbnailRect;
-
-    protected boolean mUsingDefaultColor = true;
+    protected Rect mTempThumbnailRect;
 
     public RatioKeyline(int ratioX, int ratioY, DisplayMetrics metrics) {
         this(metrics);
@@ -75,7 +73,7 @@ public class RatioKeyline implements RhythmSpecLayer {
         mTextPaint.setColor(DEFAULT_TEXT_COLOR);
     }
 
-    private RatioKeyline(DisplayMetrics metrics) {
+    protected RatioKeyline(DisplayMetrics metrics) {
         mTempRect = new Rect();
         mTempThumbnailRect = new Rect();
         mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -160,14 +158,9 @@ public class RatioKeyline implements RhythmSpecLayer {
             keyline.mRatioY = Integer.parseInt(matcher.group(2));
             keyline.mRatioString = String.format("%d:%d", keyline.mRatioX, keyline.mRatioY);
 
-            keyline.mThickness = config.getDimensionPixelSize("thickness", (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_THICKNESS, config
-                    .getDisplayMetrics()));
-
-            if (config.hasArgument("color")) {
-                keyline.mUsingDefaultColor = false;
-            }
+            keyline.mThickness = config.getDimensionPixelSize("thickness",
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_THICKNESS, config.getDisplayMetrics()));
             keyline.mBackgroundPaint.setColor(config.getColor("color", DEFAULT_FILL_COLOR));
-
             keyline.mTextPaint.setColor(config.getColor("text-color", DEFAULT_TEXT_COLOR));
 
             return keyline;

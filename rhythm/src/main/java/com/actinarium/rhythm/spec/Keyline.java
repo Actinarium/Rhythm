@@ -76,7 +76,7 @@ public class Keyline implements RhythmSpecLayer {
     /**
      * Minimum constructor for the factory
      */
-    private Keyline() {
+    protected Keyline() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
     }

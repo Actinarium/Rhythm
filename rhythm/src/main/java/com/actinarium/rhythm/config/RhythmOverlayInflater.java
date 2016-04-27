@@ -17,9 +17,10 @@
 package com.actinarium.rhythm.config;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RawRes;
-import android.support.v4.util.ArrayMap;
+import android.util.ArrayMap;
 import android.util.DisplayMetrics;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.RhythmSpecLayer;
@@ -99,7 +100,6 @@ public class RhythmOverlayInflater {
      * spec layers pre-configured, use {@link #createDefault(Context)} instead.
      *
      * @param context Context
-     * @return a new blank overlay inflater instance that is not configured to inflate any spec layer types yet
      * @see #createDefault(Context)
      */
     public RhythmOverlayInflater(Context context) {
@@ -328,7 +328,13 @@ public class RhythmOverlayInflater {
         final String specLayerType = configString.substring(spaces, i);
 
         final int anticipatedCapacity = (length - i) / 12 + 1;
-        ArrayMap<String, String> arguments = new ArrayMap<>(anticipatedCapacity);
+        Map<String, String> arguments;
+        // todo: decide on this, whether we should pull support v4 or fall back to hash map on pre-19
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            arguments = new ArrayMap<>(anticipatedCapacity);
+        } else {
+            arguments = new HashMap<>(anticipatedCapacity);
+        }
 
         // todo: instead of regex, consider parsing linearly for efficiency
         Matcher matcher = ARGUMENTS_PATTERN.matcher(configString.substring(i));

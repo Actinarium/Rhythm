@@ -77,7 +77,7 @@ public class GridLines implements RhythmSpecLayer {
     /**
      * Minimum constructor for the factory
      */
-    private GridLines() {
+    protected GridLines() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
     }

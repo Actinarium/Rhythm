@@ -53,12 +53,12 @@ public class LayerConfig {
     public static final int UNITS_IN = 6;
     public static final int UNITS_MM = 7;
 
-    private String mLayerType;
-    private int mIndent;
-    private Map<String, String> mArguments;
-    private DisplayMetrics mMetrics;
+    protected String mLayerType;
+    protected int mIndent;
+    protected Map<String, String> mArguments;
+    protected DisplayMetrics mMetrics;
 
-    private static Pattern DIMEN_VALUE_PATTERN = Pattern.compile("^-?\\d*\\.?\\d+");
+    protected static Pattern DIMEN_VALUE_PATTERN = Pattern.compile("^-?\\d*\\.?\\d+");
 
     /**
      * Create layer config object for layer of given type, with known indent, and with pre-filled arguments bag
@@ -67,7 +67,7 @@ public class LayerConfig {
      * @param indent    number of leading spaces in the config line, used to resolve layer hierarchy
      * @param arguments bag of raw arguments parsed from configuration string
      */
-    LayerConfig(@NonNull String layerType, int indent, @NonNull Map<String, String> arguments) {
+    public LayerConfig(@NonNull String layerType, int indent, @NonNull Map<String, String> arguments) {
         mLayerType = layerType;
         mIndent = indent;
         mArguments = arguments;

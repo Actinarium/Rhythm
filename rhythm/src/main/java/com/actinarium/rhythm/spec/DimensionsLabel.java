@@ -85,7 +85,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
     /**
      * Minimum constructor for the factory
      */
-    private DimensionsLabel() {
+    protected DimensionsLabel() {
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setStyle(Paint.Style.FILL);
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);

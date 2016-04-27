@@ -29,6 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * A group that clips and/or insets its child layers. Allows
  *
+ * todo: finish the doc
+ *
  * @author Paul Danyliuk
  */
 public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
@@ -84,7 +86,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
     protected boolean mIsHeightSet;
 
     // Reusable resulting rect
-    private Rect mInsetRect;
+    protected Rect mInsetRect;
 
     /**
      * Create a layer group that clips and/or insets its child layers
@@ -224,7 +226,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
         canvas.restoreToCount(state);
     }
 
-    private void recalculateInsetRect(Rect outerBounds) {
+    protected void recalculateInsetRect(Rect outerBounds) {
         final int parentWidth = outerBounds.width();
         final int parentHeight = outerBounds.height();
 
