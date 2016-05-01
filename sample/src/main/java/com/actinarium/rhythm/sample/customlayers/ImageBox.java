@@ -22,7 +22,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.Gravity;
 import com.actinarium.rhythm.config.LayerConfig;
-import com.actinarium.rhythm.config.RhythmInflationException;
+import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.RhythmSpecLayer;
@@ -109,7 +109,11 @@ public class ImageBox implements RhythmSpecLayer {
 
             box.mGravity = config.getGravity("gravity", Gravity.NO_GRAVITY);
             if (box.mGravity == Gravity.NO_GRAVITY) {
-                throw new RhythmInflationException("Error when inflating image-box: 'gravity' argument missing or invalid");
+                throw new RhythmInflationException(
+                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
+                        "Error when inflating image-box: 'gravity' argument missing or invalid",
+                        LAYER_TYPE, "gravity", config.getString("gravity"), "Gravity constants"
+                );
             }
 
             box.mWidth = config.getDimensionPixelSize("width", 0);

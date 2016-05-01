@@ -14,21 +14,30 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.config;
+package com.actinarium.rhythm.common;
+
+import java.io.IOException;
 
 /**
- * An exception to be thrown when {@link RhythmOverlayInflater} or {@link RhythmSpecLayerFactory} cannot inflate
- * declarative config
+ * A runtime counterpart of {@link IOException} thrown when the library cannot operate on provided data stream.
  *
  * @author Paul Danyliuk
  */
-public class RhythmInflationException extends RuntimeException {
+public class RuntimeIOException extends RuntimeException {
 
-    public RhythmInflationException(String detailMessage) {
+    public RuntimeIOException() {
+        super();
+    }
+
+    public RuntimeIOException(String detailMessage) {
         super(detailMessage);
     }
 
-    public RhythmInflationException(String detailMessage, Throwable throwable) {
+    public RuntimeIOException(Throwable throwable) {
+        super(throwable);
+    }
+
+    public RuntimeIOException(String detailMessage, Throwable throwable) {
         super(detailMessage, throwable);
     }
 }

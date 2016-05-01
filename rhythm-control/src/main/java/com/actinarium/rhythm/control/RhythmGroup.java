@@ -236,7 +236,7 @@ public final class RhythmGroup {
      * Propagates current overlay to all linked {@link RhythmDrawable}s, removing dead references on the way. Also
      * updates the notification to reflect current overlay’s name
      *
-     * @todo In v1.0 add possibility to propagate arbitrary overlay, not just one of those in the list
+     * @todo add possibility to propagate arbitrary overlay, not just one of those in the list
      */
     private void doSetOverlay(RhythmOverlay overlay) {
         // Using iterator here because we need to remove elements halfway

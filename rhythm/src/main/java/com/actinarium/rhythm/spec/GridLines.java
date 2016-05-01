@@ -24,7 +24,7 @@ import android.support.annotation.ColorInt;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.config.LayerConfig;
-import com.actinarium.rhythm.config.RhythmInflationException;
+import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
@@ -180,14 +180,20 @@ public class GridLines implements RhythmSpecLayer {
 
             gridLines.mGravity = config.getLayerGravity("from", Gravity.NO_GRAVITY);
             if (gridLines.mGravity == Gravity.NO_GRAVITY) {
-                throw new RhythmInflationException("Error in grid-lines config: 'from' argument is mandatory " +
-                        "and must be either 'left', 'right', 'top', 'bottom'");
+                throw new RhythmInflationException(
+                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
+                        "Error in grid-lines config: 'from' argument is mandatory and must be either 'left', 'right', 'top', 'bottom'",
+                        LAYER_TYPE, "from", config.getString("from"), "left|right|top|bottom"
+                );
             }
 
             final int step = config.getDimensionPixelOffset("step", 0);
             if (step <= 0) {
-                throw new RhythmInflationException("Error in grid-lines config: 'step' argument is mandatory " +
-                        "and must be greater than 0 (e.g. 'step=8dp')");
+                throw new RhythmInflationException(
+                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE,
+                        "Error in grid-lines config: 'step' argument is mandatory and must be greater than 0 (e.g. 'step=8dp')",
+                        LAYER_TYPE, "step", "step=8dp"
+                );
             }
             gridLines.mStep = step;
 

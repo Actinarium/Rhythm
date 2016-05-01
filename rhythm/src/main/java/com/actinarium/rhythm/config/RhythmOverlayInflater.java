@@ -25,18 +25,15 @@ import android.util.DisplayMetrics;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.RhythmSpecLayerParent;
+import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.spec.Fill;
 import com.actinarium.rhythm.spec.GridLines;
 import com.actinarium.rhythm.spec.InsetGroup;
 import com.actinarium.rhythm.spec.Keyline;
 import com.actinarium.rhythm.spec.RatioKeyline;
+import com.actinarium.rhythm.common.ReaderUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,15 +43,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * An inflater that creates {@link RhythmOverlay RhythmOverlays} from text configuration
+ * A default inflater that creates {@link RhythmOverlay RhythmOverlays} from text configuration using registered layer
+ * factories. Developers are welcome to register additional factories for custom overlays, subclass this inflater to
+ * override certain aspects, or implement their own inflaters entirely from scratch if needed.
  *
  * @author Paul Danyliuk
  */
 public class RhythmOverlayInflater {
 
-    protected static final int INITIAL_FACTORIES_CAPACITY = 8;
+    /**
+     * Initial capacity of {layer type} -&gt; {factory} map.
+     */
+    private static final int INITIAL_FACTORIES_CAPACITY = 8;
+    /**
+     * A regex to search for arguments in configuration string by a following template: key[=value]
+     */
     protected static final Pattern ARGUMENTS_PATTERN = Pattern.compile("([^\\s=]+)(?:=([^\\s]+))?");
-    protected static final int NOT_STARTED = -1;
+    /**
+     * Used internally to indicate that
+     */
+    private static final int NOT_STARTED = -1;
 
     protected Context mContext;
     protected Map<String, RhythmSpecLayerFactory> mFactories;
@@ -82,7 +90,7 @@ public class RhythmOverlayInflater {
     public static RhythmOverlayInflater createDefault(Context context) {
         final RhythmOverlayInflater inflater = new RhythmOverlayInflater(context);
 
-        // Register bundled spec layers. Wrap guide, fill, and grid line factory in a caching decorator
+        // Register bundled spec layers. Wrap keyline, fill, grid, and ratio keyline factories in caching decorators
         inflater.mFactories.put(GridLines.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new GridLines.Factory()));
         inflater.mFactories.put(Keyline.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new Keyline.Factory()));
         inflater.mFactories.put(RatioKeyline.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new RatioKeyline.Factory()));
@@ -96,14 +104,14 @@ public class RhythmOverlayInflater {
     /**
      * Create a new instance of overlay inflater with no factories registered. Call this constructor only if you need a
      * blank inflater that you are going to configure from scratch (i.e. by registering all the required factories with
-     * {@link #registerFactory(String, RhythmSpecLayerFactory)}). If you need an inflater with all bundled
-     * spec layers pre-configured, use {@link #createDefault(Context)} instead.
+     * {@link #registerFactory(String, RhythmSpecLayerFactory)}). If you need an inflater with all bundled spec layers
+     * pre-configured, use {@link #createDefault(Context)} instead.
      *
      * @param context Context
      * @see #createDefault(Context)
      */
     public RhythmOverlayInflater(Context context) {
-        mContext = context;
+        mContext = context.getApplicationContext();
         mFactories = new HashMap<>(INITIAL_FACTORIES_CAPACITY);
     }
 
@@ -143,40 +151,55 @@ public class RhythmOverlayInflater {
      * Inflate a Rhythm configuration file into a list of {@link RhythmOverlay RhythmOverlays}, which you can then
      * assign to a group, or make sub-lists of and assign to different groups.
      *
-     * @param configFile Raw configuration file with syntax according to the docs
-     * @return A list of inflated RhythmOverlays
+     * @param rawResId Raw configuration file with syntax according to the docs
+     * @return A list of inflated Rhythm overlays
      * @see #inflate(List)
      */
-    public List<RhythmOverlay> inflate(@RawRes int configFile) {
-        // Read our config
-        final InputStream inputStream = mContext.getResources().openRawResource(configFile);
-        List<String> lines = readFrom(inputStream);
+    public List<RhythmOverlay> inflate(@RawRes int rawResId) {
+        List<String> lines = ReaderUtils.readLines(mContext, rawResId);
         return inflate(lines);
     }
 
     /**
-     * Same as {@link #inflate(int)}, but instead of raw resource file it accepts a list of strings. This method may
-     * come in handy if you need to bulk inflate several overlays at runtime.
+     * Same as {@link #inflate(int)}, but accepts a string for the whole overlay configuration file. This method may
+     * come in handy if you need to bulk inflate several overlays from strings known at runtime.
      *
-     * @param config List of configuration lines, which must follow the same syntax rules as the configuration file,
-     *               that is, no <code>null</code> strings, and overlays being separated by an empty line
-     * @return A list of inflated RhythmOverlays
+     * @param configString Configuration file passed in whole as a string. Must follow the same syntax rules as the
+     *                     configuration file, e.g. overlays must be separated by an empty line
+     * @return A list of inflated Rhythm overlays
      * @see #inflate(int)
+     * @see #inflate(List)
      */
-    public List<RhythmOverlay> inflate(List<String> config) {
+    public List<RhythmOverlay> inflate(String configString) {
+        List<String> configStrings = Arrays.asList(configString.split("\\r?\\n"));
+        return inflate(configStrings);
+    }
+
+    /**
+     * <p>Same as {@link #inflate(int)}, but accepts the configuration file already split in lines as strings.</p>
+     * <p>This method walks over the lines and determines how the config should be split into separate overlays.</p>
+     *
+     * @param configStrings Configuration file split as separate lines. Must follow the same syntax rules as the
+     *                      configuration file, that is, no <code>null</code> strings, and overlays being separated by
+     *                      an empty line
+     * @return A list of inflated Rhythm overlays
+     * @see #inflate(int)
+     * @see #inflate(String)
+     */
+    public List<RhythmOverlay> inflate(List<String> configStrings) {
         List<RhythmOverlay> overlays = new ArrayList<>();
-        final int len = config.size();
+        final int len = configStrings.size();
         String overlayTitle = null;
         int overlayStart = NOT_STARTED;
 
         // Now read the lines, determine block bounds and inflate each
         for (int i = 0; i < len; i++) {
-            final String line = config.get(i);
-            if (line.trim().length() == 0) {
+            final String line = configStrings.get(i).trim();
+            if (line.length() == 0) {
                 // We encountered an empty line, meaning this is probably the end of the previous block
                 if (overlayStart != NOT_STARTED) {
                     // We deliberately ignore the case when sublist is empty (i.e. only title specified)
-                    final RhythmOverlay previousBlock = inflateOverlay(config.subList(overlayStart, i));
+                    final RhythmOverlay previousBlock = inflateOverlay(configStrings.subList(overlayStart, i));
                     previousBlock.setTitle(overlayTitle);
                     overlays.add(previousBlock);
                     overlayStart = NOT_STARTED;
@@ -186,8 +209,12 @@ public class RhythmOverlayInflater {
                 // We found an overlay title!
                 // It must be the first line of the block, so if the latter is already started, we have a problem
                 if (overlayStart != NOT_STARTED) {
-                    throw new RhythmInflationException("Malformed Rhythm configuration at line " + (i + 1)
-                            + ". Did you forget an empty newline before starting a new overlay with a #Header?");
+                    throw new RhythmInflationException(
+                            RhythmInflationException.ERROR_MALFORMED_LIST_SYNTAX,
+                            "Malformed Rhythm configuration at line " + (i + 1)
+                                    + ". Did you forget an empty newline before starting a new overlay with a #Header?",
+                            i + 1
+                    );
                 }
 
                 // Otherwise we're probably fine
@@ -199,6 +226,10 @@ public class RhythmOverlayInflater {
 
                 // Start the overlay at the next line.
                 overlayStart = i + 1;
+            } else if (line.charAt(0) == '@') {
+
+                // todo: variable declaration
+
             } else if (overlayStart == NOT_STARTED) {
                 // Found a non-empty line. If the block isn't started yet, start a block
                 overlayStart = i;
@@ -207,7 +238,7 @@ public class RhythmOverlayInflater {
 
         // If we reached the end of the file, and have a block started, inflate it
         if (overlayStart != NOT_STARTED) {
-            final RhythmOverlay previousBlock = inflateOverlay(config.subList(overlayStart, len));
+            final RhythmOverlay previousBlock = inflateOverlay(configStrings.subList(overlayStart, len));
             previousBlock.setTitle(overlayTitle);
             overlays.add(previousBlock);
         }
@@ -216,18 +247,24 @@ public class RhythmOverlayInflater {
     }
 
     /**
-     * Inflate the whole overlay from overlay configuration string. The string must have layer configs on separate
-     * lines, nested layers being properly indented with spaces.
+     * Inflate a single overlay from overlay configuration string. The string must have layer configs on separate lines,
+     * nested layers being properly indented with spaces.
      *
      * @param configString layer configuration string, following the syntax rules
-     * @return inflated rhythm overlay
+     * @return inflated Rhythm overlay
      */
     public RhythmOverlay inflateOverlay(String configString) {
         List<String> configStrings = Arrays.asList(configString.split("\\r?\\n"));
         return inflateOverlay(configStrings);
     }
 
-    protected RhythmOverlay inflateOverlay(List<String> lines) {
+    /**
+     * Inflate a single overlay from overlay configuration already presented as separate lines.
+     *
+     * @param configStrings layer configuration split in lines
+     * @return inflated Rhythm overlay
+     */
+    public RhythmOverlay inflateOverlay(List<String> configStrings) {
         // initialize stacks for parents and indents. Since there's no adequate stack implementations out there for API 8+, make own.
         // Assume there rarely will be more than 4-deep hierarchy
         int size = 4;
@@ -241,8 +278,8 @@ public class RhythmOverlayInflater {
         indents[0] = -1;
 
         // parse line by line, nest as required
-        for (int i = 0, linesSize = lines.size(); i < linesSize; i++) {
-            LayerConfig config = parseConfig(lines.get(i));
+        for (int i = 0, linesSize = configStrings.size(); i < linesSize; i++) {
+            LayerConfig config = parseConfig(configStrings.get(i));
 
             // If indent is <= indent of parent layer, then go up the hierarchy. Won't underflow b/c indents[0] is -1
             while (config.getIndent() <= indents[headIndex]) {
@@ -256,7 +293,7 @@ public class RhythmOverlayInflater {
             // if this is a layer group, add it to the stack
             if (thisLayer instanceof RhythmSpecLayerParent) {
                 headIndex++;
-                // if arrays run out of space, increase it twice (a-la ArrayList)
+                // if arrays run out of space, grow it twice (a-la ArrayList)
                 if (headIndex >= size) {
                     int newSize = size * 2;
                     int[] newIndents = new int[newSize];
@@ -296,7 +333,11 @@ public class RhythmOverlayInflater {
         config.setDisplayMetrics(mContext.getResources().getDisplayMetrics());
         RhythmSpecLayerFactory factory = mFactories.get(config.getLayerType());
         if (factory == null) {
-            throw new RhythmInflationException("No factory registered for type \"" + config.getLayerType() + "\"");
+            throw new RhythmInflationException(
+                    RhythmInflationException.ERROR_UNKNOWN_LAYER_TYPE,
+                    "No factory registered for type \"" + config.getLayerType() + "\"",
+                    config.getLayerType()
+            );
         }
         return factory.getForConfig(config);
     }
@@ -345,27 +386,6 @@ public class RhythmOverlayInflater {
         }
 
         return new LayerConfig(specLayerType, spaces, arguments);
-    }
-
-    /**
-     * Reads lines from stream and closes it
-     *
-     * @param inputStream Resource input stream
-     * @return Lines read
-     */
-    private static ArrayList<String> readFrom(InputStream inputStream) {
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()));
-        ArrayList<String> readLines = new ArrayList<>();
-        String line;
-        try {
-            while ((line = reader.readLine()) != null) {
-                readLines.add(line);
-            }
-            inputStream.close();
-        } catch (IOException e) {
-            throw new RhythmInflationException("Error when inflating the file: " + e.getMessage(), e);
-        }
-        return readLines;
     }
 
 }

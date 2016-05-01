@@ -32,7 +32,7 @@ import android.widget.MultiAutoCompleteTextView;
 import com.actinarium.aligned.Utils;
 import com.actinarium.rhythm.RhythmDrawable;
 import com.actinarium.rhythm.RhythmOverlay;
-import com.actinarium.rhythm.config.RhythmInflationException;
+import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmOverlayInflater;
 import com.actinarium.rhythm.control.RhythmFrameLayout;
 import com.actinarium.rhythm.sample.util.ViewUtils;
@@ -176,7 +176,7 @@ public class RhythmSandbox {
         for (int i = 0, linesLength = lines.length; i < linesLength; i++) {
             String line = lines[i];
             try {
-                mOverlayInflater.inflateLayer(RhythmOverlayInflater.parseConfig(line));
+                mOverlayInflater.inflateLayer(line);
             } catch (RhythmInflationException e) {
                 errors.add(mActivity.getString(R.string.validation_config_line, i + 1, e.getMessage()));
             } catch (Exception e) {

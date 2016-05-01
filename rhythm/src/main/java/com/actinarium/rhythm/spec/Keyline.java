@@ -24,7 +24,7 @@ import android.support.annotation.ColorInt;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.config.LayerConfig;
-import com.actinarium.rhythm.config.RhythmInflationException;
+import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
@@ -157,13 +157,19 @@ public class Keyline implements RhythmSpecLayer {
 
             keyline.mGravity = config.getLayerGravity("from", Gravity.NO_GRAVITY);
             if (keyline.mGravity == Gravity.NO_GRAVITY) {
-                throw new RhythmInflationException("Error in keyline config: 'from' argument is mandatory " +
-                        "and must be either 'left', 'right', 'top', 'bottom'");
+                throw new RhythmInflationException(
+                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
+                        "Error in keyline config: 'from' argument is mandatory and must be either 'left', 'right', 'top', 'bottom'",
+                        LAYER_TYPE, "from", config.getString("from"), "left|right|top|bottom"
+                );
             }
 
             if (!config.hasArgument("distance")) {
-                throw new RhythmInflationException("Error in keyline config: 'distance' argument is mandatory " +
-                        "and must be a dimension value (e.g. 8dp)");
+                throw new RhythmInflationException(
+                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_EXPECTED_TYPE,
+                        "Error in keyline config: 'distance' argument is mandatory and must be a dimension value (e.g. 'distance=16dp')",
+                        LAYER_TYPE, "step", "{dimen}" , "distance=16dp"
+                );
             }
             keyline.mDistance = config.getDimensionPixelOffset("distance", 0);
 

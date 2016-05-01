@@ -19,13 +19,13 @@ package com.actinarium.rhythm.config;
 import com.actinarium.rhythm.RhythmSpecLayer;
 
 /**
- * Interface for a factory that can instantiate a {@link RhythmSpecLayer} implementation from provided {@link
+ * <p>Interface for a factory that can instantiate a {@link RhythmSpecLayer} implementation from provided {@link
  * LayerConfig}. These factories are used by {@link RhythmOverlayInflater} to inflate declarative config into respective
  * overlays. If you make a custom spec layer, you should also create a corresponding <code>RhythmSpecLayerFactory</code>
  * and register it within {@link RhythmOverlayInflater#registerFactory(String, RhythmSpecLayerFactory)}
- * method.<br>Concrete factories may implement some sort of caching and provide the same {@link RhythmSpecLayer}
+ * method.</p><p>Concrete factories may implement some sort of caching and provide the same {@link RhythmSpecLayer}
  * instances for equal {@link LayerConfig}s if they can be reused, but it's not mandatory. Furthermore it’s developer’s
- * responsibility to not mutate the layer if the latter is reused in multiple overlays.
+ * responsibility to not mutate the layer if the latter is reused in multiple overlays.</p>
  *
  * @author Paul Danyliuk
  */

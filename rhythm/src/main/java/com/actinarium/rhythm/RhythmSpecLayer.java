@@ -26,8 +26,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * <p>Spec layer a descriptor of a granular piece of overlay (e.g. a single line, a repeating line etc), which both
- * holds the configuration of its appearance (hence the spec), but is also capable of drawing itself onto the provided
+ * <p>Spec layer is a descriptor of a granular piece of overlay (e.g. a single line, a repeating line etc), which both
+ * holds the configuration of its appearance (hence the spec) and is also capable of drawing itself onto the provided
  * canvas (hence the layer). Unlike Drawables, where separate instances are required each time they are used, spec layer
  * instances are created per configuration and can be reused across many {@link RhythmDrawable}s (views,
  * overlays).</p><p>You can create custom spec layers by implementing this interface.</p>
@@ -35,17 +35,17 @@ import java.lang.annotation.RetentionPolicy;
 public interface RhythmSpecLayer {
 
     /**
-     * Draw itself to the provided canvas within provided bounds, according to configuration (if any)
+     * Draw itself to the provided canvas within provided bounds according to internal configuration (if any)
      *
      * @param canvas         Canvas for the layer to draw itself to
      * @param drawableBounds Bounds where this layer should draw itself. Since these are the bounds of a {@link
      *                       RhythmDrawable} connected to the view, they are usually the same as the view’s bounds, so
-     *                       you can get the view’s dimensions if you need them.
+     *                       you can use this parameter to get the view’s dimensions should you need them.
      */
     void draw(Canvas canvas, Rect drawableBounds);
 
     /**
-     * Type definition for screen edge that a keyline or pattern must be attached to
+     * Type definition for screen edge that a keyline or pattern must be attached to. Used by some layers
      */
     @SuppressLint("RtlHardcoded")
     @Retention(RetentionPolicy.SOURCE)

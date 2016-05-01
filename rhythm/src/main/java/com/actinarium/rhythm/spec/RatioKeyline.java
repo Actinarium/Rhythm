@@ -28,9 +28,10 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.config.LayerConfig;
-import com.actinarium.rhythm.config.RhythmInflationException;
+import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -148,15 +149,23 @@ public class RatioKeyline implements RhythmSpecLayer {
 
             String ratio = config.getString("ratio");
             if (ratio == null) {
-                throw new RhythmInflationException("Error when inflating ratio-keyline: 'ratio' argument is missing");
+                throw new RhythmInflationException(
+                        RhythmInflationException.ERROR_ARGUMENT_MISSING,
+                        "Error when inflating ratio-keyline: 'ratio' argument is missing",
+                        LAYER_TYPE, "ratio", "{int}:{int}"
+                );
             }
             Matcher matcher = RATIO_VALUE_PATTERN.matcher(ratio);
             if (!matcher.matches()) {
-                throw new RhythmInflationException("Error when inflating ratio-keyline: 'ratio' argument is invalid, expected \"x:y\" pattern");
+                throw new RhythmInflationException(
+                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_EXPECTED_TYPE,
+                        "Error when inflating ratio-keyline: 'ratio' argument is invalid, expected \"x:y\" pattern",
+                        LAYER_TYPE, "ratio", "{int}:{int}", "ratio=16:9"
+                );
             }
             keyline.mRatioX = Integer.parseInt(matcher.group(1));
             keyline.mRatioY = Integer.parseInt(matcher.group(2));
-            keyline.mRatioString = String.format("%d:%d", keyline.mRatioX, keyline.mRatioY);
+            keyline.mRatioString = String.format(Locale.US, "%d:%d", keyline.mRatioX, keyline.mRatioY);
 
             keyline.mThickness = config.getDimensionPixelSize("thickness",
                     (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_THICKNESS, config.getDisplayMetrics()));
