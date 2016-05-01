@@ -51,7 +51,7 @@ public class RhythmInflationException extends RuntimeException {
     public static final int ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF = 4;
 
     /**
-     * A mandatory argument is missing or <= zero.<br>Args: [0] - Layer type; [1] - Argument; [2] - Example
+     * A mandatory argument is missing or &lt;= zero.<br>Args: [0] - Layer type; [1] - Argument; [2] - Example
      */
     public static final int ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE = 5;
 
@@ -90,7 +90,8 @@ public class RhythmInflationException extends RuntimeException {
 
     /**
      * Get the error code of this exception. This code then can be used to render a localized message if Rhythm is used
-     * as a dependency of <a href="">some other apps</a>.
+     * as a dependency of <a href="https://play.google.com/store/apps/details?id=com.actinarium.materialcue">some other
+     * apps</a>.
      *
      * @return error code integer, see <code>ERROR_*</code> constants in {@link RhythmInflationException} class.
      */
