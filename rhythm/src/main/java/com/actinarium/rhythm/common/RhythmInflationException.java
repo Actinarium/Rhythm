@@ -35,31 +35,46 @@ public class RhythmInflationException extends RuntimeException {
     public static final int ERROR_MALFORMED_LIST_SYNTAX = 1;
 
     /**
+     * Variable declaration is malformed.<br>Args: [0] - Offending line; [1] - Actual declaration
+     */
+    public static final int ERROR_MALFORMED_VARIABLE_SYNTAX = 2;
+
+    /**
+     * Variable declared in illegal place.<br>Args: [0] - Offending line
+     */
+    public static final int ERROR_UNEXPECTED_VARIABLE_DECLARATION = 3;
+
+    /**
+     * Title declared in illegal place.<br>Args: [0] - Offending line
+     */
+    public static final int ERROR_UNEXPECTED_TITLE_DECLARATION = 4;
+
+    /**
      * The layer type is unknown to inflater (invalid or not registered).<br>Args: [0] - Layer type
      */
-    public static final int ERROR_UNKNOWN_LAYER_TYPE = 2;
+    public static final int ERROR_UNKNOWN_LAYER_TYPE = 10;
 
     /**
      * A mandatory argument is missing.<br>Args: [0] - Layer type; [1] - Argument; [2] - Expected type
      */
-    public static final int ERROR_ARGUMENT_MISSING = 3;
+    public static final int ERROR_ARGUMENT_MISSING = 11;
 
     /**
      * A mandatory argument is missing or is not one of accepted values.<br>Args: [0] - Layer type; [1] - Argument; [2]
      * - Actual value; [3] - Accepted values
      */
-    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF = 4;
+    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF = 12;
 
     /**
      * A mandatory argument is missing or &lt;= zero.<br>Args: [0] - Layer type; [1] - Argument; [2] - Example
      */
-    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE = 5;
+    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE = 13;
 
     /**
      * A mandatory argument is missing or not of required type.<br>Args: [0] - Layer type; [1] - Argument; [2] -
      * Expected type; [3] - Example
      */
-    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_EXPECTED_TYPE = 6;
+    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_EXPECTED_TYPE = 14;
 
     private int mErrorCode;
     private Object[] mArgs;

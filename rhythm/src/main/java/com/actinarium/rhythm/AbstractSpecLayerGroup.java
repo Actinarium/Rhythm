@@ -63,4 +63,12 @@ public abstract class AbstractSpecLayerGroup<T extends AbstractSpecLayerGroup> i
         mLayers.add(layer);
         return (T) this;
     }
+
+    /**
+     * Return the number of children in this layer group
+     * @return number of children
+     */
+    public int size() {
+        return mLayers.size();
+    }
 }

@@ -55,12 +55,19 @@ public class RhythmOverlayInflater {
      * Initial capacity of {layer type} -&gt; {factory} map.
      */
     private static final int INITIAL_FACTORIES_CAPACITY = 8;
+
     /**
      * A regex to search for arguments in configuration string by a following template: key[=value]
      */
     protected static final Pattern ARGUMENTS_PATTERN = Pattern.compile("([^\\s=]+)(?:=([^\\s]+))?");
+
     /**
-     * Used internally to indicate that
+     * A regex to validate and parse variables in configuration string by a following template: @variable=value
+     */
+    protected static final Pattern VARIABLES_PATTERN = Pattern.compile("(@[\\w]+)=([^\\s]+)");
+
+    /**
+     * Used internally to indicate that there's no overlay block started at the moment of evaluating current line
      */
     private static final int NOT_STARTED = -1;
 
@@ -188,50 +195,56 @@ public class RhythmOverlayInflater {
      */
     public List<RhythmOverlay> inflate(List<String> configStrings) {
         List<RhythmOverlay> overlays = new ArrayList<>();
+        Map<String, String> globalVars = null;
         final int len = configStrings.size();
-        String overlayTitle = null;
         int overlayStart = NOT_STARTED;
 
-        // Now read the lines, determine block bounds and inflate each
-        for (int i = 0; i < len; i++) {
-            final String line = configStrings.get(i).trim();
-            if (line.length() == 0) {
-                // We encountered an empty line, meaning this is probably the end of the previous block
-                if (overlayStart != NOT_STARTED) {
-                    // We deliberately ignore the case when sublist is empty (i.e. only title specified)
-                    final RhythmOverlay previousBlock = inflateOverlay(configStrings.subList(overlayStart, i));
-                    previousBlock.setTitle(overlayTitle);
-                    overlays.add(previousBlock);
-                    overlayStart = NOT_STARTED;
-                    overlayTitle = null;
+        // Line index
+        int i = 0;
+
+        // First let's read global variables, which must be placed in the beginning of the file
+        for (; i < len; i++) {
+            final String line = configStrings.get(i);
+            if (isEmptyOrComment(line.trim())) {
+                // No-op
+            } else if (line.charAt(0) == '@') {
+                // Variable declaration. Let's check and parse it
+                if (globalVars == null) {
+                    globalVars = new HashMap<>();
                 }
-            } else if (line.charAt(0) == '#') {
-                // We found an overlay title!
-                // It must be the first line of the block, so if the latter is already started, we have a problem
-                if (overlayStart != NOT_STARTED) {
+                Matcher matcher = VARIABLES_PATTERN.matcher(line);
+                if (matcher.matches()) {
+                    String name = matcher.group(1);
+                    String value = matcher.group(2);
+                    globalVars.put(name, value);
+                } else {
+                    // Oops, bad variable syntax
                     throw new RhythmInflationException(
-                            RhythmInflationException.ERROR_MALFORMED_LIST_SYNTAX,
-                            "Malformed Rhythm configuration at line " + (i + 1)
-                                    + ". Did you forget an empty newline before starting a new overlay with a #Header?",
-                            i + 1
+                            RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
+                            "Malformed variable declaration: \"" +  line
+                                    + "\" Expected syntax is @name=value where name may contain only letters, digits, and/or underscores, and value must not have spaces.",
+                            i + 1, line
                     );
                 }
+            } else {
+                // Found a non-variable-declaration, non-empty line
+                break;
+            }
+        }
 
-                // Otherwise we're probably fine
-                // Trim the leading # and extract the title
-                overlayTitle = line.substring(1).trim();
-                if (overlayTitle.length() == 0) {
-                    overlayTitle = null;
+        // Now read the remaining lines, separating blocks by empty lines, and inflate the blocks as we go
+        for (; i < len; i++) {
+            final String line = configStrings.get(i);
+            if (line.trim().length() == 0) {
+                // We encountered an empty line, meaning this is the end of the previous block if the latter is present
+                if (overlayStart != NOT_STARTED) {
+                    // There was a block, so now it's terminated and we should inflate it.
+                    final RhythmOverlay previousBlock = inflateOverlay(configStrings.subList(overlayStart, i));
+                    overlays.add(previousBlock);
+                    overlayStart = NOT_STARTED;
                 }
-
-                // Start the overlay at the next line.
-                overlayStart = i + 1;
-            } else if (line.charAt(0) == '@') {
-
-                // todo: variable declaration
-
             } else if (overlayStart == NOT_STARTED) {
-                // Found a non-empty line. If the block isn't started yet, start a block
+                // It's not an empty line, and the block isn't started - start it at this line then
                 overlayStart = i;
             }
         }
@@ -239,7 +252,6 @@ public class RhythmOverlayInflater {
         // If we reached the end of the file, and have a block started, inflate it
         if (overlayStart != NOT_STARTED) {
             final RhythmOverlay previousBlock = inflateOverlay(configStrings.subList(overlayStart, len));
-            previousBlock.setTitle(overlayTitle);
             overlays.add(previousBlock);
         }
 
@@ -277,35 +289,90 @@ public class RhythmOverlayInflater {
         parents[0] = overlay;
         indents[0] = -1;
 
-        // parse line by line, nest as required
-        for (int i = 0, linesSize = configStrings.size(); i < linesSize; i++) {
-            LayerConfig config = parseConfig(configStrings.get(i));
+        Map<String, String> localVars = null;
 
-            // If indent is <= indent of parent layer, then go up the hierarchy. Won't underflow b/c indents[0] is -1
-            while (config.getIndent() <= indents[headIndex]) {
-                headIndex--;
-                // we could clean up the stacks but there's really no need
-            }
-
-            RhythmSpecLayer thisLayer = inflateLayer(config);
-            parents[headIndex].addLayer(thisLayer);
-
-            // if this is a layer group, add it to the stack
-            if (thisLayer instanceof RhythmSpecLayerParent) {
-                headIndex++;
-                // if arrays run out of space, grow it twice (a-la ArrayList)
-                if (headIndex >= size) {
-                    int newSize = size * 2;
-                    int[] newIndents = new int[newSize];
-                    RhythmSpecLayerParent[] newParents = new RhythmSpecLayerParent[newSize];
-                    System.arraycopy(indents, 0, newIndents, 0, size);
-                    System.arraycopy(parents, 0, newParents, 0, size);
-                    indents = newIndents;
-                    parents = newParents;
-                    size = newSize;
+        // Read line by line, evaluate line types, parse and nest
+        for (int i = 0, lines = configStrings.size(); i < lines; i++) {
+            String line = configStrings.get(i);
+            if (isEmptyOrComment(line.trim())) {
+                // Empty or comment line, no-op (btw there should be no empty lines here if inflating the whole file)
+            } else if (line.charAt(0) == '@') {
+                // This is a local variable. And all variables must be declared before any overlay lines.
+                if (overlay.size() != 0) {
+                    // todo: here and everywhere else, where line is reported make sure it reports a correct line
+                    throw new RhythmInflationException(
+                            RhythmInflationException.ERROR_UNEXPECTED_VARIABLE_DECLARATION,
+                            "Unexpected variable declaration found at line " +  (i + 1)
+                                    + ". Variables must be declared before spec layers.",
+                            i + 1
+                    );
                 }
-                parents[headIndex] = (RhythmSpecLayerParent) thisLayer;
-                indents[headIndex] = config.getIndent();
+
+                if (localVars == null) {
+                    localVars = new HashMap<>();
+                }
+
+                // Let's check and parse
+                Matcher matcher = VARIABLES_PATTERN.matcher(line);
+                if (matcher.matches()) {
+                    String name = matcher.group(1);
+                    String value = matcher.group(2);
+                    localVars.put(name, value);
+                } else {
+                    // Oops, bad variable syntax
+                    throw new RhythmInflationException(
+                            RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
+                            "Malformed variable declaration: \"" +  line
+                                    + "\" Expected syntax is @name=value where name may contain only letters, digits, and/or underscores, and value must not have spaces.",
+                            i+ 1, line
+                    );
+                }
+            } else if (line.charAt(0) == '#') {
+                // Looks like a title. A title should be the first non-empty line, and there should be no multiple titles per block
+                if (overlay.getTitle() != null || localVars != null || overlay.size() != 0) {
+                    throw new RhythmInflationException(
+                            RhythmInflationException.ERROR_UNEXPECTED_TITLE_DECLARATION,
+                            "Unexpected overlay title found at line " + (i + 1)
+                                    + ". An overlay title must be declared before anything else. Did you forget an empty newline before starting a new overlay?",
+                            i + 1
+                    );
+                }
+
+                // Otherwise OK, we probably have a title
+                String title = line.substring(1).trim();
+                if (title.length() != 0) {
+                    overlay.setTitle(title);
+                }
+            } else {
+                // Otherwise assume the line is a spec layer, try parsing and inflating it as a separate layer
+                LayerConfig config = parseConfig(line);
+
+                // If indent is <= indent of parent layer, then go up the hierarchy. Won't underflow b/c indents[0] is -1
+                while (config.getIndent() <= indents[headIndex]) {
+                    headIndex--;
+                    // we could clean up the stacks but there's really no need
+                }
+
+                RhythmSpecLayer thisLayer = inflateLayer(config);
+                parents[headIndex].addLayer(thisLayer);
+
+                // if this is a layer group, add it to the stack
+                if (thisLayer instanceof RhythmSpecLayerParent) {
+                    headIndex++;
+                    // if arrays run out of space, grow it twice (a-la ArrayList)
+                    if (headIndex >= size) {
+                        int newSize = size * 2;
+                        int[] newIndents = new int[newSize];
+                        RhythmSpecLayerParent[] newParents = new RhythmSpecLayerParent[newSize];
+                        System.arraycopy(indents, 0, newIndents, 0, size);
+                        System.arraycopy(parents, 0, newParents, 0, size);
+                        indents = newIndents;
+                        parents = newParents;
+                        size = newSize;
+                    }
+                    parents[headIndex] = (RhythmSpecLayerParent) thisLayer;
+                    indents[headIndex] = config.getIndent();
+                }
             }
         }
 
@@ -351,7 +418,7 @@ public class RhythmOverlayInflater {
      * does not have {@link DisplayMetrics} injected into it - you have to do it yourself before querying complex
      * dimensions from this layer config object.
      */
-    public static LayerConfig parseConfig(String configString) {
+    public LayerConfig parseConfig(String configString) {
         // Let's just iterate over the first chars to get indent and layer type, and parse the arguments with regex
         int i = 0;
         int length = configString.length();
@@ -370,14 +437,12 @@ public class RhythmOverlayInflater {
 
         final int anticipatedCapacity = (length - i) / 12 + 1;
         Map<String, String> arguments;
-        // todo: decide on this, whether we should pull support v4 or fall back to hash map on pre-19
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             arguments = new ArrayMap<>(anticipatedCapacity);
         } else {
             arguments = new HashMap<>(anticipatedCapacity);
         }
 
-        // todo: instead of regex, consider parsing linearly for efficiency
         Matcher matcher = ARGUMENTS_PATTERN.matcher(configString.substring(i));
         while (matcher.find()) {
             String key = matcher.group(1);
@@ -388,4 +453,13 @@ public class RhythmOverlayInflater {
         return new LayerConfig(specLayerType, spaces, arguments);
     }
 
+    /**
+     * Determines whether the line is empty or a comment one (starts with <code>//</code>) and thus should be ignored.
+     *
+     * @param line line to test, should be pre-trimmed
+     * @return true if empty or comment
+     */
+    private static boolean isEmptyOrComment(String line) {
+        return line.length() == 0 || (line.charAt(0) == '/' && line.length() >= 2 && line.charAt(1) == '/');
+    }
 }
