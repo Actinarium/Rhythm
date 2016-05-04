@@ -56,6 +56,7 @@ public class LayerConfig {
     protected String mLayerType;
     protected int mIndent;
     protected Map<String, String> mArguments;
+    protected Map<String, String> mVariables;
     protected DisplayMetrics mMetrics;
 
     protected static Pattern DIMEN_VALUE_PATTERN = Pattern.compile("^-?\\d*\\.?\\d+");
@@ -66,11 +67,13 @@ public class LayerConfig {
      * @param layerType spec layer type, used for appropriate factory lookup
      * @param indent    number of leading spaces in the config line, used to resolve layer hierarchy
      * @param arguments bag of raw arguments parsed from configuration string
+     * @param variables bag of variables to be used in arguments. Keys must be prefixed with <code>@</code>.
      */
-    public LayerConfig(@NonNull String layerType, int indent, @NonNull Map<String, String> arguments) {
+    public LayerConfig(@NonNull String layerType, int indent, @NonNull Map<String, String> arguments, @NonNull Map<String, String> variables) {
         mLayerType = layerType;
         mIndent = indent;
         mArguments = arguments;
+        mVariables = variables;
     }
 
     /**
@@ -139,13 +142,18 @@ public class LayerConfig {
     }
 
     /**
-     * Get argument value as raw string
+     * Get argument value as raw string. If the stored value is a variable (starting with <code>@</code>), returns the
+     * value of the variable by provided reference name
      *
      * @param key argument key
-     * @return argument value as raw string
+     * @return argument value as raw string, or null if key is missing or the value references a missing variable
      */
     public String getString(String key) {
-        return mArguments.get(key);
+        String value = mArguments.get(key);
+        if (value != null && value.length() > 0 && value.charAt(0) == '@') {
+            value = mVariables.get(value);
+        }
+        return value;
     }
 
     /**
@@ -156,7 +164,8 @@ public class LayerConfig {
      * @return argument value as raw string
      */
     public String getString(String key, @Nullable String defaultValue) {
-        return mArguments.containsKey(key) ? mArguments.get(key) : defaultValue;
+        String rawValue = getString(key);
+        return rawValue != null ? rawValue : defaultValue;
     }
 
     /**
@@ -167,7 +176,8 @@ public class LayerConfig {
      * @return argument value parsed as integer
      */
     public int getInt(String key, int defaultValue) {
-        return mArguments.containsKey(key) ? Integer.parseInt(mArguments.get(key)) : defaultValue;
+        String rawValue = getString(key);
+        return rawValue != null ? Integer.parseInt(rawValue) : defaultValue;
     }
 
     /**
@@ -178,7 +188,8 @@ public class LayerConfig {
      * @return argument value parsed as float
      */
     public float getFloat(String key, float defaultValue) {
-        return mArguments.containsKey(key) ? Float.parseFloat(mArguments.get(key)) : defaultValue;
+        String rawValue = getString(key);
+        return rawValue != null ? Float.parseFloat(rawValue) : defaultValue;
     }
 
     /**
@@ -192,8 +203,8 @@ public class LayerConfig {
      */
     public boolean getBoolean(String key, boolean defaultValue, boolean nullValue) {
         if (mArguments.containsKey(key)) {
-            final String value = mArguments.get(key);
-            return value == null ? nullValue : Boolean.parseBoolean(value);
+            String rawValue = getString(key);
+            return rawValue == null ? nullValue : Boolean.parseBoolean(rawValue);
         } else {
             return defaultValue;
         }
@@ -208,7 +219,8 @@ public class LayerConfig {
      */
     @ColorInt
     public int getColor(String key, @ColorInt int defaultValue) {
-        return mArguments.containsKey(key) ? Color.parseColor(mArguments.get(key)) : defaultValue;
+        String rawValue = getString(key);
+        return rawValue != null ? Color.parseColor(rawValue) : defaultValue;
     }
 
     /**
@@ -222,7 +234,7 @@ public class LayerConfig {
      */
     @SuppressLint("RtlHardcoded")
     public int getGravity(String key, int defaultValue) {
-        String gravityArg = mArguments.get(key);
+        String gravityArg = getString(key);
         if (gravityArg == null) {
             return defaultValue;
         } else if (gravityArg.equals("center")) {
@@ -272,7 +284,7 @@ public class LayerConfig {
     @SuppressLint("RtlHardcoded")
     @Edge
     public int getLayerGravity(String key, @Edge int defaultValue) {
-        String gravityArg = mArguments.get(key);
+        String gravityArg = getString(key);
         if ("top".equals(gravityArg)) {
             return Gravity.TOP;
         } else if ("left".equals(gravityArg)) {
@@ -296,7 +308,7 @@ public class LayerConfig {
      */
     @DimensionUnits
     public int getDimensionUnits(String key) {
-        String value = mArguments.get(key);
+        String value = getString(key);
         if (value == null) {
             return UNITS_NULL;
         } else if (value.endsWith("dp") || value.endsWith("dip")) {
@@ -331,7 +343,7 @@ public class LayerConfig {
      * @see #getDimensionPixelRaw(float, int, DisplayMetrics)
      */
     public float getDimensionValueRaw(String key, float defaultValue) {
-        String value = mArguments.get(key);
+        String value = getString(key);
         if (value == null) {
             return defaultValue;
         }
@@ -465,13 +477,14 @@ public class LayerConfig {
         if (this == o) { return true; }
         if (o == null || getClass() != o.getClass()) { return false; }
         LayerConfig that = (LayerConfig) o;
-        return mArguments.equals(that.mArguments) && mLayerType.equals(that.mLayerType);
+        return mArguments.equals(that.mArguments) && mVariables.equals(that.mVariables) && mLayerType.equals(that.mLayerType);
     }
 
     @Override
     public int hashCode() {
         int result = mLayerType.hashCode();
         result = 31 * result + mArguments.hashCode();
+        result = 31 * result + mVariables.hashCode();
         return result;
     }
 

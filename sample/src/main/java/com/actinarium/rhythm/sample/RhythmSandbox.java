@@ -172,16 +172,28 @@ public class RhythmSandbox {
 
         // Otherwise verify line by line and collect errors
         ArrayList<String> errors = new ArrayList<>();
+
+        /*
         String[] lines = overlayConfig.split("\\n");
+        List<String> singletonList = new ArrayList<>(1);
+        singletonList.add(null);
         for (int i = 0, linesLength = lines.length; i < linesLength; i++) {
-            String line = lines[i];
+            singletonList.set(0, lines[i]);
             try {
-                mOverlayInflater.inflateLayer(line);
+                mOverlayInflater.inflateOverlay(singletonList);
             } catch (RhythmInflationException e) {
                 errors.add(mActivity.getString(R.string.validation_config_line, i + 1, e.getMessage()));
             } catch (Exception e) {
                 errors.add(mActivity.getString(R.string.validation_config_line_unexpected, i + 1, e.getMessage()));
             }
+        } */
+
+        try {
+            mOverlayInflater.inflateOverlay(overlayConfig);
+        } catch (RhythmInflationException e) {
+            errors.add(mActivity.getString(R.string.validation_config_line, 0, e.getMessage()));
+        } catch (Exception e) {
+            errors.add(mActivity.getString(R.string.validation_config_line_unexpected, 0, e.getMessage()));
         }
 
         final int errorNumber = errors.size();

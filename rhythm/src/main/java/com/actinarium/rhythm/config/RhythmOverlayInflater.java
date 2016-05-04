@@ -25,6 +25,7 @@ import android.util.DisplayMetrics;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.RhythmSpecLayerParent;
+import com.actinarium.rhythm.common.ReaderUtils;
 import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.spec.Fill;
@@ -32,10 +33,10 @@ import com.actinarium.rhythm.spec.GridLines;
 import com.actinarium.rhythm.spec.InsetGroup;
 import com.actinarium.rhythm.spec.Keyline;
 import com.actinarium.rhythm.spec.RatioKeyline;
-import com.actinarium.rhythm.common.ReaderUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,7 +196,7 @@ public class RhythmOverlayInflater {
      */
     public List<RhythmOverlay> inflate(List<String> configStrings) {
         List<RhythmOverlay> overlays = new ArrayList<>();
-        Map<String, String> globalVars = null;
+        Map<String, String> globalVars = new HashMap<>();
         final int len = configStrings.size();
         int overlayStart = NOT_STARTED;
 
@@ -209,9 +210,6 @@ public class RhythmOverlayInflater {
                 // No-op
             } else if (line.charAt(0) == '@') {
                 // Variable declaration. Let's check and parse it
-                if (globalVars == null) {
-                    globalVars = new HashMap<>();
-                }
                 Matcher matcher = VARIABLES_PATTERN.matcher(line);
                 if (matcher.matches()) {
                     String name = matcher.group(1);
@@ -221,7 +219,7 @@ public class RhythmOverlayInflater {
                     // Oops, bad variable syntax
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
-                            "Malformed variable declaration: \"" +  line
+                            "Malformed variable declaration: \"" + line + "\" on line " + (i + 1)
                                     + "\" Expected syntax is @name=value where name may contain only letters, digits, and/or underscores, and value must not have spaces.",
                             i + 1, line
                     );
@@ -239,7 +237,7 @@ public class RhythmOverlayInflater {
                 // We encountered an empty line, meaning this is the end of the previous block if the latter is present
                 if (overlayStart != NOT_STARTED) {
                     // There was a block, so now it's terminated and we should inflate it.
-                    final RhythmOverlay previousBlock = inflateOverlay(configStrings.subList(overlayStart, i));
+                    final RhythmOverlay previousBlock = inflateOverlayInternal(configStrings.subList(overlayStart, i), globalVars, overlayStart);
                     overlays.add(previousBlock);
                     overlayStart = NOT_STARTED;
                 }
@@ -251,7 +249,7 @@ public class RhythmOverlayInflater {
 
         // If we reached the end of the file, and have a block started, inflate it
         if (overlayStart != NOT_STARTED) {
-            final RhythmOverlay previousBlock = inflateOverlay(configStrings.subList(overlayStart, len));
+            final RhythmOverlay previousBlock = inflateOverlayInternal(configStrings.subList(overlayStart, len), globalVars, overlayStart);
             overlays.add(previousBlock);
         }
 
@@ -259,15 +257,27 @@ public class RhythmOverlayInflater {
     }
 
     /**
-     * Inflate a single overlay from overlay configuration string. The string must have layer configs on separate lines,
-     * nested layers being properly indented with spaces.
+     * Inflate a single overlay from overlay configuration string according to the syntax spec.
      *
      * @param configString layer configuration string, following the syntax rules
      * @return inflated Rhythm overlay
      */
     public RhythmOverlay inflateOverlay(String configString) {
         List<String> configStrings = Arrays.asList(configString.split("\\r?\\n"));
-        return inflateOverlay(configStrings);
+        //noinspection unchecked
+        return inflateOverlayInternal(configStrings, Collections.EMPTY_MAP, 0);
+    }
+
+    /**
+     * Inflate a single overlay from overlay configuration string according to the syntax spec.
+     *
+     * @param configString layer configuration string, following the syntax rules
+     * @param vars         the @key->value map of the values that can be referenced within this overlay (see the docs)
+     * @return inflated Rhythm overlay
+     */
+    public RhythmOverlay inflateOverlay(String configString, @NonNull Map<String, String> vars) {
+        List<String> configStrings = Arrays.asList(configString.split("\\r?\\n"));
+        return inflateOverlayInternal(configStrings, vars, 0);
     }
 
     /**
@@ -277,6 +287,32 @@ public class RhythmOverlayInflater {
      * @return inflated Rhythm overlay
      */
     public RhythmOverlay inflateOverlay(List<String> configStrings) {
+        //noinspection unchecked
+        return inflateOverlayInternal(configStrings, Collections.EMPTY_MAP, 0);
+    }
+
+    /**
+     * Inflate a single overlay from overlay configuration already presented as separate lines.
+     *
+     * @param configStrings layer configuration split in lines
+     * @param vars          the @key->value map of the values that can be referenced within this overlay (see the docs)
+     * @return inflated Rhythm overlay
+     */
+    public RhythmOverlay inflateOverlay(List<String> configStrings, @NonNull Map<String, String> vars) {
+        return inflateOverlayInternal(configStrings, vars, 0);
+    }
+
+    /**
+     * Internal method for inflating an overlay from separate config lines, with provided global variables map, and
+     * possibly as a part of an overlay config file.
+     *
+     * @param configStrings layer configuration split in lines
+     * @param globalVars    map of global variables
+     * @param offset        index of the line where this overlay starts in the context of an outer config. Pass 0 if
+     *                      inflating this overlay on its own
+     * @return inflated Rhythm overlay
+     */
+    protected RhythmOverlay inflateOverlayInternal(List<String> configStrings, @NonNull Map<String, String> globalVars, int offset) {
         // initialize stacks for parents and indents. Since there's no adequate stack implementations out there for API 8+, make own.
         // Assume there rarely will be more than 4-deep hierarchy
         int size = 4;
@@ -289,7 +325,9 @@ public class RhythmOverlayInflater {
         parents[0] = overlay;
         indents[0] = -1;
 
-        Map<String, String> localVars = null;
+        // At first assume there are no local overrides, so reusing global vars map for now
+        Map<String, String> localVars = globalVars;
+        boolean hasLocalVars = false;
 
         // Read line by line, evaluate line types, parse and nest
         for (int i = 0, lines = configStrings.size(); i < lines; i++) {
@@ -299,17 +337,18 @@ public class RhythmOverlayInflater {
             } else if (line.charAt(0) == '@') {
                 // This is a local variable. And all variables must be declared before any overlay lines.
                 if (overlay.size() != 0) {
-                    // todo: here and everywhere else, where line is reported make sure it reports a correct line
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_UNEXPECTED_VARIABLE_DECLARATION,
-                            "Unexpected variable declaration found at line " +  (i + 1)
+                            "Unexpected variable declaration found at line " + (i + offset + 1)
                                     + ". Variables must be declared before spec layers.",
-                            i + 1
+                            i + offset + 1
                     );
                 }
 
-                if (localVars == null) {
-                    localVars = new HashMap<>();
+                // If it's the first local var, copy the global vars map where we'll be adding/overwriting values
+                if (!hasLocalVars) {
+                    localVars = new HashMap<>(globalVars);
+                    hasLocalVars = true;
                 }
 
                 // Let's check and parse
@@ -322,19 +361,19 @@ public class RhythmOverlayInflater {
                     // Oops, bad variable syntax
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
-                            "Malformed variable declaration: \"" +  line
-                                    + "\" Expected syntax is @name=value where name may contain only letters, digits, and/or underscores, and value must not have spaces.",
-                            i+ 1, line
+                            "Malformed variable declaration: \"" + line + "\" on line " + (i + offset + 1)
+                                    + " Expected syntax is @name=value where name may contain only letters, digits, and/or underscores, and value must not have spaces.",
+                            i + offset + 1, line
                     );
                 }
             } else if (line.charAt(0) == '#') {
                 // Looks like a title. A title should be the first non-empty line, and there should be no multiple titles per block
-                if (overlay.getTitle() != null || localVars != null || overlay.size() != 0) {
+                if (overlay.getTitle() != null || hasLocalVars || overlay.size() != 0) {
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_UNEXPECTED_TITLE_DECLARATION,
-                            "Unexpected overlay title found at line " + (i + 1)
+                            "Unexpected overlay title found at line " + (i + offset + 1)
                                     + ". An overlay title must be declared before anything else. Did you forget an empty newline before starting a new overlay?",
-                            i + 1
+                            i + offset + 1
                     );
                 }
 
@@ -345,7 +384,7 @@ public class RhythmOverlayInflater {
                 }
             } else {
                 // Otherwise assume the line is a spec layer, try parsing and inflating it as a separate layer
-                LayerConfig config = parseConfig(line);
+                LayerConfig config = parseConfig(line, localVars);
 
                 // If indent is <= indent of parent layer, then go up the hierarchy. Won't underflow b/c indents[0] is -1
                 while (config.getIndent() <= indents[headIndex]) {
@@ -353,7 +392,7 @@ public class RhythmOverlayInflater {
                     // we could clean up the stacks but there's really no need
                 }
 
-                RhythmSpecLayer thisLayer = inflateLayer(config);
+                RhythmSpecLayer thisLayer = inflateLayerInternal(config);
                 parents[headIndex].addLayer(thisLayer);
 
                 // if this is a layer group, add it to the stack
@@ -376,6 +415,16 @@ public class RhythmOverlayInflater {
             }
         }
 
+        // If there are only variables and nothing else, seems like the user tried to declare global variables between overlay blocks
+        if (hasLocalVars && overlay.size() == 0 && overlay.getTitle() == null) {
+            throw new RhythmInflationException(
+                    RhythmInflationException.ERROR_UNEXPECTED_VARIABLE_DECLARATION,
+                    "Unexpected variable declaration found at line " + (offset + 1)
+                            + ". Global variables must be declared before all overlay blocks.",
+                    offset + 1
+            );
+        }
+
         return overlay;
     }
 
@@ -386,7 +435,20 @@ public class RhythmOverlayInflater {
      * @return inflated layer
      */
     public RhythmSpecLayer inflateLayer(String configString) {
-        return inflateLayer(parseConfig(configString));
+        //noinspection unchecked
+        return inflateLayerInternal(parseConfig(configString, Collections.EMPTY_MAP));
+    }
+
+    /**
+     * Inflate an individual layer from raw configuration string
+     *
+     * @param configString configuration string to parse and feed to layer's factory
+     * @param vars         map of @key->value mappings used to resolve argument references (e.g.
+     *                     <code>@primary=#FF0000</code> to use in <code>color=@primary</code>)
+     * @return inflated layer
+     */
+    public RhythmSpecLayer inflateLayer(String configString, @NonNull Map<String, String> vars) {
+        return inflateLayerInternal(parseConfig(configString, vars));
     }
 
     /**
@@ -396,7 +458,7 @@ public class RhythmOverlayInflater {
      * @param config parsed layer configuration
      * @return inflated layer
      */
-    public RhythmSpecLayer inflateLayer(LayerConfig config) {
+    protected RhythmSpecLayer inflateLayerInternal(LayerConfig config) {
         config.setDisplayMetrics(mContext.getResources().getDisplayMetrics());
         RhythmSpecLayerFactory factory = mFactories.get(config.getLayerType());
         if (factory == null) {
@@ -414,11 +476,13 @@ public class RhythmOverlayInflater {
      *
      * @param configString configuration string, indented with spaces if required, starting with layer title and
      *                     containing args or key=value pairs
+     * @param vars         map of @key->value mappings used to resolve argument references (e.g.
+     *                     <code>@primary=#FF0000</code> to use in <code>color=@primary</code>)
      * @return layer config object to feed to {@link RhythmSpecLayerFactory#getForConfig(LayerConfig)}. <b>Note:</b>
      * does not have {@link DisplayMetrics} injected into it - you have to do it yourself before querying complex
      * dimensions from this layer config object.
      */
-    public LayerConfig parseConfig(String configString) {
+    protected LayerConfig parseConfig(String configString, @NonNull Map<String, String> vars) {
         // Let's just iterate over the first chars to get indent and layer type, and parse the arguments with regex
         int i = 0;
         int length = configString.length();
@@ -450,7 +514,7 @@ public class RhythmOverlayInflater {
             arguments.put(key, value);
         }
 
-        return new LayerConfig(specLayerType, spaces, arguments);
+        return new LayerConfig(specLayerType, spaces, arguments, vars);
     }
 
     /**

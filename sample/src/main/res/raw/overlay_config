@@ -1,35 +1,57 @@
+// This is a comment
+
+// -------- GLOBAL VARIABLES --------
+// Declared before any overlay blocks
+
+// Distances
+@margin=16dp
+@avatar=56dp
+@content=72dp
+
+// Color variables
+@fill=#400091EA
+@secondary=#800091EA
+@card_action_margin=#60F50057
+
+// --------- OVERLAY BLOCKS ---------
+// Separated by an empty line
+// May start with an optional title
+// May declare variables and override
+// global variables
+
 # Standard grid
-grid-lines step=8dp from=top
-grid-lines step=8dp from=left
+@step=8dp
+grid-lines step=@step from=top
+grid-lines step=@step from=left
 
 # Typography grid w/keylines
-grid-lines step=4dp from=top color=#800091EA
-keyline distance=16dp from=left
-keyline distance=16dp from=right
-keyline distance=72dp from=left
+grid-lines step=4dp from=top color=@secondary
+keyline distance=@margin from=left
+keyline distance=@margin from=right
+keyline distance=@content from=left
 
 # Avatar list
 grid-lines step=8dp from=top
 grid-lines step=8dp from=left
-inset no-clip left=0dp width=16dp
-  fill color=#400091EA
-inset no-clip left=56dp width=16dp
-  fill color=#400091EA
-inset no-clip right=0dp width=16dp
-  fill color=#400091EA
-keyline distance=16dp from=left
-keyline distance=16dp from=right
-keyline distance=72dp from=left
-keyline distance=56dp from=left outside
+inset no-clip left=0dp width=@margin
+  fill
+inset no-clip left=@avatar width=16dp
+  fill
+inset no-clip right=0dp width=@margin
+  fill
+keyline distance=@margin from=left
+keyline distance=@margin from=right
+keyline distance=@content from=left
+keyline distance=@avatar from=left outside
 
 # Hybrid grid
 grid-lines step=8dp from=top
 grid-lines step=8dp from=left
-inset left=72dp right=16dp
-  grid-lines step=8dp from=top offset=4dp color=#800091EA
-keyline distance=16dp from=left
-keyline distance=16dp from=right
-keyline distance=72dp from=left
+inset left=@content right=@margin
+  grid-lines step=8dp from=top offset=4dp color=@secondary
+keyline distance=@margin from=left
+keyline distance=@margin from=right
+keyline distance=@content from=left
 
 # Split-screen aligned 8dp
 grid-lines step=8dp from=top
@@ -39,23 +61,23 @@ grid-lines step=8dp from=right limit=4
 # Content card w/ 80dp image
 inset right=96dp bottom=56dp
   inset height=24dp left=16dp
-    fill color=#400091EA
+    fill
   inset width=16dp
-    fill color=#400091EA
+    fill
   inset left=16dp top=24dp
     grid-lines step=4dp from=top
   keyline distance=24dp from=top
 inset right=0 width=96dp bottom=56dp
   inset height=16dp right=16dp
-    fill color=#400091EA
+    fill
   inset width=16dp right=0
-    fill color=#400091EA
+    fill
   keyline distance=16dp from=top
 inset bottom=0 height=56dp
-  keyline distance=8dp from=top    thickness=8dp color=#60F50057
-  keyline distance=8dp from=left   thickness=8dp color=#60F50057
-  keyline distance=8dp from=right  thickness=8dp color=#60F50057
-  keyline distance=8dp from=bottom thickness=8dp color=#60F50057
+  keyline distance=8dp from=top    thickness=8dp color=@card_action_margin
+  keyline distance=8dp from=left   thickness=8dp color=@card_action_margin
+  keyline distance=8dp from=right  thickness=8dp color=@card_action_margin
+  keyline distance=8dp from=bottom thickness=8dp color=@card_action_margin
 keyline distance=16dp from=left
 keyline distance=16dp from=right
 image-box gravity=top|right width=80dp height=80dp distance-x=16dp distance-y=16dp
