@@ -65,7 +65,7 @@ public class RhythmOverlayInflater {
     /**
      * A regex to validate and parse variables in configuration string by a following template: @variable=value
      */
-    protected static final Pattern VARIABLES_PATTERN = Pattern.compile("(@[\\w]+)=([^\\s]+)");
+    protected static final Pattern VARIABLES_PATTERN = Pattern.compile("(@[\\w]+)=(.*)");
 
     /**
      * Used internally to indicate that there's no overlay block started at the moment of evaluating current line
@@ -220,7 +220,7 @@ public class RhythmOverlayInflater {
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
                             "Malformed variable declaration: \"" + line + "\" on line " + (i + 1)
-                                    + "\" Expected syntax is @name=value where name may contain only letters, digits, and/or underscores, and value must not have spaces.",
+                                    + "\" Expected syntax is @name=value where name may contain only letters, digits, and/or underscores.",
                             i + 1, line
                     );
                 }
@@ -362,7 +362,7 @@ public class RhythmOverlayInflater {
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
                             "Malformed variable declaration: \"" + line + "\" on line " + (i + offset + 1)
-                                    + " Expected syntax is @name=value where name may contain only letters, digits, and/or underscores, and value must not have spaces.",
+                                    + " Expected syntax is @name=value where name may contain only letters, digits, and/or underscores.",
                             i + offset + 1, line
                     );
                 }

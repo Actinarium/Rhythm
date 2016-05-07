@@ -94,6 +94,7 @@ public class RhythmFrameLayout extends FrameLayout {
         super(context);
         mRhythmGroupIndex = NO_GROUP;
         mOverlayPosition = OVERLAY_POSITION_UNDER_CONTENT;
+        setWillNotDraw(false);
     }
 
     public RhythmFrameLayout(Context context, AttributeSet attrs) {
@@ -124,8 +125,11 @@ public class RhythmFrameLayout extends FrameLayout {
                     || position == OVERLAY_POSITION_OVER_FOREGROUND) {
                 //noinspection ResourceType
                 mOverlayPosition = position;
+                // We need to ensure draw()/onDraw() is called when overlay position is other than over content (otherwise it's drawn elsewhere)
+                setWillNotDraw(position == OVERLAY_POSITION_OVER_CONTENT);
             } else {
                 mOverlayPosition = OVERLAY_POSITION_UNDER_CONTENT;
+                setWillNotDraw(false);
             }
 
             mRhythmGroupIndex = array.getInteger(R.styleable.RhythmFrameLayout_rhythmGroup, NO_GROUP);
@@ -251,9 +255,10 @@ public class RhythmFrameLayout extends FrameLayout {
      * @see #OVERLAY_POSITION_OVER_CONTENT
      * @see #OVERLAY_POSITION_OVER_FOREGROUND
      */
-    public void setOverlayPosition(int overlayPosition) {
+    public void setOverlayPosition(@OverlayPosition int overlayPosition) {
         if (mOverlayPosition != overlayPosition) {
             mOverlayPosition = overlayPosition;
+            setWillNotDraw(overlayPosition == OVERLAY_POSITION_OVER_CONTENT);
             invalidate();
         }
     }

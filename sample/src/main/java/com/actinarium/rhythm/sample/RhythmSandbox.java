@@ -67,16 +67,16 @@ public class RhythmSandbox {
     };
 
     private static final String DEFAULT_SANDBOX_CONFIG =
-            "grid-lines step=8dp from=left\n" +
-            "grid-lines step=4dp from=top color=#800091EA\n" +
-            "inset left=0dp width=16dp\n" +
+            "@margin=16dp\n" +
+            "@grid_color=#800091EA\n" +
+            "grid-lines step=8dp from=left color=@grid_color\n" +
+            "grid-lines step=4dp from=top color=@grid_color\n" +
+            "inset left=0dp width=@margin\n" +
             " fill\n" +
-            "inset right=0dp width=16dp\n" +
+            "inset right=0dp width=@margin\n" +
             " fill\n" +
-            "keyline distance=16dp from=left\n" +
-            "keyline distance=16dp from=right\n" +
-            "inset left=16dp\n" +
-            " keyline distance=40dp from=top thickness=2dp outside";
+            "keyline distance=@margin from=left\n" +
+            "keyline distance=@margin from=right\n";
 
     // -----------------------------------------------------------------------------------------------------------------
 
