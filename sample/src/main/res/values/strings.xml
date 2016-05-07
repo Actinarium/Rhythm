@@ -44,10 +44,9 @@
         Jelly beans biscuit brownie dragée marshmallow dessert sesame snaps donut candy. Brownie carrot cake sesame snaps.</string>
 
     <string name="type_config_here">Type configuration here</string>
-    <string name="validation_config_dialog_title">Configuration has issues</string>
+    <string name="validation_config_dialog_title">Error</string>
     <string name="validation_config_empty">Configuration is empty</string>
     <string name="validation_config_line">Line <xliff:g id="line_number" example="3">%d</xliff:g>: <xliff:g id="error_message" example="Unknown layer type">%s</xliff:g></string>
-    <string name="validation_config_line_unexpected">Line <xliff:g id="line_number" example="3">%d</xliff:g> [unexpected]: <xliff:g id="error_message" example="Unknown layer type">%s</xliff:g></string>
     <string name="apply">Try me</string>
     <string name="ok">OK</string>
 

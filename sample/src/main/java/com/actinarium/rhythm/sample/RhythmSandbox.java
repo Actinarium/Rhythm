@@ -35,15 +35,12 @@ import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmOverlayInflater;
 import com.actinarium.rhythm.control.RhythmFrameLayout;
-import com.actinarium.rhythm.sample.util.ViewUtils;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.spec.Fill;
 import com.actinarium.rhythm.spec.GridLines;
 import com.actinarium.rhythm.spec.InsetGroup;
 import com.actinarium.rhythm.spec.Keyline;
 import com.actinarium.rhythm.spec.RatioKeyline;
-
-import java.util.ArrayList;
 
 /**
  * A presenter for the Rhythm Sandbox card, where you can try the configuration at runtime
@@ -162,47 +159,32 @@ public class RhythmSandbox {
      * @return true if validation passed
      */
     private boolean validate(String overlayConfig) {
+        String error = null;
+
         // If config is empty, short-circuit
         if (overlayConfig.trim().length() == 0) {
-            String[] errorArray = new String[]{(mActivity.getString(R.string.validation_config_empty))};
-            InvalidOverlayDialogFragment dialogFragment = InvalidOverlayDialogFragment.newInstance(errorArray);
+            error = mActivity.getString(R.string.validation_config_empty);
+            InvalidOverlayDialogFragment dialogFragment = InvalidOverlayDialogFragment.newInstance(error);
             dialogFragment.show(mActivity.getSupportFragmentManager(), InvalidOverlayDialogFragment.TAG);
             return false;
         }
 
-        // Otherwise verify line by line and collect errors
-        ArrayList<String> errors = new ArrayList<>();
-
-        /*
-        String[] lines = overlayConfig.split("\\n");
-        List<String> singletonList = new ArrayList<>(1);
-        singletonList.add(null);
-        for (int i = 0, linesLength = lines.length; i < linesLength; i++) {
-            singletonList.set(0, lines[i]);
-            try {
-                mOverlayInflater.inflateOverlay(singletonList);
-            } catch (RhythmInflationException e) {
-                errors.add(mActivity.getString(R.string.validation_config_line, i + 1, e.getMessage()));
-            } catch (Exception e) {
-                errors.add(mActivity.getString(R.string.validation_config_line_unexpected, i + 1, e.getMessage()));
-            }
-        } */
-
+        // Heads up: line-by-line validation was removed because of increased complexity after 0.9.5.
+        // Thing is, when inflating a raw overlay config file the validation is not really that helpful,
+        // therefore not implementing it as a core feature.
+        // todo: bring line-by-line validation back eventually
         try {
             mOverlayInflater.inflateOverlay(overlayConfig);
         } catch (RhythmInflationException e) {
-            errors.add(mActivity.getString(R.string.validation_config_line, 0, e.getMessage()));
+            error = mActivity.getString(R.string.validation_config_line, e.getLineNumber() + 1, e.getMessage());
         } catch (Exception e) {
-            errors.add(mActivity.getString(R.string.validation_config_line_unexpected, 0, e.getMessage()));
+            error = e.getMessage();
         }
 
-        final int errorNumber = errors.size();
-        if (errorNumber == 0) {
+        if (error == null) {
             return true;
         } else {
-            String[] errorArray = new String[errorNumber];
-            errors.toArray(errorArray);
-            InvalidOverlayDialogFragment dialogFragment = InvalidOverlayDialogFragment.newInstance(errorArray);
+            InvalidOverlayDialogFragment dialogFragment = InvalidOverlayDialogFragment.newInstance(error);
             dialogFragment.show(mActivity.getSupportFragmentManager(), InvalidOverlayDialogFragment.TAG);
             return false;
         }
@@ -253,14 +235,14 @@ public class RhythmSandbox {
 
         public static final String TAG = "InvalidOverlayDialogFragment";
 
-        public static final String ARG_ERRORS = "com.actinarium.rhythm.sample.intent.arg.ERRORS";
+        public static final String ARG_ERROR = "com.actinarium.rhythm.sample.intent.arg.ERROR";
 
         private Context mContext;
 
-        public static InvalidOverlayDialogFragment newInstance(String[] errors) {
+        public static InvalidOverlayDialogFragment newInstance(String error) {
             InvalidOverlayDialogFragment fragment = new InvalidOverlayDialogFragment();
             Bundle args = new Bundle(1);
-            args.putStringArray(ARG_ERRORS, errors);
+            args.putString(ARG_ERROR, error);
             fragment.setArguments(args);
             return fragment;
         }
@@ -274,17 +256,12 @@ public class RhythmSandbox {
         @Override
         @NonNull
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final String[] errors = getArguments().getStringArray(ARG_ERRORS);
-
-            final int bulletRadius = getResources().getDimensionPixelSize(R.dimen.bulletRadius);
-            final int bulletCenterX = getResources().getDimensionPixelSize(R.dimen.bulletCenterX);
-            final int leadingMargin = getResources().getDimensionPixelSize(R.dimen.bulletLeadingMargin);
-            CharSequence message = ViewUtils.makeBulletList(bulletRadius, bulletCenterX, leadingMargin, errors);
+            final String error = getArguments().getString(ARG_ERROR);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder
                     .setTitle(R.string.validation_config_dialog_title)
-                    .setMessage(message)
+                    .setMessage(error)
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

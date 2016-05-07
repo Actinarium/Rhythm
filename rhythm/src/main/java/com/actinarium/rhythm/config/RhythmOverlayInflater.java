@@ -219,10 +219,9 @@ public class RhythmOverlayInflater {
                     // Oops, bad variable syntax
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
-                            "Malformed variable declaration: \"" + line + "\" on line " + (i + 1)
-                                    + "\" Expected syntax is @name=value where name may contain only letters, digits, and/or underscores.",
-                            i + 1, line
-                    );
+                            "Malformed variable declaration.\nExpected syntax is @name=value where name may contain only letters, digits, and/or underscores.",
+                            line
+                    ).setLineNumber(i);
                 }
             } else {
                 // Found a non-variable-declaration, non-empty line
@@ -339,10 +338,8 @@ public class RhythmOverlayInflater {
                 if (overlay.size() != 0) {
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_UNEXPECTED_VARIABLE_DECLARATION,
-                            "Unexpected variable declaration found at line " + (i + offset + 1)
-                                    + ". Variables must be declared before spec layers.",
-                            i + offset + 1
-                    );
+                            "Unexpected variable declaration.\nVariables must be declared before spec layers."
+                    ).setLineNumber(i + offset);
                 }
 
                 // If it's the first local var, copy the global vars map where we'll be adding/overwriting values
@@ -361,20 +358,17 @@ public class RhythmOverlayInflater {
                     // Oops, bad variable syntax
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
-                            "Malformed variable declaration: \"" + line + "\" on line " + (i + offset + 1)
-                                    + " Expected syntax is @name=value where name may contain only letters, digits, and/or underscores.",
-                            i + offset + 1, line
-                    );
+                            "Malformed variable declaration: \"" + line + "\".\nExpected syntax is @name=value where name may contain only letters, digits, and/or underscores.",
+                            line
+                    ).setLineNumber(i + offset);
                 }
             } else if (line.charAt(0) == '#') {
                 // Looks like a title. A title should be the first non-empty line, and there should be no multiple titles per block
                 if (overlay.getTitle() != null || hasLocalVars || overlay.size() != 0) {
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_UNEXPECTED_TITLE_DECLARATION,
-                            "Unexpected overlay title found at line " + (i + offset + 1)
-                                    + ". An overlay title must be declared before anything else. Did you forget an empty newline before starting a new overlay?",
-                            i + offset + 1
-                    );
+                            "Unexpected overlay title.\nThere can be only one title per overlay, and it must be the first line. Did you forget an empty newline before starting a new overlay?"
+                    ).setLineNumber(i + offset);
                 }
 
                 // Otherwise OK, we probably have a title
@@ -392,7 +386,7 @@ public class RhythmOverlayInflater {
                     // we could clean up the stacks but there's really no need
                 }
 
-                RhythmSpecLayer thisLayer = inflateLayerInternal(config);
+                RhythmSpecLayer thisLayer = inflateLayerInternal(config, i + offset);
                 parents[headIndex].addLayer(thisLayer);
 
                 // if this is a layer group, add it to the stack
@@ -419,10 +413,8 @@ public class RhythmOverlayInflater {
         if (hasLocalVars && overlay.size() == 0 && overlay.getTitle() == null) {
             throw new RhythmInflationException(
                     RhythmInflationException.ERROR_UNEXPECTED_VARIABLE_DECLARATION,
-                    "Unexpected variable declaration found at line " + (offset + 1)
-                            + ". Global variables must be declared before all overlay blocks.",
-                    offset + 1
-            );
+                    "Unexpected variable declaration.\nGlobal variables must be declared before all overlay blocks."
+            ).setLineNumber(offset);
         }
 
         return overlay;
@@ -436,7 +428,7 @@ public class RhythmOverlayInflater {
      */
     public RhythmSpecLayer inflateLayer(String configString) {
         //noinspection unchecked
-        return inflateLayerInternal(parseConfig(configString, Collections.EMPTY_MAP));
+        return inflateLayerInternal(parseConfig(configString, Collections.EMPTY_MAP), RhythmInflationException.LINE_NOT_SPECIFIED);
     }
 
     /**
@@ -448,7 +440,7 @@ public class RhythmOverlayInflater {
      * @return inflated layer
      */
     public RhythmSpecLayer inflateLayer(String configString, @NonNull Map<String, String> vars) {
-        return inflateLayerInternal(parseConfig(configString, vars));
+        return inflateLayerInternal(parseConfig(configString, vars), RhythmInflationException.LINE_NOT_SPECIFIED);
     }
 
     /**
@@ -458,17 +450,29 @@ public class RhythmOverlayInflater {
      * @param config parsed layer configuration
      * @return inflated layer
      */
-    protected RhythmSpecLayer inflateLayerInternal(LayerConfig config) {
+    protected RhythmSpecLayer inflateLayerInternal(LayerConfig config, int lineNumber) {
         config.setDisplayMetrics(mContext.getResources().getDisplayMetrics());
         RhythmSpecLayerFactory factory = mFactories.get(config.getLayerType());
         if (factory == null) {
+            Object[] knownLayers = mFactories.keySet().toArray();
             throw new RhythmInflationException(
                     RhythmInflationException.ERROR_UNKNOWN_LAYER_TYPE,
-                    "No factory registered for type \"" + config.getLayerType() + "\"",
-                    config.getLayerType()
-            );
+                    "Unknown layer type \"" + config.getLayerType() + "\".\nAvailable types are: " + Arrays.toString(knownLayers),
+                    config.getLayerType(), knownLayers
+            ).setLineNumber(lineNumber);
         }
-        return factory.getForConfig(config);
+        try {
+            return factory.getForConfig(config);
+        } catch (RhythmInflationException e) {
+            // Set line number and rethrow
+            throw e.setLineNumber(lineNumber);
+        } catch (Exception e) {
+            // Catch all other exceptions (e.g. IllegalArgument etc) and wrap'em in RhythmInflationException
+            throw new RhythmInflationException(
+                    RhythmInflationException.ERROR_INFLATING_LAYER_GENERIC,
+                    "Error inflating layer: " + e.getMessage(), e
+            ).setLineNumber(lineNumber);
+        }
     }
 
     /**
