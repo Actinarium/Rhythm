@@ -27,9 +27,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * A group that clips and/or insets its child layers. Allows
- *
- * todo: finish the doc
+ * A group that clips and/or insets its child layers. Allows setting left, right, top, and bottom insets, positive or
+ * negative, as well as width and height, all in either absolute dimensions or as percent of parent. Setting width or
+ * height takes precedence over setting insets in the following way: if width (height) and right (bottom) are set but
+ * left (top) is not, the block floats to the right (bottom), otherwise it stays on the left (top).
  *
  * @author Paul Danyliuk
  */

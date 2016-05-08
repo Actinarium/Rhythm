@@ -36,7 +36,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * todo: write the doc
+ * A single horizontal keyline whose distance from the top is calculated from the width of current bounds and given
+ * aspect ratio. Displays the label in the bottom right corner of the enclosed rectangle. Experimental at the moment,
+ * meaning its behavior, appearance, and parameters may change. As of now, the keyline label is always 12dp high,
+ * 24dp wide, has 10dp font that shrinks if not fitting, and is always within the enclosed rectangle, i.e. overdrawing
+ * its bottom edge.
  *
  * @author Paul Danyliuk
  */

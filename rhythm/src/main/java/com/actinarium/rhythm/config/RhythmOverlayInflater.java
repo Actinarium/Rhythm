@@ -261,9 +261,9 @@ public class RhythmOverlayInflater {
      * @param configString layer configuration string, following the syntax rules
      * @return inflated Rhythm overlay
      */
+    @SuppressWarnings("unchecked")
     public RhythmOverlay inflateOverlay(String configString) {
         List<String> configStrings = Arrays.asList(configString.split("\\r?\\n"));
-        //noinspection unchecked
         return inflateOverlayInternal(configStrings, Collections.EMPTY_MAP, 0);
     }
 
@@ -271,7 +271,8 @@ public class RhythmOverlayInflater {
      * Inflate a single overlay from overlay configuration string according to the syntax spec.
      *
      * @param configString layer configuration string, following the syntax rules
-     * @param vars         the @key->value map of the values that can be referenced within this overlay (see the docs)
+     * @param vars         the @key-&gt;value map of the values that can be referenced within this overlay (see the
+     *                     docs)
      * @return inflated Rhythm overlay
      */
     public RhythmOverlay inflateOverlay(String configString, @NonNull Map<String, String> vars) {
@@ -285,8 +286,8 @@ public class RhythmOverlayInflater {
      * @param configStrings layer configuration split in lines
      * @return inflated Rhythm overlay
      */
+    @SuppressWarnings("unchecked")
     public RhythmOverlay inflateOverlay(List<String> configStrings) {
-        //noinspection unchecked
         return inflateOverlayInternal(configStrings, Collections.EMPTY_MAP, 0);
     }
 
@@ -294,7 +295,8 @@ public class RhythmOverlayInflater {
      * Inflate a single overlay from overlay configuration already presented as separate lines.
      *
      * @param configStrings layer configuration split in lines
-     * @param vars          the @key->value map of the values that can be referenced within this overlay (see the docs)
+     * @param vars          the @key-&gt;value map of the values that can be referenced within this overlay (see the
+     *                      docs)
      * @return inflated Rhythm overlay
      */
     public RhythmOverlay inflateOverlay(List<String> configStrings, @NonNull Map<String, String> vars) {
@@ -426,28 +428,29 @@ public class RhythmOverlayInflater {
      * @param configString configuration string to parse and feed to layer's factory
      * @return inflated layer
      */
+    @SuppressWarnings("unchecked")
     public RhythmSpecLayer inflateLayer(String configString) {
-        //noinspection unchecked
-        return inflateLayerInternal(parseConfig(configString, Collections.EMPTY_MAP), RhythmInflationException.LINE_NOT_SPECIFIED);
+        return inflateLayerInternal(parseConfig(configString, Collections.EMPTY_MAP), 0);
     }
 
     /**
      * Inflate an individual layer from raw configuration string
      *
      * @param configString configuration string to parse and feed to layer's factory
-     * @param vars         map of @key->value mappings used to resolve argument references (e.g.
+     * @param vars         map of @key-&gt;value mappings used to resolve argument references (e.g.
      *                     <code>@primary=#FF0000</code> to use in <code>color=@primary</code>)
      * @return inflated layer
      */
     public RhythmSpecLayer inflateLayer(String configString, @NonNull Map<String, String> vars) {
-        return inflateLayerInternal(parseConfig(configString, vars), RhythmInflationException.LINE_NOT_SPECIFIED);
+        return inflateLayerInternal(parseConfig(configString, vars), 0);
     }
 
     /**
      * Inflate an individual layer from already parsed layer configuration. This method will inject display metrics into
      * the config object.
      *
-     * @param config parsed layer configuration
+     * @param config     parsed layer configuration
+     * @param lineNumber number of the configuration line we're inflating. Required for error reporting.
      * @return inflated layer
      */
     protected RhythmSpecLayer inflateLayerInternal(LayerConfig config, int lineNumber) {
@@ -480,7 +483,7 @@ public class RhythmOverlayInflater {
      *
      * @param configString configuration string, indented with spaces if required, starting with layer title and
      *                     containing args or key=value pairs
-     * @param vars         map of @key->value mappings used to resolve argument references (e.g.
+     * @param vars         map of @key-&gt;value mappings used to resolve argument references (e.g.
      *                     <code>@primary=#FF0000</code> to use in <code>color=@primary</code>)
      * @return layer config object to feed to {@link RhythmSpecLayerFactory#getForConfig(LayerConfig)}. <b>Note:</b>
      * does not have {@link DisplayMetrics} injected into it - you have to do it yourself before querying complex
