@@ -27,6 +27,7 @@ import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.RhythmSpecLayerParent;
 import com.actinarium.rhythm.common.ReaderUtils;
 import com.actinarium.rhythm.common.RhythmInflationException;
+import com.actinarium.rhythm.spec.Columns;
 import com.actinarium.rhythm.spec.DimensionsLabel;
 import com.actinarium.rhythm.spec.Fill;
 import com.actinarium.rhythm.spec.GridLines;
@@ -55,7 +56,7 @@ public class RhythmOverlayInflater {
     /**
      * Initial capacity of {layer type} -&gt; {factory} map.
      */
-    private static final int INITIAL_FACTORIES_CAPACITY = 8;
+    private static final int INITIAL_FACTORIES_CAPACITY = 16;
 
     /**
      * A regex to search for arguments in configuration string by a following template: key[=value]
@@ -88,6 +89,7 @@ public class RhythmOverlayInflater {
      * inflater.registerFactory(RatioKeyline.Factory.LAYER_TYPE, new RatioKeyline.Factory());
      * inflater.registerFactory(Fill.Factory.LAYER_TYPE, new Fill.Factory());
      * inflater.registerFactory(InsetGroup.Factory.LAYER_TYPE, new InsetGroup.Factory());
+     * inflater.registerFactory(Columns.Factory.LAYER_TYPE, new Columns.Factory());
      * inflater.registerFactory(DimensionsLabel.Factory.LAYER_TYPE, new DimensionsLabel.Factory());
      * </code></pre>
      *
@@ -104,6 +106,7 @@ public class RhythmOverlayInflater {
         inflater.mFactories.put(RatioKeyline.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new RatioKeyline.Factory()));
         inflater.mFactories.put(Fill.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new Fill.Factory()));
         inflater.mFactories.put(InsetGroup.Factory.LAYER_TYPE, new InsetGroup.Factory());
+        inflater.mFactories.put(Columns.Factory.LAYER_TYPE, new Columns.Factory());
         inflater.mFactories.put(DimensionsLabel.Factory.LAYER_TYPE, new DimensionsLabel.Factory());
 
         return inflater;
@@ -244,6 +247,7 @@ public class RhythmOverlayInflater {
                 // It's not an empty line, and the block isn't started - start it at this line then
                 overlayStart = i;
             }
+            // todo: handle comments between overlay blocks
         }
 
         // If we reached the end of the file, and have a block started, inflate it

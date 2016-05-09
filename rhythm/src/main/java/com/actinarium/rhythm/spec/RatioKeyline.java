@@ -68,8 +68,6 @@ public class RatioKeyline implements RhythmSpecLayer {
     protected int mLabelHeight;
     protected int mLabelSideWidth;
 
-    protected Rect mTempThumbnailRect;
-
     public RatioKeyline(int ratioX, int ratioY, DisplayMetrics metrics) {
         this(metrics);
         mRatioX = ratioX;
@@ -80,7 +78,6 @@ public class RatioKeyline implements RhythmSpecLayer {
 
     protected RatioKeyline(DisplayMetrics metrics) {
         mTempRect = new Rect();
-        mTempThumbnailRect = new Rect();
         mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBackgroundPaint.setStyle(Paint.Style.FILL);
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);

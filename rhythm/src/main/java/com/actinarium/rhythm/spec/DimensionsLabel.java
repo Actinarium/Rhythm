@@ -60,7 +60,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
     protected int mGravity = Gravity.BOTTOM | Gravity.RIGHT;
     protected Paint mBackgroundPaint;
     protected TextPaint mTextPaint;
-    private Rect mTempRect;
+    private Rect mTempRect = new Rect();
 
     /**
      * Create a spec layer that displays dimensions label
@@ -78,8 +78,6 @@ public class DimensionsLabel implements RhythmSpecLayer {
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(DEFAULT_TEXT_COLOR);
         mTextPaint.setTextSize(DEFAULT_TEXT_SIZE * mScaleFactor);
-
-        mTempRect = new Rect();
     }
 
     /**
@@ -89,7 +87,6 @@ public class DimensionsLabel implements RhythmSpecLayer {
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setStyle(Paint.Style.FILL);
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        mTempRect = new Rect();
     }
 
     /**

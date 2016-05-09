@@ -40,9 +40,9 @@ public class Keyline implements RhythmSpecLayer {
 
     public static final int DEFAULT_KEYLINE_COLOR = 0x60F50057;
     /**
-     * Default keyline thickness (3px)
+     * Default keyline thickness (2px)
      */
-    public static final int DEFAULT_THICKNESS = 3;
+    public static final int DEFAULT_THICKNESS = 2;
 
     public static final boolean ALIGN_INSIDE = false;
     public static final boolean ALIGN_OUTSIDE = true;

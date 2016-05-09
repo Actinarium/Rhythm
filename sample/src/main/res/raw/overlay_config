@@ -16,8 +16,7 @@
 // --------- OVERLAY BLOCKS ---------
 // Separated by an empty line
 // May start with an optional title
-// May declare variables and override
-// global variables
+// May declare local variables and override global variables
 
 # Standard grid
 @step=8dp
@@ -53,10 +52,29 @@ keyline distance=@margin from=left
 keyline distance=@margin from=right
 keyline distance=@content from=left
 
-# Split-screen aligned 8dp
-grid-lines step=8dp from=top
-grid-lines step=8dp from=left  limit=4
-grid-lines step=8dp from=right limit=4
+# Three columns w/8dp gutters
+// Change these variables to set up columns count, margins, and gutters
+@count=3
+@half_gutter=4dp
+@margin_minus_half_gutter=12dp
+@keyline_thickness=0.6dp
+// --------------------------------------------------------------------
+inset left=@margin_minus_half_gutter right=@margin_minus_half_gutter
+ columns count=@count
+  inset left=@half_gutter right=@half_gutter
+   grid-lines step=8dp from=top
+   grid-lines step=8dp from=left  limit=2
+   grid-lines step=8dp from=right limit=2
+  inset left=0 width=@half_gutter
+   fill
+  inset right=0 width=@half_gutter
+   fill
+  keyline distance=@half_gutter from=left  thickness=@keyline_thickness
+  keyline distance=@half_gutter from=right thickness=@keyline_thickness
+inset left=0 width=@margin_minus_half_gutter
+ fill
+inset right=0 width=@margin_minus_half_gutter
+ fill
 
 # Content card w/ 80dp image
 inset right=96dp bottom=56dp

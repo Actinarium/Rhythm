@@ -87,14 +87,13 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
     protected boolean mIsHeightSet;
 
     // Reusable resulting rect
-    protected Rect mInsetRect;
+    protected Rect mInsetRect = new Rect();
 
     /**
      * Create a layer group that clips and/or insets its child layers
      */
     public InsetGroup() {
         super();
-        mInsetRect = new Rect();
     }
 
     /**
@@ -104,7 +103,6 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      */
     public InsetGroup(int initialCapacity) {
         super(initialCapacity);
-        mInsetRect = new Rect();
     }
 
     /**
@@ -222,7 +220,6 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
             // Draw sub-layers within new bounds
             super.draw(canvas, mInsetRect);
         }
-
 
         canvas.restoreToCount(state);
     }
