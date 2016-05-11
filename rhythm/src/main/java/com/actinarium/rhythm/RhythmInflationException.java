@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.common;
-
-import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.config.RhythmOverlayInflater;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
+package com.actinarium.rhythm;
 
 /**
  * <p>A runtime exception to be thrown when there is an error inflating declarative configuration.</p><p>Unlike the

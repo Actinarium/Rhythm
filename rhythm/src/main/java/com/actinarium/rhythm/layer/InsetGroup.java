@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.spec;
+package com.actinarium.rhythm.layer;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import com.actinarium.rhythm.AbstractSpecLayerGroup;
 import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
+import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

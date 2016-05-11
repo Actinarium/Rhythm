@@ -21,12 +21,12 @@ import android.view.Gravity;
 import com.actinarium.rhythm.control.RhythmControl;
 import com.actinarium.rhythm.control.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
-import com.actinarium.rhythm.config.RhythmOverlayInflater;
+import com.actinarium.rhythm.RhythmOverlayInflater;
 import com.actinarium.rhythm.sample.customlayers.ImageBox;
 import com.actinarium.rhythm.sample.customlayers.LayoutBounds;
-import com.actinarium.rhythm.spec.GridLines;
-import com.actinarium.rhythm.spec.Keyline;
-import com.actinarium.rhythm.spec.InsetGroup;
+import com.actinarium.rhythm.layer.GridLines;
+import com.actinarium.rhythm.layer.Keyline;
+import com.actinarium.rhythm.layer.InsetGroup;
 
 import java.util.List;
 

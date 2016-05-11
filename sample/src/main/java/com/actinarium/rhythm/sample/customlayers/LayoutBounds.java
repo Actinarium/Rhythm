@@ -24,8 +24,8 @@ import android.graphics.RectF;
 import android.graphics.Region;
 import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.common.RhythmInflationException;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
+import com.actinarium.rhythm.RhythmInflationException;
+import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 /**
  * A simple custom layer that draws layout bounds, similarly to "Draw layout bounds" in Developer options

@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.config;
-
-import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.RhythmSpecLayer;
+package com.actinarium.rhythm;
 
 /**
  * <p>Interface for a factory that can instantiate a {@link RhythmSpecLayer} implementation from provided {@link

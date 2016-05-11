@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.spec;
+package com.actinarium.rhythm.layer;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
@@ -23,9 +23,9 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.common.RhythmInflationException;
+import com.actinarium.rhythm.RhythmInflationException;
 import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
+import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 /**
  * A spec layer for horizontal <b>or</b> vertical grid lines (not both at once!), repeating at a fixed step. Horizontal

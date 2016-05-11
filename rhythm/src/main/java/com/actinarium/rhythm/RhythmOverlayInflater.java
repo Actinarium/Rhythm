@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.config;
+package com.actinarium.rhythm;
 
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RawRes;
 import android.util.ArrayMap;
-import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.RhythmOverlay;
-import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.RhythmSpecLayerParent;
-import com.actinarium.rhythm.common.ReaderUtils;
-import com.actinarium.rhythm.common.RhythmInflationException;
-import com.actinarium.rhythm.spec.Columns;
-import com.actinarium.rhythm.spec.DimensionsLabel;
-import com.actinarium.rhythm.spec.Fill;
-import com.actinarium.rhythm.spec.GridLines;
-import com.actinarium.rhythm.spec.InsetGroup;
-import com.actinarium.rhythm.spec.Keyline;
-import com.actinarium.rhythm.spec.RatioKeyline;
+import com.actinarium.rhythm.internal.ReaderUtils;
+import com.actinarium.rhythm.layer.Columns;
+import com.actinarium.rhythm.layer.DimensionsLabel;
+import com.actinarium.rhythm.layer.Fill;
+import com.actinarium.rhythm.layer.GridLines;
+import com.actinarium.rhythm.layer.InsetGroup;
+import com.actinarium.rhythm.layer.Keyline;
+import com.actinarium.rhythm.layer.RatioKeyline;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,9 +40,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A default inflater that creates {@link RhythmOverlay RhythmOverlays} from text configuration using registered layer
- * factories. Developers are welcome to register additional factories for custom overlays, subclass this inflater to
- * override certain aspects, or implement their own inflaters entirely from scratch if needed.
+ * <p>A default inflater that creates {@linkplain RhythmOverlay}s from text configuration using registered layer
+ * factories. Supports inflating multiple overlays from configuration files (see <a
+ * href="https://github.com/Actinarium/Rhythm/wiki">the docs</a>) separated by newlines as well as separate overlays;
+ * supports comments and variables, and supporting custom spec layers by allowing to register spec layer
+ * factories.</p><p>The provided implementation is a reference one &mdash; developers are welcome to subclass this
+ * inflater or any classes of the inflation pipeline to override certain aspects, or implement their own inflation
+ * mechanisms (e.g. different lexers, parse-time validation, transformations, XML/JSON/YAML support etc) entirely from
+ * scratch should they need something different.</p>
  *
  * @author Paul Danyliuk
  */

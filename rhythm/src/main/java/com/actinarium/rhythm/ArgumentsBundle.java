@@ -22,7 +22,6 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

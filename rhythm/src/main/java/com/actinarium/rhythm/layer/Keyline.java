@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.spec;
+package com.actinarium.rhythm.layer;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
@@ -23,9 +23,9 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.common.RhythmInflationException;
+import com.actinarium.rhythm.RhythmInflationException;
 import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
+import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 /**
  * A layer that draws a horizontal or vertical full-bleed keyline at the specified distance from the specified edge of a

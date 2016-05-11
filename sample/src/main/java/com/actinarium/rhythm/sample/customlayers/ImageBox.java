@@ -23,10 +23,10 @@ import android.graphics.Rect;
 import android.view.Gravity;
 import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.common.RhythmInflationException;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
-import com.actinarium.rhythm.spec.DimensionsLabel;
-import com.actinarium.rhythm.spec.InsetGroup;
+import com.actinarium.rhythm.RhythmInflationException;
+import com.actinarium.rhythm.RhythmSpecLayerFactory;
+import com.actinarium.rhythm.layer.DimensionsLabel;
+import com.actinarium.rhythm.layer.InsetGroup;
 
 /**
  * An example of a custom spec layer drawing a translucent overlay of specified width and height, gravity and margin,

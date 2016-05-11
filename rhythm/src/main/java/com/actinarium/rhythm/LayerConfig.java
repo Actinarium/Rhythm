@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.config;
+package com.actinarium.rhythm;
 
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
-import com.actinarium.rhythm.RhythmSpecLayer;
 
 import java.util.Map;
 

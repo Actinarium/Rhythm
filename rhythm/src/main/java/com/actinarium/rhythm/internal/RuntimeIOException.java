@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.common;
+package com.actinarium.rhythm.internal;
 
 import java.io.IOException;
 

@@ -32,15 +32,15 @@ import android.widget.MultiAutoCompleteTextView;
 import com.actinarium.aligned.Utils;
 import com.actinarium.rhythm.RhythmDrawable;
 import com.actinarium.rhythm.RhythmOverlay;
-import com.actinarium.rhythm.common.RhythmInflationException;
-import com.actinarium.rhythm.config.RhythmOverlayInflater;
+import com.actinarium.rhythm.RhythmInflationException;
+import com.actinarium.rhythm.RhythmOverlayInflater;
 import com.actinarium.rhythm.control.RhythmFrameLayout;
-import com.actinarium.rhythm.spec.DimensionsLabel;
-import com.actinarium.rhythm.spec.Fill;
-import com.actinarium.rhythm.spec.GridLines;
-import com.actinarium.rhythm.spec.InsetGroup;
-import com.actinarium.rhythm.spec.Keyline;
-import com.actinarium.rhythm.spec.RatioKeyline;
+import com.actinarium.rhythm.layer.DimensionsLabel;
+import com.actinarium.rhythm.layer.Fill;
+import com.actinarium.rhythm.layer.GridLines;
+import com.actinarium.rhythm.layer.InsetGroup;
+import com.actinarium.rhythm.layer.Keyline;
+import com.actinarium.rhythm.layer.RatioKeyline;
 
 /**
  * A presenter for the Rhythm Sandbox card, where you can try the configuration at runtime

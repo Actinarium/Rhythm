@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.spec;
+package com.actinarium.rhythm.layer;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import com.actinarium.rhythm.AbstractSpecLayerGroup;
-import com.actinarium.rhythm.common.RhythmInflationException;
+import com.actinarium.rhythm.RhythmInflationException;
 import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
+import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 /**
  * A layer that divides provided bounds into arbitrary number of equally wide columns and then draws nested layers in

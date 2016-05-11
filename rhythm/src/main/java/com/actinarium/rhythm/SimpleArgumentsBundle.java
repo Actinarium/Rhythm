@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.config;
+package com.actinarium.rhythm;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
@@ -24,7 +24,6 @@ import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
-import com.actinarium.rhythm.ArgumentsBundle;
 
 import java.util.Map;
 import java.util.regex.Matcher;

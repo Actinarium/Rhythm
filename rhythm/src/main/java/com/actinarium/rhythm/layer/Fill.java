@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.spec;
+package com.actinarium.rhythm.layer;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -22,7 +22,7 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
+import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 /**
  * A layer that fills all provided area with solid color. You will usually want to use it inside {@link InsetGroup} to

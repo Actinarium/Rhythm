@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.actinarium.rhythm.spec;
+package com.actinarium.rhythm.layer;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
@@ -28,7 +28,7 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
+import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 import java.text.DecimalFormat;
 
