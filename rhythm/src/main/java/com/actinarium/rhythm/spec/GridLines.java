@@ -23,8 +23,8 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.common.RhythmInflationException;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
@@ -48,7 +48,7 @@ public class GridLines implements RhythmSpecLayer {
     protected int mLimit = Integer.MAX_VALUE;
 
     protected int mOffset;
-    @Edge
+    @ArgumentsBundle.EdgeAffinity
     protected int mGravity;
     protected Paint mPaint;
 
@@ -65,7 +65,7 @@ public class GridLines implements RhythmSpecLayer {
      *                half of the view when its width is not an exact multiple of the step.
      * @param step    Grid step, in pixels
      */
-    public GridLines(@Edge int gravity, int step) {
+    public GridLines(@ArgumentsBundle.EdgeAffinity int gravity, int step) {
         mStep = step;
         mGravity = gravity;
 
@@ -175,19 +175,19 @@ public class GridLines implements RhythmSpecLayer {
         public static final String LAYER_TYPE = "grid-lines";
 
         @Override
-        public GridLines getForConfig(LayerConfig config) {
+        public GridLines getForConfig(ArgumentsBundle argsBundle) {
             GridLines gridLines = new GridLines();
 
-            gridLines.mGravity = config.getLayerGravity("from", Gravity.NO_GRAVITY);
+            gridLines.mGravity = argsBundle.getEdgeAffinity("from", Gravity.NO_GRAVITY);
             if (gridLines.mGravity == Gravity.NO_GRAVITY) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
                         "Error in grid-lines config: 'from' argument is mandatory and must be either 'left', 'right', 'top', 'bottom'",
-                        LAYER_TYPE, "from", config.getString("from"), "left|right|top|bottom"
+                        LAYER_TYPE, "from", argsBundle.getString("from"), "left|right|top|bottom"
                 );
             }
 
-            final int step = config.getDimensionPixelOffset("step", 0);
+            final int step = argsBundle.getDimensionPixelOffset("step", 0);
             if (step <= 0) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE,
@@ -197,10 +197,10 @@ public class GridLines implements RhythmSpecLayer {
             }
             gridLines.mStep = step;
 
-            gridLines.mPaint.setColor(config.getColor("color", DEFAULT_GRID_COLOR));
-            gridLines.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
-            gridLines.setLimit(config.getInt("limit", Integer.MAX_VALUE));
-            gridLines.mOffset = config.getDimensionPixelOffset("offset", 0);
+            gridLines.mPaint.setColor(argsBundle.getColor("color", DEFAULT_GRID_COLOR));
+            gridLines.mThickness = argsBundle.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
+            gridLines.setLimit(argsBundle.getInt("limit", Integer.MAX_VALUE));
+            gridLines.mOffset = argsBundle.getDimensionPixelOffset("offset", 0);
 
             return gridLines;
         }

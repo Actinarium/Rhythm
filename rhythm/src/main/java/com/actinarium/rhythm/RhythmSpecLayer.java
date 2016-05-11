@@ -16,14 +16,8 @@
 
 package com.actinarium.rhythm;
 
-import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.support.annotation.IntDef;
-import android.view.Gravity;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * <p>Spec layer is a descriptor of a granular piece of overlay (e.g. a single line, a repeating line etc), which both
@@ -44,12 +38,4 @@ public interface RhythmSpecLayer {
      */
     void draw(Canvas canvas, Rect drawableBounds);
 
-    /**
-     * Type definition for screen edge that a keyline or pattern must be attached to. Used by some layers
-     */
-    @SuppressLint("RtlHardcoded")
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Gravity.TOP, Gravity.BOTTOM, Gravity.LEFT, Gravity.RIGHT, Gravity.NO_GRAVITY})
-    @interface Edge {
-    }
 }

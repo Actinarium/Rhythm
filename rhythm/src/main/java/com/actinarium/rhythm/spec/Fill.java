@@ -21,7 +21,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
@@ -71,9 +71,9 @@ public class Fill implements RhythmSpecLayer {
         public static final String LAYER_TYPE = "fill";
 
         @Override
-        public Fill getForConfig(LayerConfig config) {
+        public Fill getForConfig(ArgumentsBundle argsBundle) {
             Fill fill = new Fill();
-            fill.mPaint.setColor(config.getColor("color", DEFAULT_FILL_COLOR));
+            fill.mPaint.setColor(argsBundle.getColor("color", DEFAULT_FILL_COLOR));
 
             return fill;
         }

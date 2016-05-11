@@ -16,7 +16,7 @@
 
 package com.actinarium.rhythm.common;
 
-import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.config.RhythmOverlayInflater;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
@@ -152,7 +152,7 @@ public class RhythmInflationException extends RuntimeException {
 
     /**
      * Set the line number where the exception occurred. This should be called by a {@link RhythmOverlayInflater}
-     * implementation and <b>never</b> within {@link RhythmSpecLayerFactory#getForConfig(LayerConfig)}.
+     * implementation and <b>never</b> within {@link RhythmSpecLayerFactory#getForConfig(ArgumentsBundle)}.
      *
      * @param lineNumber Number of line where exception occurred, 0-based
      * @return this for chaining

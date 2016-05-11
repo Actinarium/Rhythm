@@ -27,8 +27,8 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.common.RhythmInflationException;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 import java.util.Locale;
@@ -145,10 +145,10 @@ public class RatioKeyline implements RhythmSpecLayer {
         private static Pattern RATIO_VALUE_PATTERN = Pattern.compile("(\\d+):(\\d+)");
 
         @Override
-        public RatioKeyline getForConfig(LayerConfig config) {
-            RatioKeyline keyline = new RatioKeyline(config.getDisplayMetrics());
+        public RatioKeyline getForConfig(ArgumentsBundle argsBundle) {
+            RatioKeyline keyline = new RatioKeyline(argsBundle.getDisplayMetrics());
 
-            String ratio = config.getString("ratio");
+            String ratio = argsBundle.getString("ratio");
             if (ratio == null) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING,
@@ -168,10 +168,10 @@ public class RatioKeyline implements RhythmSpecLayer {
             keyline.mRatioY = Integer.parseInt(matcher.group(2));
             keyline.mRatioString = String.format(Locale.US, "%d:%d", keyline.mRatioX, keyline.mRatioY);
 
-            keyline.mThickness = config.getDimensionPixelSize("thickness",
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_THICKNESS, config.getDisplayMetrics()));
-            keyline.mBackgroundPaint.setColor(config.getColor("color", DEFAULT_FILL_COLOR));
-            keyline.mTextPaint.setColor(config.getColor("text-color", DEFAULT_TEXT_COLOR));
+            keyline.mThickness = argsBundle.getDimensionPixelSize("thickness",
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_THICKNESS, argsBundle.getDisplayMetrics()));
+            keyline.mBackgroundPaint.setColor(argsBundle.getColor("color", DEFAULT_FILL_COLOR));
+            keyline.mTextPaint.setColor(argsBundle.getColor("text-color", DEFAULT_TEXT_COLOR));
 
             return keyline;
         }

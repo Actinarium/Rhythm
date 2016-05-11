@@ -20,7 +20,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import com.actinarium.rhythm.AbstractSpecLayerGroup;
 import com.actinarium.rhythm.common.RhythmInflationException;
-import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
@@ -83,10 +83,10 @@ public class Columns extends AbstractSpecLayerGroup<Columns> {
         public static final String LAYER_TYPE = "columns";
 
         @Override
-        public Columns getForConfig(LayerConfig config) {
+        public Columns getForConfig(ArgumentsBundle argsBundle) {
             Columns columns = new Columns();
 
-            columns.mColumnCount = config.getInt("count", 0);
+            columns.mColumnCount = argsBundle.getInt("count", 0);
             if (columns.mColumnCount <= 0) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE,

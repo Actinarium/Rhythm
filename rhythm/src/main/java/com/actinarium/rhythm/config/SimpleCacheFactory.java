@@ -16,6 +16,7 @@
 
 package com.actinarium.rhythm.config;
 
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.RhythmSpecLayer;
 
 import java.util.HashMap;
@@ -29,7 +30,7 @@ import java.util.Map;
 public class SimpleCacheFactory<T extends RhythmSpecLayer> implements RhythmSpecLayerFactory<T> {
 
     private RhythmSpecLayerFactory<T> mDecoratedFactory;
-    private Map<LayerConfig, T> mCache;
+    private Map<ArgumentsBundle, T> mCache;
 
     public SimpleCacheFactory(RhythmSpecLayerFactory<T> decoratedFactory) {
         mDecoratedFactory = decoratedFactory;
@@ -39,19 +40,19 @@ public class SimpleCacheFactory<T extends RhythmSpecLayer> implements RhythmSpec
     /**
      * Returns layer for this configuration from cache, or creates a new one via decorated factory if not found in cache
      *
-     * @param config container with arguments for this layer
+     * @param argsBundle container with arguments for this layer
      * @return layer for this configuration, either new or from cache
      */
     @Override
-    public T getForConfig(LayerConfig config) {
-        T layer = mCache.get(config);
+    public T getForConfig(ArgumentsBundle argsBundle) {
+        T layer = mCache.get(argsBundle);
         if (layer != null) {
             return layer;
         }
 
         // if cache miss, inflate the new one
-        layer = mDecoratedFactory.getForConfig(config);
-        mCache.put(config, layer);
+        layer = mDecoratedFactory.getForConfig(argsBundle);
+        mCache.put(argsBundle, layer);
         return layer;
     }
 }

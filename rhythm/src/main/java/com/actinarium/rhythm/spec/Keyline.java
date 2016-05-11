@@ -23,8 +23,8 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.common.RhythmInflationException;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 /**
@@ -48,7 +48,7 @@ public class Keyline implements RhythmSpecLayer {
     public static final boolean ALIGN_OUTSIDE = true;
 
     protected int mThickness = DEFAULT_THICKNESS;
-    @Edge
+    @ArgumentsBundle.EdgeAffinity
     protected int mGravity;
     protected int mDistance;
     protected boolean mAlignOutside;
@@ -64,7 +64,7 @@ public class Keyline implements RhythmSpecLayer {
      * @param distance Distance of this keyline from the specified edge, in pixels.
      * @see #setAlignOutside(boolean)
      */
-    public Keyline(@Edge int gravity, int distance) {
+    public Keyline(@ArgumentsBundle.EdgeAffinity int gravity, int distance) {
         mGravity = gravity;
         mDistance = distance;
 
@@ -152,30 +152,30 @@ public class Keyline implements RhythmSpecLayer {
         public static final String LAYER_TYPE = "keyline";
 
         @Override
-        public Keyline getForConfig(LayerConfig config) {
+        public Keyline getForConfig(ArgumentsBundle argsBundle) {
             Keyline keyline = new Keyline();
 
-            keyline.mGravity = config.getLayerGravity("from", Gravity.NO_GRAVITY);
+            keyline.mGravity = argsBundle.getEdgeAffinity("from", Gravity.NO_GRAVITY);
             if (keyline.mGravity == Gravity.NO_GRAVITY) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
                         "Error in keyline config: 'from' argument is mandatory and must be either 'left', 'right', 'top', 'bottom'",
-                        LAYER_TYPE, "from", config.getString("from"), "left|right|top|bottom"
+                        LAYER_TYPE, "from", argsBundle.getString("from"), "left|right|top|bottom"
                 );
             }
 
-            if (!config.hasArgument("distance")) {
+            if (!argsBundle.hasArgument("distance")) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_EXPECTED_TYPE,
                         "Error in keyline config: 'distance' argument is mandatory and must be a dimension value (e.g. 'distance=16dp')",
                         LAYER_TYPE, "step", "{dimen}" , "distance=16dp"
                 );
             }
-            keyline.mDistance = config.getDimensionPixelOffset("distance", 0);
+            keyline.mDistance = argsBundle.getDimensionPixelOffset("distance", 0);
 
-            keyline.mPaint.setColor(config.getColor("color", DEFAULT_KEYLINE_COLOR));
-            keyline.mThickness = config.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
-            keyline.mAlignOutside = config.getBoolean("outside", ALIGN_INSIDE, ALIGN_OUTSIDE);
+            keyline.mPaint.setColor(argsBundle.getColor("color", DEFAULT_KEYLINE_COLOR));
+            keyline.mThickness = argsBundle.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
+            keyline.mAlignOutside = argsBundle.getBoolean("outside", ALIGN_INSIDE, ALIGN_OUTSIDE);
 
             return keyline;
         }

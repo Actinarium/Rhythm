@@ -27,7 +27,7 @@ import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 import java.text.DecimalFormat;
@@ -206,16 +206,16 @@ public class DimensionsLabel implements RhythmSpecLayer {
 
         @SuppressLint("RtlHardcoded")
         @Override
-        public DimensionsLabel getForConfig(LayerConfig config) {
+        public DimensionsLabel getForConfig(ArgumentsBundle argsBundle) {
             DimensionsLabel label = new DimensionsLabel();
 
-            final float density = config.getDisplayMetrics().density;
+            final float density = argsBundle.getDisplayMetrics().density;
             label.mScaleFactor = density;
 
-            label.mGravity = config.getGravity("gravity", Gravity.BOTTOM | Gravity.RIGHT);
-            label.mBackgroundPaint.setColor(config.getColor("color", DEFAULT_BACKGROUND));
-            label.mTextPaint.setColor(config.getColor("text-color", DEFAULT_TEXT_COLOR));
-            label.mTextPaint.setTextSize(config.getDimensionPixelExact("text-size", DEFAULT_TEXT_SIZE * density));
+            label.mGravity = argsBundle.getGravity("gravity", Gravity.BOTTOM | Gravity.RIGHT);
+            label.mBackgroundPaint.setColor(argsBundle.getColor("color", DEFAULT_BACKGROUND));
+            label.mTextPaint.setColor(argsBundle.getColor("text-color", DEFAULT_TEXT_COLOR));
+            label.mTextPaint.setTextSize(argsBundle.getDimensionPixelExact("text-size", DEFAULT_TEXT_SIZE * density));
 
             return label;
         }

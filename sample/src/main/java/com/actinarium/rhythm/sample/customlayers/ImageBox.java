@@ -21,11 +21,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.Gravity;
-import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.ArgumentsBundle;
+import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 import com.actinarium.rhythm.spec.DimensionsLabel;
-import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.spec.InsetGroup;
 
 /**
@@ -96,7 +96,7 @@ public class ImageBox implements RhythmSpecLayer {
     }
 
     /**
-     * A factory to add inflater support for this custom layer. See how you can get various values from the LayerConfig
+     * A factory to add inflater support for this custom layer. See how you can get various values from the ArgumentsBundle
      * object
      */
     public static class Factory implements RhythmSpecLayerFactory<ImageBox> {
@@ -104,22 +104,22 @@ public class ImageBox implements RhythmSpecLayer {
         public static final String LAYER_TYPE = "image-box";
 
         @Override
-        public ImageBox getForConfig(LayerConfig config) {
-            ImageBox box = new ImageBox(config.getDisplayMetrics().density);
+        public ImageBox getForConfig(ArgumentsBundle argsBundle) {
+            ImageBox box = new ImageBox(argsBundle.getDisplayMetrics().density);
 
-            box.mGravity = config.getGravity("gravity", Gravity.NO_GRAVITY);
+            box.mGravity = argsBundle.getGravity("gravity", Gravity.NO_GRAVITY);
             if (box.mGravity == Gravity.NO_GRAVITY) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
                         "Error when inflating image-box: 'gravity' argument missing or invalid",
-                        LAYER_TYPE, "gravity", config.getString("gravity"), "Gravity constants"
+                        LAYER_TYPE, "gravity", argsBundle.getString("gravity"), "Gravity constants"
                 );
             }
 
-            box.mWidth = config.getDimensionPixelSize("width", 0);
-            box.mHeight = config.getDimensionPixelSize("height", 0);
-            box.mDistanceX = config.getDimensionPixelOffset("distance-x", 0);
-            box.mDistanceY = config.getDimensionPixelOffset("distance-y", 0);
+            box.mWidth = argsBundle.getDimensionPixelSize("width", 0);
+            box.mHeight = argsBundle.getDimensionPixelSize("height", 0);
+            box.mDistanceX = argsBundle.getDimensionPixelOffset("distance-x", 0);
+            box.mDistanceY = argsBundle.getDimensionPixelOffset("distance-y", 0);
 
             return box;
         }

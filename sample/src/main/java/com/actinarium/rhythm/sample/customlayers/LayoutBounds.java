@@ -22,8 +22,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.config.LayerConfig;
 import com.actinarium.rhythm.common.RhythmInflationException;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
@@ -77,10 +77,10 @@ public class LayoutBounds implements RhythmSpecLayer {
         public static final String LAYER_TYPE = "layout-bounds";
 
         @Override
-        public LayoutBounds getForConfig(LayerConfig config) {
+        public LayoutBounds getForConfig(ArgumentsBundle argsBundle) {
             LayoutBounds layoutBounds = new LayoutBounds();
 
-            layoutBounds.mCrosshairSize = config.getDimensionPixelOffset("crosshair-size", 0);
+            layoutBounds.mCrosshairSize = argsBundle.getDimensionPixelOffset("crosshair-size", 0);
             if (layoutBounds.mCrosshairSize <= 0) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE,

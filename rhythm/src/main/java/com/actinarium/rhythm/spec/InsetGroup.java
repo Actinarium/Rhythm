@@ -20,7 +20,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import com.actinarium.rhythm.AbstractSpecLayerGroup;
-import com.actinarium.rhythm.config.LayerConfig;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.config.RhythmSpecLayerFactory;
 
 import java.lang.annotation.Retention;
@@ -265,45 +265,45 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
         public static final String LAYER_TYPE = "inset";
 
         @Override
-        public InsetGroup getForConfig(LayerConfig config) {
+        public InsetGroup getForConfig(ArgumentsBundle argsBundle) {
             InsetGroup insetGroup = new InsetGroup();
 
-            if (config.hasArgument("no-clip")) {
+            if (argsBundle.hasArgument("no-clip")) {
                 insetGroup.mMode = MODE_NO_CLIP;
-            } else if (config.hasArgument("clip-only")) {
+            } else if (argsBundle.hasArgument("clip-only")) {
                 insetGroup.mMode = MODE_CLIP_ONLY;
             } else {
                 insetGroup.mMode = MODE_DEFAULT;
             }
 
-            if (config.hasArgument("top")) {
-                boolean isPercent = config.getDimensionUnits("top") == LayerConfig.UNITS_PERCENT;
-                int value = config.getDimensionPixelOffset("top", 0);
+            if (argsBundle.hasArgument("top")) {
+                boolean isPercent = argsBundle.getDimensionUnits("top") == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelOffset("top", 0);
                 insetGroup.setTop(value, isPercent);
             }
-            if (config.hasArgument("bottom")) {
-                boolean isPercent = config.getDimensionUnits("bottom") == LayerConfig.UNITS_PERCENT;
-                int value = config.getDimensionPixelOffset("bottom", 0);
+            if (argsBundle.hasArgument("bottom")) {
+                boolean isPercent = argsBundle.getDimensionUnits("bottom") == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelOffset("bottom", 0);
                 insetGroup.setBottom(value, isPercent);
             }
-            if (config.hasArgument("left")) {
-                boolean isPercent = config.getDimensionUnits("left") == LayerConfig.UNITS_PERCENT;
-                int value = config.getDimensionPixelOffset("left", 0);
+            if (argsBundle.hasArgument("left")) {
+                boolean isPercent = argsBundle.getDimensionUnits("left") == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelOffset("left", 0);
                 insetGroup.setLeft(value, isPercent);
             }
-            if (config.hasArgument("right")) {
-                boolean isPercent = config.getDimensionUnits("right") == LayerConfig.UNITS_PERCENT;
-                int value = config.getDimensionPixelOffset("right", 0);
+            if (argsBundle.hasArgument("right")) {
+                boolean isPercent = argsBundle.getDimensionUnits("right") == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelOffset("right", 0);
                 insetGroup.setRight(value, isPercent);
             }
-            if (config.hasArgument("width")) {
-                boolean isPercent = config.getDimensionUnits("width") == LayerConfig.UNITS_PERCENT;
-                int value = config.getDimensionPixelSize("width", 0);
+            if (argsBundle.hasArgument("width")) {
+                boolean isPercent = argsBundle.getDimensionUnits("width") == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelSize("width", 0);
                 insetGroup.setWidth(value, isPercent);
             }
-            if (config.hasArgument("height")) {
-                boolean isPercent = config.getDimensionUnits("height") == LayerConfig.UNITS_PERCENT;
-                int value = config.getDimensionPixelSize("height", 0);
+            if (argsBundle.hasArgument("height")) {
+                boolean isPercent = argsBundle.getDimensionUnits("height") == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelSize("height", 0);
                 insetGroup.setHeight(value, isPercent);
             }
 

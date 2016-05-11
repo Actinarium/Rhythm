@@ -19,39 +19,28 @@ package com.actinarium.rhythm.config;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.RhythmSpecLayer.Edge;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A container for arguments parsed from layer configuration line. The arguments are stored as a String-&gt;String
- * key-value map and parsed as required types when requested by <code>get*()</code> methods, so if you need to request
- * the same parameter multiple times, storing it in a variable may be a good idea.
+ * <p>A basic implementation of {@link ArgumentsBundle} used by {@link RhythmOverlayInflater}. For simplicity, it stores
+ * all arguments as a String-&gt;String key-value map and parses them into required types when accessed by respective
+ * getter methods (also meaning it fails lazily). Does not cache parsing results.</p><p>Additionally to the arguments
+ * bag, objects of this class store extra metadata about the layer being inflated, such as the layer type and its indent
+ * (leading spaces in the config) to properly nest it within the overlay being inflated.</p>
  *
  * @author Paul Danyliuk
  */
-public class LayerConfig {
-
-    public static final int UNITS_NULL = -1;
-    public static final int UNITS_NUMBER = 0;
-    public static final int UNITS_PERCENT = 1;
-    public static final int UNITS_PX = 2;
-    public static final int UNITS_DP = 3;
-    public static final int UNITS_SP = 4;
-    public static final int UNITS_PT = 5;
-    public static final int UNITS_IN = 6;
-    public static final int UNITS_MM = 7;
+public class SimpleLayerConfig implements ArgumentsBundle {
 
     protected String mLayerType;
     protected int mIndent;
@@ -69,7 +58,7 @@ public class LayerConfig {
      * @param arguments bag of raw arguments parsed from configuration string
      * @param variables bag of variables to be used in arguments. Keys must be prefixed with <code>@</code>.
      */
-    public LayerConfig(@NonNull String layerType, int indent, @NonNull Map<String, String> arguments, @NonNull Map<String, String> variables) {
+    public SimpleLayerConfig(@NonNull String layerType, int indent, @NonNull Map<String, String> arguments, @NonNull Map<String, String> variables) {
         mLayerType = layerType;
         mIndent = indent;
         mArguments = arguments;
@@ -104,10 +93,9 @@ public class LayerConfig {
     }
 
     /**
-     * Get display metrics injected in this config
-     *
-     * @return display metrics object
+     * {@inheritDoc}
      */
+    @Override
     public DisplayMetrics getDisplayMetrics() {
         return mMetrics;
     }
@@ -123,31 +111,25 @@ public class LayerConfig {
     }
 
     /**
-     * Put a key without value into the bag
+     * Put a key without value (<code>null</code> value) into the bag
      *
      * @param key Key
+     * @see #getBoolean(String, boolean, boolean)
      */
     public void put(String key) {
         mArguments.put(key, null);
     }
 
-    /**
-     * Test if there's an argument with given key in the bag
-     *
-     * @param key argument key
-     * @return true if argument is present regardless of value
-     */
+    @Override
     public boolean hasArgument(String key) {
         return mArguments.containsKey(key);
     }
 
     /**
-     * Get argument value as raw string. If the stored value is a variable (starting with <code>@</code>), returns the
-     * value of the variable by provided reference name
-     *
-     * @param key argument key
-     * @return argument value as raw string, or null if key is missing or the value references a missing variable
+     * {@inheritDoc} Will return the raw string as put in the arguments map by the inflater. If the stored value is a
+     * variable (starting with <code>@</code>), returns the value of the variable by provided reference name.
      */
+    @Override
     public String getString(String key) {
         String value = mArguments.get(key);
         if (value != null && value.length() > 0 && value.charAt(0) == '@') {
@@ -157,50 +139,27 @@ public class LayerConfig {
     }
 
     /**
-     * Get argument value as raw string with possible fallback to default value
-     *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return argument value as raw string
+     * {@inheritDoc} Will return the raw string as put in the arguments map by the inflater.
      */
+    @Override
     public String getString(String key, @Nullable String defaultValue) {
         String rawValue = getString(key);
         return rawValue != null ? rawValue : defaultValue;
     }
 
-    /**
-     * Get argument value as integer with possible fallback to default value
-     *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return argument value parsed as integer
-     */
+    @Override
     public int getInt(String key, int defaultValue) {
         String rawValue = getString(key);
         return rawValue != null ? Integer.parseInt(rawValue) : defaultValue;
     }
 
-    /**
-     * Get argument value as float with possible fallback to default value
-     *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return argument value parsed as float
-     */
+    @Override
     public float getFloat(String key, float defaultValue) {
         String rawValue = getString(key);
         return rawValue != null ? Float.parseFloat(rawValue) : defaultValue;
     }
 
-    /**
-     * Get boolean argument, which can have implicit value
-     *
-     * @param key          argument key
-     * @param defaultValue value if argument is not present
-     * @param nullValue    value if argument is present but doesn't contain value (i.e. not <code>arg=true</code> but
-     *                     simply <code>arg</code>)
-     * @return argument boolean value
-     */
+    @Override
     public boolean getBoolean(String key, boolean defaultValue, boolean nullValue) {
         if (mArguments.containsKey(key)) {
             String rawValue = getString(key);
@@ -210,13 +169,7 @@ public class LayerConfig {
         }
     }
 
-    /**
-     * Get argument value as color integer with possible fallback to default value
-     *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return argument value parsed as color integer
-     */
+    @Override
     @ColorInt
     public int getColor(String key, @ColorInt int defaultValue) {
         String rawValue = getString(key);
@@ -224,14 +177,10 @@ public class LayerConfig {
     }
 
     /**
-     * Determine gravity constant (a combination of {@link Gravity} constants) from a string like <code>top|left</code>,
-     * with fallback to default value.
-     *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return gravity constant
-     * @see #getLayerGravity(String, int)
+     * {@inheritDoc} Does a quick and rough parsing of the raw string for containing constant words like
+     * <code>top</code> or <code>center_vertical</code>
      */
+    @Override
     @SuppressLint("RtlHardcoded")
     public int getGravity(String key, int defaultValue) {
         String gravityArg = getString(key);
@@ -272,18 +221,10 @@ public class LayerConfig {
         }
     }
 
-    /**
-     * Get argument as layer gravity constant, which is either <code>top</code>, <code>bottom</code>, <code>left</code>,
-     * or <code>right</code>, with fallback to default value if argument is missing or invalid.
-     *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return gravity constant
-     * @see #getGravity(String, int)
-     */
+    @Override
     @SuppressLint("RtlHardcoded")
-    @Edge
-    public int getLayerGravity(String key, @Edge int defaultValue) {
+    @EdgeAffinity
+    public int getEdgeAffinity(String key, @EdgeAffinity int defaultValue) {
         String gravityArg = getString(key);
         if ("top".equals(gravityArg)) {
             return Gravity.TOP;
@@ -299,13 +240,11 @@ public class LayerConfig {
     }
 
     /**
-     * Determine units of dimension argument. <b>Note:</b> this is a very crude implementation relying only on the check
-     * of trailing string characters (i.e. whether the string ends with "dp", "px", "%" etc). However, for
-     * development-time library and assuming that developers are not their own enemies, that should be fine.
-     *
-     * @param key argument key
-     * @return dimension argument units
+     * {@inheritDoc} <b>Note:</b> this is a very crude implementation relying only on the check of trailing string
+     * characters (i.e. whether the string ends with "dp", "px", "%" etc). However, for development-time library and
+     * assuming that developers are not their own enemies, that should be fine.
      */
+    @Override
     @DimensionUnits
     public int getDimensionUnits(String key) {
         String value = getString(key);
@@ -332,17 +271,12 @@ public class LayerConfig {
     }
 
     /**
-     * Extract numeric value from dimension argument disregarding units and NOT performing any conversion to pixels.
-     * Normally you should use one of the "pixel" methods instead.
+     * {@inheritDoc}
      *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return dimension argument raw value
-     * @see #getDimensionPixelSize(String, int)
-     * @see #getDimensionPixelOffset(String, int)
      * @see #getDimensionPixelRaw(float, int, DisplayMetrics)
      */
-    public float getDimensionValueRaw(String key, float defaultValue) {
+    @Override
+    public float getDimensionValue(String key, float defaultValue) {
         String value = getString(key);
         if (value == null) {
             return defaultValue;
@@ -356,64 +290,44 @@ public class LayerConfig {
     }
 
     /**
-     * Get dimension argument value as pixels with possible fallback to default value. Unlike {@link
-     * #getDimensionPixelSize(String, int)} and {@link #getDimensionPixelSize(String, int)}, this method <b>doesn't</b>
-     * perform any rounding. <b>Note:</b> for resolving complex dimension types, {@link DisplayMetrics} must be injected
-     * into this config
+     * {@inheritDoc} <b>Note:</b> this method requires that {@link DisplayMetrics} object is injected in this config.
      *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return argument value converted to pixels
-     * @see #getDimensionPixelSize(String, int)
-     * @see #getDimensionPixelOffset(String, int)
      * @see #getDimensionPixelRaw(float, int, DisplayMetrics)
      */
+    @Override
     public float getDimensionPixelExact(String key, float defaultValue) {
         @DimensionUnits int units = getDimensionUnits(key);
         if (units == UNITS_NULL) {
             return defaultValue;
         }
-        float rawValue = getDimensionValueRaw(key, defaultValue);
+        float rawValue = getDimensionValue(key, defaultValue);
         return getDimensionPixelRaw(rawValue, units, mMetrics);
     }
 
     /**
-     * Get dimension argument value as pixels with possible fallback to default value. Unlike {@link
-     * #getDimensionPixelSize(String, int)}, this method rounds converted value <b>down</b> to the closest integer.
-     * <b>Note:</b> for resolving complex dimension types, {@link DisplayMetrics} must be injected into this config
+     * {@inheritDoc} <b>Note:</b> this method requires that {@link DisplayMetrics} object is injected in this config.
      *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return argument value converted to pixels
-     * @see #getDimensionPixelSize(String, int)
-     * @see #getDimensionPixelExact(String, float)
      * @see #getDimensionPixelRaw(float, int, DisplayMetrics)
      */
+    @Override
     public int getDimensionPixelOffset(String key, int defaultValue) {
         @DimensionUnits int units = getDimensionUnits(key);
         if (units == UNITS_NULL) {
             return defaultValue;
         }
-        float rawValue = getDimensionValueRaw(key, defaultValue);
+        float rawValue = getDimensionValue(key, defaultValue);
         return (int) getDimensionPixelRaw(rawValue, units, mMetrics);
     }
 
     /**
-     * Get dimension argument value as pixels with possible fallback to default value. Unlike {@link
-     * #getDimensionPixelOffset(String, int)}}, this method rounds converted value <b>up or down</b> to the closest
-     * integer by common rules, and ensures the result is at least 1px if original value is not 0. <b>Note:</b> for
-     * resolving complex dimension types, {@link DisplayMetrics} must be injected into this config
+     * {@inheritDoc} <b>Note:</b> this method requires that {@link DisplayMetrics} object is injected in this config.
      *
-     * @param key          argument key
-     * @param defaultValue fallback value
-     * @return argument value converted to pixels
-     * @see #getDimensionPixelOffset(String, int)
-     * @see #getDimensionPixelExact(String, float)
      * @see #getDimensionPixelRaw(float, int, DisplayMetrics)
      */
+    @Override
     public int getDimensionPixelSize(String key, int defaultValue) {
         @DimensionUnits int units = getDimensionUnits(key);
-        float rawValue = getDimensionValueRaw(key, defaultValue);
+        float rawValue = getDimensionValue(key, defaultValue);
         float result = getDimensionPixelRaw(rawValue, units, mMetrics);
 
         final int res = (int) (result + 0.5f);
@@ -476,7 +390,7 @@ public class LayerConfig {
     public boolean equals(Object o) {
         if (this == o) { return true; }
         if (o == null || getClass() != o.getClass()) { return false; }
-        LayerConfig that = (LayerConfig) o;
+        SimpleLayerConfig that = (SimpleLayerConfig) o;
         return mArguments.equals(that.mArguments) && mVariables.equals(that.mVariables) && mLayerType.equals(that.mLayerType);
     }
 
@@ -486,14 +400,6 @@ public class LayerConfig {
         result = 31 * result + mArguments.hashCode();
         result = 31 * result + mVariables.hashCode();
         return result;
-    }
-
-    /**
-     * Dimension argument units
-     */
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({UNITS_NULL, UNITS_NUMBER, UNITS_PERCENT, UNITS_PX, UNITS_DP, UNITS_SP, UNITS_MM, UNITS_PT, UNITS_IN})
-    public @interface DimensionUnits {
     }
 
 }

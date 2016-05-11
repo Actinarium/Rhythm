@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RawRes;
 import android.util.ArrayMap;
 import android.util.DisplayMetrics;
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.RhythmSpecLayerParent;
@@ -384,7 +385,7 @@ public class RhythmOverlayInflater {
                 }
             } else {
                 // Otherwise assume the line is a spec layer, try parsing and inflating it as a separate layer
-                LayerConfig config = parseConfig(line, localVars);
+                SimpleLayerConfig config = parseConfig(line, localVars);
 
                 // If indent is <= indent of parent layer, then go up the hierarchy. Won't underflow b/c indents[0] is -1
                 while (config.getIndent() <= indents[headIndex]) {
@@ -457,7 +458,7 @@ public class RhythmOverlayInflater {
      * @param lineNumber number of the configuration line we're inflating. Required for error reporting.
      * @return inflated layer
      */
-    protected RhythmSpecLayer inflateLayerInternal(LayerConfig config, int lineNumber) {
+    protected RhythmSpecLayer inflateLayerInternal(SimpleLayerConfig config, int lineNumber) {
         config.setDisplayMetrics(mContext.getResources().getDisplayMetrics());
         RhythmSpecLayerFactory factory = mFactories.get(config.getLayerType());
         if (factory == null) {
@@ -483,17 +484,17 @@ public class RhythmOverlayInflater {
     }
 
     /**
-     * Parses a line with single layer configuration into a LayerConfig object
+     * Parses a line with single layer configuration into a ArgumentsBundle object
      *
      * @param configString configuration string, indented with spaces if required, starting with layer title and
      *                     containing args or key=value pairs
      * @param vars         map of @key-&gt;value mappings used to resolve argument references (e.g.
      *                     <code>@primary=#FF0000</code> to use in <code>color=@primary</code>)
-     * @return layer config object to feed to {@link RhythmSpecLayerFactory#getForConfig(LayerConfig)}. <b>Note:</b>
+     * @return layer config object to feed to {@link RhythmSpecLayerFactory#getForConfig(ArgumentsBundle)}. <b>Note:</b>
      * does not have {@link DisplayMetrics} injected into it - you have to do it yourself before querying complex
      * dimensions from this layer config object.
      */
-    protected LayerConfig parseConfig(String configString, @NonNull Map<String, String> vars) {
+    protected SimpleLayerConfig parseConfig(String configString, @NonNull Map<String, String> vars) {
         // Let's just iterate over the first chars to get indent and layer type, and parse the arguments with regex
         int i = 0;
         int length = configString.length();
@@ -525,7 +526,7 @@ public class RhythmOverlayInflater {
             arguments.put(key, value);
         }
 
-        return new LayerConfig(specLayerType, spaces, arguments, vars);
+        return new SimpleLayerConfig(specLayerType, spaces, arguments, vars);
     }
 
     /**

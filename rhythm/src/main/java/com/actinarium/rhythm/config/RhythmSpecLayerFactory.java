@@ -16,29 +16,30 @@
 
 package com.actinarium.rhythm.config;
 
+import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.RhythmSpecLayer;
 
 /**
  * <p>Interface for a factory that can instantiate a {@link RhythmSpecLayer} implementation from provided {@link
- * LayerConfig}. These factories are used by {@link RhythmOverlayInflater} to inflate declarative config into respective
- * overlays. If you make a custom spec layer, you should also create a corresponding <code>RhythmSpecLayerFactory</code>
- * and register it within {@link RhythmOverlayInflater#registerFactory(String, RhythmSpecLayerFactory)}
- * method.</p><p>Concrete factories may implement some sort of caching and provide the same {@link RhythmSpecLayer}
- * instances for equal {@link LayerConfig}s if they can be reused, but it's not mandatory. Furthermore it’s developer’s
- * responsibility to not mutate the layer if the latter is reused in multiple overlays.</p>
+ * ArgumentsBundle}. These factories are used by {@link RhythmOverlayInflater} to inflate declarative config into
+ * respective overlays. If you make a custom spec layer, you should also create a corresponding
+ * <code>RhythmSpecLayerFactory</code> and register it within {@link RhythmOverlayInflater#registerFactory(String,
+ * RhythmSpecLayerFactory)} method.</p><p>Concrete factories may implement some sort of caching and provide the same
+ * {@link RhythmSpecLayer} instances for equal {@linkplain ArgumentsBundle ArgumentsBundles} if they can be reused, but
+ * it's not mandatory. Furthermore it’s developer’s responsibility to not mutate the layer if the latter is reused in
+ * multiple overlays.</p>
  *
  * @author Paul Danyliuk
  */
 public interface RhythmSpecLayerFactory<T extends RhythmSpecLayer> {
 
     /**
-     * Create and configure a spec layer based on provided configuration, or get previously created one from cache if it
-     * can be safely reused. There's no need to verify if {@link LayerConfig#getLayerType()} corresponds to this
-     * factory.
+     * Create and configure a spec layer from provided arguments, or get previously created one from cache if it can be
+     * safely reused.
      *
-     * @param config container with arguments for this layer
+     * @param argsBundle container with arguments for this layer
      * @return configured layer
      */
-    T getForConfig(LayerConfig config);
+    T getForConfig(ArgumentsBundle argsBundle);
 
 }
