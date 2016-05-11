@@ -25,70 +25,28 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import com.actinarium.rhythm.ArgumentsBundle;
-import com.actinarium.rhythm.RhythmSpecLayer;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p>A basic implementation of {@link ArgumentsBundle} used by {@link RhythmOverlayInflater}. For simplicity, it stores
- * all arguments as a String-&gt;String key-value map and parses them into required types when accessed by respective
- * getter methods (also meaning it fails lazily). Does not cache parsing results.</p><p>Additionally to the arguments
- * bag, objects of this class store extra metadata about the layer being inflated, such as the layer type and its indent
- * (leading spaces in the config) to properly nest it within the overlay being inflated.</p>
+ * A basic implementation of {@link ArgumentsBundle}, which stores all arguments simply as a String-&gt;String key-value
+ * map and parses them into required types when accessed by respective getter methods (meaning it also fails lazily).
+ * Does not cache parsing results, so if the same arguments are requested multiple times, it may be a good idea to query
+ * them once and store the result in a variable.
  *
  * @author Paul Danyliuk
  */
-public class SimpleLayerConfig implements ArgumentsBundle {
+public class SimpleArgumentsBundle implements ArgumentsBundle {
 
-    protected String mLayerType;
-    protected int mIndent;
     protected Map<String, String> mArguments;
-    protected Map<String, String> mVariables;
     protected DisplayMetrics mMetrics;
 
     protected static Pattern DIMEN_VALUE_PATTERN = Pattern.compile("^-?\\d*\\.?\\d+");
 
-    /**
-     * Create layer config object for layer of given type, with known indent, and with pre-filled arguments bag
-     *
-     * @param layerType spec layer type, used for appropriate factory lookup
-     * @param indent    number of leading spaces in the config line, used to resolve layer hierarchy
-     * @param arguments bag of raw arguments parsed from configuration string
-     * @param variables bag of variables to be used in arguments. Keys must be prefixed with <code>@</code>.
-     */
-    public SimpleLayerConfig(@NonNull String layerType, int indent, @NonNull Map<String, String> arguments, @NonNull Map<String, String> variables) {
-        mLayerType = layerType;
-        mIndent = indent;
+    public SimpleArgumentsBundle(@NonNull Map<String, String> arguments, @NonNull DisplayMetrics metrics) {
         mArguments = arguments;
-        mVariables = variables;
-    }
-
-    /**
-     * Get the name of {@link RhythmSpecLayer spec layer} to inflate with these arguments
-     *
-     * @return spec layer type
-     */
-    public String getLayerType() {
-        return mLayerType;
-    }
-
-    /**
-     * Get the number of spaces this config line was indented with. Used internally to resolve grouping
-     *
-     * @return number of spaces
-     */
-    public int getIndent() {
-        return mIndent;
-    }
-
-    /**
-     * Inject display metrics so that complex dimensions (dp, sp etc) can be resolved
-     *
-     * @param metrics display metrics object
-     */
-    public void setDisplayMetrics(DisplayMetrics metrics) {
         mMetrics = metrics;
     }
 
@@ -126,16 +84,11 @@ public class SimpleLayerConfig implements ArgumentsBundle {
     }
 
     /**
-     * {@inheritDoc} Will return the raw string as put in the arguments map by the inflater. If the stored value is a
-     * variable (starting with <code>@</code>), returns the value of the variable by provided reference name.
+     * {@inheritDoc} Will return the raw string as put in the arguments map by the inflater.
      */
     @Override
     public String getString(String key) {
-        String value = mArguments.get(key);
-        if (value != null && value.length() > 0 && value.charAt(0) == '@') {
-            value = mVariables.get(value);
-        }
-        return value;
+        return mArguments.get(key);
     }
 
     /**
@@ -143,6 +96,7 @@ public class SimpleLayerConfig implements ArgumentsBundle {
      */
     @Override
     public String getString(String key, @Nullable String defaultValue) {
+        // todo: here and everywhere - DON'T RETRIEVE VALUE VIA GETSTRING!!! Refactor ASAP
         String rawValue = getString(key);
         return rawValue != null ? rawValue : defaultValue;
     }
@@ -352,9 +306,6 @@ public class SimpleLayerConfig implements ArgumentsBundle {
     public static float getDimensionPixelRaw(float value, @DimensionUnits int units, DisplayMetrics metrics) {
         switch (units) {
             case UNITS_DP:
-                if (metrics == null) {
-                    throw new IllegalArgumentException("Need metrics for dp->px conversion");
-                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, metrics);
             case UNITS_PX:
             case UNITS_PERCENT:
@@ -362,24 +313,12 @@ public class SimpleLayerConfig implements ArgumentsBundle {
             case UNITS_NULL:
                 return value;
             case UNITS_SP:
-                if (metrics == null) {
-                    throw new IllegalArgumentException("Need metrics for sp->px conversion");
-                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, metrics);
             case UNITS_PT:
-                if (metrics == null) {
-                    throw new IllegalArgumentException("Need metrics for pt->px conversion");
-                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PT, value, metrics);
             case UNITS_IN:
-                if (metrics == null) {
-                    throw new IllegalArgumentException("Need metrics for in->px conversion");
-                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_IN, value, metrics);
             case UNITS_MM:
-                if (metrics == null) {
-                    throw new IllegalArgumentException("Need metrics for mm->px conversion");
-                }
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, value, metrics);
             default:
                 return 0;
@@ -390,16 +329,11 @@ public class SimpleLayerConfig implements ArgumentsBundle {
     public boolean equals(Object o) {
         if (this == o) { return true; }
         if (o == null || getClass() != o.getClass()) { return false; }
-        SimpleLayerConfig that = (SimpleLayerConfig) o;
-        return mArguments.equals(that.mArguments) && mVariables.equals(that.mVariables) && mLayerType.equals(that.mLayerType);
+        return mArguments.equals(((SimpleArgumentsBundle) o).mArguments);
     }
 
     @Override
     public int hashCode() {
-        int result = mLayerType.hashCode();
-        result = 31 * result + mArguments.hashCode();
-        result = 31 * result + mVariables.hashCode();
-        return result;
+        return mArguments.hashCode();
     }
-
 }
