@@ -39,19 +39,10 @@ public class Fill implements RhythmSpecLayer {
     /**
      * Create a layer that fills current bounds with solid color
      */
-    public Fill(@ColorInt int color) {
-        this();
-        mPaint.setColor(color);
-    }
-
-    /**
-     * <p>Create a layer that fills current bounds with solid color.</p> <p>This is a minimum constructor for the
-     * factory &mdash; only paints and reusable objects are initialized. Developers extending this class are responsible
-     * for setting all fields to proper argument values.</p>
-     */
-    protected Fill() {
+    public Fill() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(DEFAULT_FILL_COLOR);
     }
 
     /**
@@ -81,7 +72,9 @@ public class Fill implements RhythmSpecLayer {
 
         @Override
         public Fill getForArguments(ArgumentsBundle argsBundle) {
-            return new Fill(argsBundle.getColor(ARG_COLOR, DEFAULT_FILL_COLOR));
+            Fill fill = new Fill();
+            fill.setColor(argsBundle.getColor(ARG_COLOR, DEFAULT_FILL_COLOR));
+            return fill;
         }
     }
 
