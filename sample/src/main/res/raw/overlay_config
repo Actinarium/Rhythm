@@ -1,7 +1,14 @@
-// This is a comment
+// This is a comment. Comments start with two slashes //
+// End of line comments are not supported
 
 // -------- GLOBAL VARIABLES --------
 // Declared before any overlay blocks
+// Syntax: @name=value or @name=@other_var
+// When assigning one variable to another, its value is copied
+@a=10
+@b=@a
+@a=20
+// at this point @a=20, @b=10
 
 // Distances
 @margin=16dp
@@ -11,11 +18,10 @@
 // Color variables
 @fill=#400091EA
 @secondary=#800091EA
-@card_action_margin=#60F50057
 
 // --------- OVERLAY BLOCKS ---------
 // Separated by an empty line
-// May start with an optional title
+// May start with an optional title (line begins with #)
 // May declare local variables and override global variables
 
 # Standard grid
@@ -29,14 +35,21 @@ keyline distance=@margin from=left
 keyline distance=@margin from=right
 keyline distance=@content from=left
 
+// A bunch of comments between overlay blocks
+// is not associated with any of them
+
 # Avatar list
 grid-lines step=8dp from=top
 grid-lines step=8dp from=left
+// Inset is a layer group - it can nest other layers
 inset no-clip left=0dp width=@margin
+  // Nested layers must be indented with extra spaces
   fill
 inset no-clip left=@avatar width=16dp
   fill
-inset no-clip right=0dp width=@margin
+// You can simply write 0 instead of 0dp
+// Integer values are treated as pixels
+inset no-clip right=0 width=@margin
   fill
 keyline distance=@margin from=left
 keyline distance=@margin from=right
@@ -52,53 +65,60 @@ keyline distance=@margin from=left
 keyline distance=@margin from=right
 keyline distance=@content from=left
 
-# Three columns w/8dp gutters
+# Four columns w/8dp gutters
 // Change these variables to set up columns count, margins, and gutters
-@count=3
+// Sorry to have it like this - expressions are coming in the next update
+@count=4
 @half_gutter=4dp
 @margin_minus_half_gutter=12dp
 @keyline_thickness=0.6dp
 // --------------------------------------------------------------------
 inset left=@margin_minus_half_gutter right=@margin_minus_half_gutter
- columns count=@count
-  inset left=@half_gutter right=@half_gutter
-   grid-lines step=8dp from=top
-   grid-lines step=8dp from=left  limit=2
-   grid-lines step=8dp from=right limit=2
-  inset left=0 width=@half_gutter
-   fill
-  inset right=0 width=@half_gutter
-   fill
-  keyline distance=@half_gutter from=left  thickness=@keyline_thickness
-  keyline distance=@half_gutter from=right thickness=@keyline_thickness
+  // A new columns layer divides the width into @count equal areas
+  // and draws child layers into each of them
+  columns count=@count
+    inset left=@half_gutter right=@half_gutter
+      grid-lines step=8dp from=top
+      grid-lines step=8dp from=left  limit=2
+      grid-lines step=8dp from=right limit=2
+    inset left=0 width=@half_gutter
+      fill
+    inset right=0 width=@half_gutter
+      fill
+    keyline distance=@half_gutter from=left  thickness=@keyline_thickness
+    keyline distance=@half_gutter from=right thickness=@keyline_thickness
 inset left=0 width=@margin_minus_half_gutter
- fill
+  fill
 inset right=0 width=@margin_minus_half_gutter
- fill
+  fill
 
 # Content card w/ 80dp image
+@card_margin=16dp
+@action_margin_width=8dp
+@action_margin_color=#60F50057
 inset right=96dp bottom=56dp
-  inset height=24dp left=16dp
+  inset height=24dp left=@card_margin
     fill
-  inset width=16dp
+  inset width=@card_margin
     fill
-  inset left=16dp top=24dp
+  inset left=@card_margin top=24dp
     grid-lines step=4dp from=top
   keyline distance=24dp from=top
 inset right=0 width=96dp bottom=56dp
-  inset height=16dp right=16dp
+  inset height=@card_margin right=@card_margin
     fill
-  inset width=16dp right=0
+  inset width=@card_margin right=0
     fill
   keyline distance=16dp from=top
 inset bottom=0 height=56dp
-  keyline distance=8dp from=top    thickness=8dp color=@card_action_margin
-  keyline distance=8dp from=left   thickness=8dp color=@card_action_margin
-  keyline distance=8dp from=right  thickness=8dp color=@card_action_margin
-  keyline distance=8dp from=bottom thickness=8dp color=@card_action_margin
-keyline distance=16dp from=left
-keyline distance=16dp from=right
-image-box gravity=top|right width=80dp height=80dp distance-x=16dp distance-y=16dp
+  keyline distance=0 from=top    thickness=@action_margin_width outside color=@action_margin_color
+  keyline distance=0 from=left   thickness=@action_margin_width outside color=@action_margin_color
+  keyline distance=0 from=right  thickness=@action_margin_width outside color=@action_margin_color
+  keyline distance=0 from=bottom thickness=@action_margin_width outside color=@action_margin_color
+keyline distance=@card_margin from=left
+keyline distance=@card_margin from=right
+// Here's the custom layer
+image-box gravity=top|right width=80dp height=80dp distance-x=@card_margin distance-y=@card_margin
 
 # Text view size & bounds
 layout-bounds crosshair-size=16dp

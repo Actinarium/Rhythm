@@ -22,11 +22,11 @@ import com.actinarium.rhythm.control.RhythmControl;
 import com.actinarium.rhythm.control.RhythmGroup;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.RhythmOverlayInflater;
+import com.actinarium.rhythm.layer.Inset;
 import com.actinarium.rhythm.sample.customlayers.ImageBox;
 import com.actinarium.rhythm.sample.customlayers.LayoutBounds;
 import com.actinarium.rhythm.layer.GridLines;
 import com.actinarium.rhythm.layer.Keyline;
-import com.actinarium.rhythm.layer.InsetGroup;
 
 import java.util.List;
 
@@ -82,7 +82,7 @@ public class RhythmSampleApplication extends Application implements RhythmContro
         float density = getResources().getDisplayMetrics().density;     // we need this to convert dp to px ourselves...
         RhythmOverlay unusedOverlay = new RhythmOverlay(5)
                 .addLayer(new GridLines(Gravity.TOP, (int) (4 * density)).setColor(GridLines.DEFAULT_GRID_COLOR))
-                .addLayer(new InsetGroup(1)
+                .addLayer(new Inset(1)
                         .addLayer(new GridLines(Gravity.TOP, (int) (8 * density))
                                 .setOffset((int) (4 * density))
                                 .setColor(GridLines.DEFAULT_GRID_COLOR)))

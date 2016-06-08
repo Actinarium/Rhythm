@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
+import android.support.annotation.FloatRange;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -35,7 +36,8 @@ import java.text.DecimalFormat;
 /**
  * A layer that draws a small box with dimensions of the current view. Inspect the dimensions of your views at glance.
  * noticing the issues asap. By default, the box is placed in the bottom right corner, but you can change its gravity
- * with {@link #setGravity(int)}.
+ * with {@link #setGravity(int)}. <b>Experimental at the moment, meaning its behavior, appearance, and parameters may
+ * change.</b>
  *
  * @author Paul Danyliuk
  */
@@ -43,7 +45,8 @@ public class DimensionsLabel implements RhythmSpecLayer {
 
     public static final int DEFAULT_BACKGROUND = 0x80000000;
     public static final int DEFAULT_TEXT_COLOR = 0xA0FFFFFF;
-    public static final int DEFAULT_TEXT_SIZE = 12;              // dp
+    public static final float DEFAULT_SCALE_FACTOR = 1f;
+    public static final int DEFAULT_TEXT_SIZE = 12;              // px
 
     // Pretty print chars
     public static final char ONE_HALF = '\u00bd';
@@ -55,38 +58,36 @@ public class DimensionsLabel implements RhythmSpecLayer {
 
     protected static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
+    @FloatRange(from = 0.0, fromInclusive = false)
     protected float mScaleFactor;
     @SuppressLint("RtlHardcoded")
     protected int mGravity = Gravity.BOTTOM | Gravity.RIGHT;
     protected Paint mBackgroundPaint;
     protected TextPaint mTextPaint;
-    private Rect mTempRect = new Rect();
 
-    /**
-     * Create a spec layer that displays dimensions label
-     *
-     * @param scaleFactor Scale factor to divide pixels by. Provide {@link DisplayMetrics#density} here to get your
-     *                    dimensions displayed in dips, or set to 1f to get pixels.
-     */
-    public DimensionsLabel(float scaleFactor) {
-        mScaleFactor = scaleFactor;
+    private Rect mTemp = new Rect();
 
+    public DimensionsLabel() {
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setStyle(Paint.Style.FILL);
-        mBackgroundPaint.setColor(DEFAULT_BACKGROUND);
-
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setColor(DEFAULT_TEXT_COLOR);
-        mTextPaint.setTextSize(DEFAULT_TEXT_SIZE * mScaleFactor);
+
+        mScaleFactor = DEFAULT_SCALE_FACTOR;
+        mBackgroundPaint.setColor(DEFAULT_BACKGROUND);
+        mTextPaint.setTextSize(DEFAULT_TEXT_SIZE);
     }
 
     /**
-     * Minimum constructor for the factory
+     * Set a scale factor that will be applied to width and height of provided bounds
+     *
+     * @param scaleFactor Scale factor to divide pixels by. Provide {@link DisplayMetrics#density} here to display
+     *                    dimensions as dips, {@link DisplayMetrics#scaledDensity} to display them as <code>sp</code>,
+     *                    or {@link #DEFAULT_SCALE_FACTOR} (<code>1f</code>) to get pixels.
+     * @return this for chaining
      */
-    protected DimensionsLabel() {
-        mBackgroundPaint = new Paint();
-        mBackgroundPaint.setStyle(Paint.Style.FILL);
-        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    public DimensionsLabel setScaleFactor(@FloatRange(from = 0.0, fromInclusive = false) float scaleFactor) {
+        mScaleFactor = scaleFactor;
+        return this;
     }
 
     /**
@@ -102,9 +103,9 @@ public class DimensionsLabel implements RhythmSpecLayer {
     }
 
     /**
-     * Set the color of text box background
+     * Set label background color
      *
-     * @param color Text box background color, in #AARRGGBB format as usual
+     * @param color Label background color, in #AARRGGBB format as usual
      * @return this for chaining
      */
     public DimensionsLabel setBackgroundColor(@ColorInt int color) {
@@ -113,9 +114,9 @@ public class DimensionsLabel implements RhythmSpecLayer {
     }
 
     /**
-     * Set the color of the text itself
+     * Set the color of the label text itself
      *
-     * @param color Text color, in #AARRGGBB format as usual
+     * @param color Label text color, in #AARRGGBB format as usual
      * @return this for chaining
      */
     public DimensionsLabel setTextColor(@ColorInt int color) {
@@ -129,7 +130,7 @@ public class DimensionsLabel implements RhythmSpecLayer {
      * @param size Text size, in pixels
      * @return this for chaining
      */
-    public DimensionsLabel setTextSize(float size) {
+    public DimensionsLabel setTextSize(@FloatRange(from = 0.0, fromInclusive = false) float size) {
         mTextPaint.setTextSize(size);
         return this;
     }
@@ -145,14 +146,14 @@ public class DimensionsLabel implements RhythmSpecLayer {
         // (although that's one instantiation per draw call...)
         // This is what happens if you're obsessed with perfection like me
         StaticLayout layout = new StaticLayout(text, mTextPaint, intWidth, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
-        Gravity.apply(mGravity, (int) (layout.getLineMax(0) + 0.5), layout.getHeight(), drawableBounds, mTempRect);
+        Gravity.apply(mGravity, (int) (layout.getLineMax(0) + 0.5), layout.getHeight(), drawableBounds, mTemp);
 
         // Draw background
-        canvas.drawRect(mTempRect, mBackgroundPaint);
+        canvas.drawRect(mTemp, mBackgroundPaint);
 
         // We have to translate the canvas ourselves, since layout can only draw itself at (0, 0)
         canvas.save();
-        canvas.translate(mTempRect.left, mTempRect.top);
+        canvas.translate(mTemp.left, mTemp.top);
         layout.draw(canvas);
         canvas.restore();
     }
@@ -197,25 +198,30 @@ public class DimensionsLabel implements RhythmSpecLayer {
     }
 
     /**
-     * A factory that creates new DimensionsLabel layers from config lines like <code>dimensions-label gravity=top|left
-     * text-color=black text-size=8sp</code>
+     * A default factory that creates new {@link DimensionsLabel} layers from config lines according to <a
+     * href="https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration#dimensions-label">the docs</a>
      */
     public static class Factory implements RhythmSpecLayerFactory<DimensionsLabel> {
 
         public static final String LAYER_TYPE = "dimensions-label";
+        public static final String ARG_GRAVITY = "gravity";
+        public static final String ARG_COLOR = "color";
+        public static final String ARG_TEXT_COLOR = "text-color";
+        public static final String ARG_TEXT_SIZE = "text-size";
 
         @SuppressLint("RtlHardcoded")
         @Override
-        public DimensionsLabel getForConfig(ArgumentsBundle argsBundle) {
+        public DimensionsLabel getForArguments(ArgumentsBundle argsBundle) {
             DimensionsLabel label = new DimensionsLabel();
 
             final float density = argsBundle.getDisplayMetrics().density;
             label.mScaleFactor = density;
 
-            label.mGravity = argsBundle.getGravity("gravity", Gravity.BOTTOM | Gravity.RIGHT);
-            label.mBackgroundPaint.setColor(argsBundle.getColor("color", DEFAULT_BACKGROUND));
-            label.mTextPaint.setColor(argsBundle.getColor("text-color", DEFAULT_TEXT_COLOR));
-            label.mTextPaint.setTextSize(argsBundle.getDimensionPixelExact("text-size", DEFAULT_TEXT_SIZE * density));
+            label.mGravity = argsBundle.getGravity(ARG_GRAVITY, Gravity.BOTTOM | Gravity.RIGHT);
+            label.mBackgroundPaint.setColor(argsBundle.getColor(ARG_COLOR, DEFAULT_BACKGROUND));
+            label.mTextPaint.setColor(argsBundle.getColor(ARG_TEXT_COLOR, DEFAULT_TEXT_COLOR));
+            // todo: it shouldn't be the factory's concern to pre-multiply default text size by density - think of how to handle this gracefully
+            label.mTextPaint.setTextSize(argsBundle.getDimensionPixelExact(ARG_TEXT_SIZE, DEFAULT_TEXT_SIZE * density));
 
             return label;
         }

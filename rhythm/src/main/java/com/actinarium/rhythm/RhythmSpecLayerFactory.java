@@ -37,6 +37,6 @@ public interface RhythmSpecLayerFactory<T extends RhythmSpecLayer> {
      * @param argsBundle container with arguments for this layer
      * @return configured layer
      */
-    T getForConfig(ArgumentsBundle argsBundle);
+    T getForArguments(ArgumentsBundle argsBundle);
 
 }

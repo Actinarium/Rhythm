@@ -57,17 +57,14 @@ public class RhythmDrawable extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
-        Rect bounds = getBounds();
-
         // Draw decorated drawable if present
         if (mDecorated != null) {
-            mDecorated.setBounds(bounds);
             mDecorated.draw(canvas);
         }
 
         // Draw overlay if present
         if (mOverlay != null) {
-            mOverlay.draw(canvas, bounds);
+            mOverlay.draw(canvas, getBounds());
         }
     }
 
@@ -109,6 +106,9 @@ public class RhythmDrawable extends Drawable {
      */
     public void setDecorated(@Nullable Drawable decorated) {
         mDecorated = decorated;
+        if (mDecorated != null) {
+            mDecorated.setBounds(getBounds());
+        }
         invalidateSelf();
     }
 
@@ -167,5 +167,12 @@ public class RhythmDrawable extends Drawable {
     @Override
     protected boolean onLevelChange(int level) {
         return mDecorated != null && mDecorated.setLevel(level);
+    }
+
+    @Override
+    protected void onBoundsChange(Rect bounds) {
+        if (mDecorated != null) {
+            mDecorated.setBounds(bounds);
+        }
     }
 }

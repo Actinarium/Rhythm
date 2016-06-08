@@ -38,7 +38,7 @@ import com.actinarium.rhythm.control.RhythmFrameLayout;
 import com.actinarium.rhythm.layer.DimensionsLabel;
 import com.actinarium.rhythm.layer.Fill;
 import com.actinarium.rhythm.layer.GridLines;
-import com.actinarium.rhythm.layer.InsetGroup;
+import com.actinarium.rhythm.layer.Inset;
 import com.actinarium.rhythm.layer.Keyline;
 import com.actinarium.rhythm.layer.RatioKeyline;
 
@@ -54,7 +54,7 @@ public class RhythmSandbox {
      */
     String[] ALL_CONFIG_WORDS = {
             Keyline.Factory.LAYER_TYPE, GridLines.Factory.LAYER_TYPE, Fill.Factory.LAYER_TYPE,
-            InsetGroup.Factory.LAYER_TYPE, RatioKeyline.Factory.LAYER_TYPE, DimensionsLabel.Factory.LAYER_TYPE,
+            Inset.Factory.LAYER_TYPE, RatioKeyline.Factory.LAYER_TYPE, DimensionsLabel.Factory.LAYER_TYPE,
             "outside", "no-clip", "clip-only",
             "from=", "distance=", "step=", "ratio=", "gravity=",
             "top", "bottom", "left", "right",
@@ -73,7 +73,7 @@ public class RhythmSandbox {
             "inset right=0dp width=@margin\n" +
             " fill\n" +
             "keyline distance=@margin from=left\n" +
-            "keyline distance=@margin from=right\n";
+            "keyline distance=@margin from=right";
 
     // -----------------------------------------------------------------------------------------------------------------
 

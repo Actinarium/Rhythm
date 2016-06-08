@@ -77,7 +77,7 @@ public class LayoutBounds implements RhythmSpecLayer {
         public static final String LAYER_TYPE = "layout-bounds";
 
         @Override
-        public LayoutBounds getForConfig(ArgumentsBundle argsBundle) {
+        public LayoutBounds getForArguments(ArgumentsBundle argsBundle) {
             LayoutBounds layoutBounds = new LayoutBounds();
 
             layoutBounds.mCrosshairSize = argsBundle.getDimensionPixelOffset("crosshair-size", 0);

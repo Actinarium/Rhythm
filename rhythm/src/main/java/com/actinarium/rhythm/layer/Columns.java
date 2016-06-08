@@ -18,6 +18,7 @@ package com.actinarium.rhythm.layer;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.support.annotation.IntRange;
 import com.actinarium.rhythm.AbstractSpecLayerGroup;
 import com.actinarium.rhythm.RhythmInflationException;
 import com.actinarium.rhythm.ArgumentsBundle;
@@ -31,8 +32,10 @@ import com.actinarium.rhythm.RhythmSpecLayerFactory;
  */
 public class Columns extends AbstractSpecLayerGroup<Columns> {
 
+    @IntRange(from = 1)
     protected int mColumnCount;
-    protected Rect mTemp = new Rect();
+
+    private Rect mTemp = new Rect();
 
     /**
      * Create spec layer that will evenly divide current bounds in given number of columns and then draw all child
@@ -40,21 +43,42 @@ public class Columns extends AbstractSpecLayerGroup<Columns> {
      *
      * @param columnCount number of columns, must be a positive integer
      */
-    public Columns(int columnCount) {
+    public Columns(@IntRange(from = 1) int columnCount) {
         super();
         mColumnCount = columnCount;
     }
 
-    public Columns(int columnCount, int initialCapacity) {
+    /**
+     * Create spec layer that will evenly divide current bounds in given number of columns and then draw all child
+     * layers in each
+     *
+     * @param columnCount     number of columns, must be a positive integer
+     * @param initialCapacity anticipated number of child layers
+     */
+    public Columns(@IntRange(from = 1) int columnCount, int initialCapacity) {
         super(initialCapacity);
         mColumnCount = columnCount;
     }
 
     /**
-     * Protected constructor for the factory
+     * <p>Create spec layer that will evenly divide current bounds in given number of columns and then draw all child
+     * layers in each.</p> <p>This is a minimum constructor for the factory &mdash; only paints and reusable objects are
+     * initialized. Developers extending this class are responsible for setting all fields to proper argument
+     * values.</p>
      */
     protected Columns() {
         super();
+    }
+
+    /**
+     * Set the number of columns
+     *
+     * @param columnCount number of columns, must be a positive integer
+     * @return this for chaining
+     */
+    public Columns setColumnCount(@IntRange(from = 1) int columnCount) {
+        mColumnCount = columnCount;
+        return this;
     }
 
     @Override
@@ -76,17 +100,19 @@ public class Columns extends AbstractSpecLayerGroup<Columns> {
     }
 
     /**
-     * A factory that creates new InsetGroups from config lines like <code>inset no-clip top=24dp width=50%</code>
+     * A default factory that creates new {@link Columns} layers from config lines according to <a
+     * href="https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration#columns">the docs</a>
      */
     public static class Factory implements RhythmSpecLayerFactory<Columns> {
 
         public static final String LAYER_TYPE = "columns";
+        public static final String ARG_COUNT = "count";
 
         @Override
-        public Columns getForConfig(ArgumentsBundle argsBundle) {
+        public Columns getForArguments(ArgumentsBundle argsBundle) {
             Columns columns = new Columns();
 
-            columns.mColumnCount = argsBundle.getInt("count", 0);
+            columns.mColumnCount = argsBundle.getInt(ARG_COUNT, 0);
             if (columns.mColumnCount <= 0) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE,

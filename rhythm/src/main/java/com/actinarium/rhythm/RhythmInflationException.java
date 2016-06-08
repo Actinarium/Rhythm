@@ -21,6 +21,9 @@ package com.actinarium.rhythm;
  * usual exceptions, {@link RhythmInflationException} <b>must</b> also have a line number and an error code. The error
  * code should identify an exception cause and is used for localization. Additionally a set of objects can be passed as
  * arguments to use when formatting the localized message.</p>
+ * <p>
+ * todo: revert it back to a plain inflation exception. Metadata is excessive - KISS these exceptions for the library,
+ * and Material Cue uses a separate validator anyway
  *
  * @author Paul Danyliuk
  */
@@ -45,43 +48,54 @@ public class RhythmInflationException extends RuntimeException {
     public static final int ERROR_UNEXPECTED_VARIABLE_DECLARATION = 3;
 
     /**
+     * Referenced variable was not declared.<br>Args: [0] - Variable name
+     */
+    public static final int ERROR_VARIABLE_NOT_FOUND = 4;
+
+    /**
      * Title declared in illegal place.<br>No args
      */
-    public static final int ERROR_UNEXPECTED_TITLE_DECLARATION = 4;
+    public static final int ERROR_UNEXPECTED_TITLE_DECLARATION = 5;
 
     /**
      * The layer type is unknown to inflater (invalid or not registered).<br>Args: [0] - Layer type; [1] - Array of
      * supported layer types
      */
-    public static final int ERROR_UNKNOWN_LAYER_TYPE = 5;
+    public static final int ERROR_UNKNOWN_LAYER_TYPE = 6;
+
+    /**
+     * Thrown when layer declaration is malformed, i.e. doesn't follow the <code>&lt;layer_name&gt;
+     * {&lt;key&gt;[=&lt;value&gt;]}*</code> grammar.<br>No args
+     */
+    public static final int ERROR_MALFORMED_LAYER_DECLARATION = 10;
 
     /**
      * Unexpected error when inflating a specific layer. Used for rethrown exceptions caused by parsing errors, illegal
      * states etc. An exception with this code must wrap the exception that caused it.<br>No args
      */
-    public static final int ERROR_INFLATING_LAYER_GENERIC = 10;
+    public static final int ERROR_INFLATING_LAYER_GENERIC = 11;
 
     /**
      * A mandatory argument is missing.<br>Args: [0] - Layer type; [1] - Argument; [2] - Expected type
      */
-    public static final int ERROR_ARGUMENT_MISSING = 11;
+    public static final int ERROR_ARGUMENT_MISSING = 12;
 
     /**
      * A mandatory argument is missing or is not one of accepted values.<br>Args: [0] - Layer type; [1] - Argument; [2]
      * - Actual value; [3] - Accepted values
      */
-    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF = 12;
+    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF = 13;
 
     /**
      * A mandatory argument is missing or &lt;= zero.<br>Args: [0] - Layer type; [1] - Argument; [2] - Example
      */
-    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE = 13;
+    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE = 14;
 
     /**
      * A mandatory argument is missing or not of required type.<br>Args: [0] - Layer type; [1] - Argument; [2] -
      * Expected type; [3] - Example
      */
-    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_EXPECTED_TYPE = 14;
+    public static final int ERROR_ARGUMENT_MISSING_OR_NOT_EXPECTED_TYPE = 15;
 
     /**
      * Used when the line where this exception occurred isn't specified
@@ -148,7 +162,7 @@ public class RhythmInflationException extends RuntimeException {
 
     /**
      * Set the line number where the exception occurred. This should be called by a {@link RhythmOverlayInflater}
-     * implementation and <b>never</b> within {@link RhythmSpecLayerFactory#getForConfig(ArgumentsBundle)}.
+     * implementation and <b>never</b> within {@link RhythmSpecLayerFactory#getForArguments(ArgumentsBundle)}.
      *
      * @param lineNumber Number of line where exception occurred, 0-based
      * @return this for chaining

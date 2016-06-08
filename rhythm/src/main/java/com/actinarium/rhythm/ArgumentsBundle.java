@@ -88,14 +88,13 @@ public interface ArgumentsBundle {
     float getFloat(String key, float defaultValue);
 
     /**
-     * Get boolean argument, which can have implicit value.
+     * Get boolean argument. Arguments specified as <code>arg</code> are identical to <code>arg=true</code>.
      *
      * @param key          argument key
      * @param defaultValue value if argument is not present
-     * @param nullValue    value if argument is present but the value is <code>null</code>
      * @return argument boolean value
      */
-    boolean getBoolean(String key, boolean defaultValue, boolean nullValue);
+    boolean getBoolean(String key, boolean defaultValue);
 
     /**
      * Get argument value as color integer with fallback to default value if argument is missing.
@@ -193,8 +192,6 @@ public interface ArgumentsBundle {
 
     /**
      * Get display metrics associated with this arguments bundle.
-     * <p>
-     * todo: this shouldn't be part of the arguments bundle
      *
      * @return display metrics object
      */
@@ -203,7 +200,7 @@ public interface ArgumentsBundle {
     /**
      * Type definition for dimension argument units
      */
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.CLASS)
     @IntDef({UNITS_NULL, UNITS_NUMBER, UNITS_PERCENT, UNITS_PX, UNITS_DP, UNITS_SP, UNITS_MM, UNITS_PT, UNITS_IN})
     public @interface DimensionUnits {
     }
@@ -212,7 +209,7 @@ public interface ArgumentsBundle {
      * Type definition for screen edge that a keyline or pattern must be attached to. Used by some layers
      */
     @SuppressLint("RtlHardcoded")
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.CLASS)
     @IntDef({Gravity.TOP, Gravity.BOTTOM, Gravity.LEFT, Gravity.RIGHT, Gravity.NO_GRAVITY})
     @interface EdgeAffinity {
     }

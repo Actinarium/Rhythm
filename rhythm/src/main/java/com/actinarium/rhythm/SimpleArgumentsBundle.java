@@ -44,6 +44,18 @@ public class SimpleArgumentsBundle implements ArgumentsBundle {
 
     protected static Pattern DIMEN_VALUE_PATTERN = Pattern.compile("^-?\\d*\\.?\\d+");
 
+    /**
+     * Create a new simple arguments bundle implementation from provided key-&gt;value map.
+     *
+     * @param arguments A collection that maps arguments to values. In this implementation both the key and the value
+     *                  are raw strings, parsed into required data types as requested from the map. The values must be
+     *                  already provided as parsable literal values &mdash; this implementation cannot resolve variables
+     *                  or calculate expressions.<br>For performance reasons, this map will be used as is, therefore it
+     *                  <b>must not</b> be mutated. Furthermore this implementation lacks methods to put new parameters
+     *                  into the bag.
+     * @param metrics   Display metrics associated with this arguments bundle, required so that dimension values (dp, sp
+     *                  etc) can be properly resolved.
+     */
     public SimpleArgumentsBundle(@NonNull Map<String, String> arguments, @NonNull DisplayMetrics metrics) {
         mArguments = arguments;
         mMetrics = metrics;
@@ -57,37 +69,30 @@ public class SimpleArgumentsBundle implements ArgumentsBundle {
         return mMetrics;
     }
 
-    /**
-     * Put a key-value pair into the arguments bag
-     *
-     * @param key   Key
-     * @param value Value
-     */
-    public void put(String key, String value) {
-        mArguments.put(key, value);
-    }
-
-    /**
-     * Put a key without value (<code>null</code> value) into the bag
-     *
-     * @param key Key
-     * @see #getBoolean(String, boolean, boolean)
-     */
-    public void put(String key) {
-        mArguments.put(key, null);
-    }
-
     @Override
     public boolean hasArgument(String key) {
         return mArguments.containsKey(key);
     }
 
     /**
-     * {@inheritDoc} Will return the raw string as put in the arguments map by the inflater.
+     * Resolves argument value from the bundle. This implementation simply returns the raw string as put in the argument
+     * map by the inflater. Used internally by all <code>getXxx()</code> methods &mdash; subclasses should override this
+     * method if additional processing is required (e.g. lazy variable dereference, expression evaluation etc).
+     *
+     * @param key key of the argument whose value to resolve
+     * @return string representation of the value
+     */
+    protected String resolveArgument(String key) {
+        return mArguments.get(key);
+    }
+
+    /**
+     * {@inheritDoc} For simple arguments bundle, will return the raw string as put in the arguments map by the
+     * inflater. If you need to change how raw value is resolved, override {@link #resolveArgument(String)}
      */
     @Override
     public String getString(String key) {
-        return mArguments.get(key);
+        return resolveArgument(key);
     }
 
     /**
@@ -95,28 +100,27 @@ public class SimpleArgumentsBundle implements ArgumentsBundle {
      */
     @Override
     public String getString(String key, @Nullable String defaultValue) {
-        // todo: here and everywhere - DON'T RETRIEVE VALUE VIA GETSTRING!!! Refactor ASAP
-        String rawValue = getString(key);
+        String rawValue = resolveArgument(key);
         return rawValue != null ? rawValue : defaultValue;
     }
 
     @Override
     public int getInt(String key, int defaultValue) {
-        String rawValue = getString(key);
+        String rawValue = resolveArgument(key);
         return rawValue != null ? Integer.parseInt(rawValue) : defaultValue;
     }
 
     @Override
     public float getFloat(String key, float defaultValue) {
-        String rawValue = getString(key);
+        String rawValue = resolveArgument(key);
         return rawValue != null ? Float.parseFloat(rawValue) : defaultValue;
     }
 
     @Override
-    public boolean getBoolean(String key, boolean defaultValue, boolean nullValue) {
+    public boolean getBoolean(String key, boolean defaultValue) {
         if (mArguments.containsKey(key)) {
-            String rawValue = getString(key);
-            return rawValue == null ? nullValue : Boolean.parseBoolean(rawValue);
+            String rawValue = resolveArgument(key);
+            return rawValue == null || Boolean.parseBoolean(rawValue);
         } else {
             return defaultValue;
         }
@@ -125,7 +129,7 @@ public class SimpleArgumentsBundle implements ArgumentsBundle {
     @Override
     @ColorInt
     public int getColor(String key, @ColorInt int defaultValue) {
-        String rawValue = getString(key);
+        String rawValue = resolveArgument(key);
         return rawValue != null ? Color.parseColor(rawValue) : defaultValue;
     }
 
@@ -136,7 +140,7 @@ public class SimpleArgumentsBundle implements ArgumentsBundle {
     @Override
     @SuppressLint("RtlHardcoded")
     public int getGravity(String key, int defaultValue) {
-        String gravityArg = getString(key);
+        String gravityArg = resolveArgument(key);
         if (gravityArg == null) {
             return defaultValue;
         } else if (gravityArg.equals("center")) {
@@ -178,7 +182,7 @@ public class SimpleArgumentsBundle implements ArgumentsBundle {
     @SuppressLint("RtlHardcoded")
     @EdgeAffinity
     public int getEdgeAffinity(String key, @EdgeAffinity int defaultValue) {
-        String gravityArg = getString(key);
+        String gravityArg = resolveArgument(key);
         if ("top".equals(gravityArg)) {
             return Gravity.TOP;
         } else if ("left".equals(gravityArg)) {
@@ -200,7 +204,7 @@ public class SimpleArgumentsBundle implements ArgumentsBundle {
     @Override
     @DimensionUnits
     public int getDimensionUnits(String key) {
-        String value = getString(key);
+        String value = resolveArgument(key);
         if (value == null) {
             return UNITS_NULL;
         } else if (value.endsWith("dp") || value.endsWith("dip")) {
@@ -230,7 +234,7 @@ public class SimpleArgumentsBundle implements ArgumentsBundle {
      */
     @Override
     public float getDimensionValue(String key, float defaultValue) {
-        String value = getString(key);
+        String value = resolveArgument(key);
         if (value == null) {
             return defaultValue;
         }

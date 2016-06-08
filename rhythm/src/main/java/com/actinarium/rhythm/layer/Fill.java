@@ -25,8 +25,8 @@ import com.actinarium.rhythm.ArgumentsBundle;
 import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 /**
- * A layer that fills all provided area with solid color. You will usually want to use it inside {@link InsetGroup} to
- * draw rectangles (margins, gutters etc).
+ * A layer that fills all provided area with solid color. You will usually want to use it inside {@link Inset} to draw
+ * rectangles (margins, gutters etc).
  *
  * @author Paul Danyliuk
  */
@@ -37,14 +37,21 @@ public class Fill implements RhythmSpecLayer {
     protected Paint mPaint;
 
     /**
-     * Create a layer that fills all provided area with solid color
-     *
-     * @see #setColor(int)
+     * Create a layer that fills current bounds with solid color
      */
-    public Fill() {
+    public Fill(@ColorInt int color) {
+        this();
+        mPaint.setColor(color);
+    }
+
+    /**
+     * <p>Create a layer that fills current bounds with solid color.</p> <p>This is a minimum constructor for the
+     * factory &mdash; only paints and reusable objects are initialized. Developers extending this class are responsible
+     * for setting all fields to proper argument values.</p>
+     */
+    protected Fill() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(DEFAULT_FILL_COLOR);
     }
 
     /**
@@ -64,18 +71,17 @@ public class Fill implements RhythmSpecLayer {
     }
 
     /**
-     * A factory that creates new Fill layers from config lines like <code>fill color=#2000FFFF</code>
+     * A default factory that creates new {@link Fill} layers from config lines according to <a
+     * href="https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration#fill">the docs</a>
      */
     public static class Factory implements RhythmSpecLayerFactory<Fill> {
 
         public static final String LAYER_TYPE = "fill";
+        public static final String ARG_COLOR = "color";
 
         @Override
-        public Fill getForConfig(ArgumentsBundle argsBundle) {
-            Fill fill = new Fill();
-            fill.mPaint.setColor(argsBundle.getColor("color", DEFAULT_FILL_COLOR));
-
-            return fill;
+        public Fill getForArguments(ArgumentsBundle argsBundle) {
+            return new Fill(argsBundle.getColor(ARG_COLOR, DEFAULT_FILL_COLOR));
         }
     }
 

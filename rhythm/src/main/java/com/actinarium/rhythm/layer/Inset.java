@@ -34,7 +34,7 @@ import java.lang.annotation.RetentionPolicy;
  *
  * @author Paul Danyliuk
  */
-public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
+public class Inset extends AbstractSpecLayerGroup<Inset> {
 
     /**
      * Inset the bounds and clip the overlay. Default behavior
@@ -92,7 +92,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
     /**
      * Create a layer group that clips and/or insets its child layers
      */
-    public InsetGroup() {
+    public Inset() {
         super();
     }
 
@@ -101,7 +101,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      *
      * @param initialCapacity anticipated number of child layers
      */
-    public InsetGroup(int initialCapacity) {
+    public Inset(int initialCapacity) {
         super(initialCapacity);
     }
 
@@ -114,7 +114,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      * @see #MODE_NO_CLIP
      * @see #MODE_CLIP_ONLY
      */
-    public InsetGroup setMode(@Mode int mode) {
+    public Inset setMode(@Mode int mode) {
         mMode = mode;
         return this;
     }
@@ -126,7 +126,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
      * @return this for chaining
      */
-    public InsetGroup setTop(int value, boolean isPercent) {
+    public Inset setTop(int value, boolean isPercent) {
         mIsTopSet = true;
         mTop = value;
         mIsTopPercent = isPercent;
@@ -140,7 +140,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
      * @return this for chaining
      */
-    public InsetGroup setBottom(int value, boolean isPercent) {
+    public Inset setBottom(int value, boolean isPercent) {
         mIsBottomSet = true;
         mBottom = value;
         mIsBottomPercent = isPercent;
@@ -154,7 +154,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
      * @return this for chaining
      */
-    public InsetGroup setLeft(int value, boolean isPercent) {
+    public Inset setLeft(int value, boolean isPercent) {
         mIsLeftSet = true;
         mLeft = value;
         mIsLeftPercent = isPercent;
@@ -168,7 +168,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
      * @return this for chaining
      */
-    public InsetGroup setRight(int value, boolean isPercent) {
+    public Inset setRight(int value, boolean isPercent) {
         mIsRightSet = true;
         mRight = value;
         mIsRightPercent = isPercent;
@@ -182,7 +182,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
      * @return this for chaining
      */
-    public InsetGroup setWidth(int value, boolean isPercent) {
+    public Inset setWidth(int value, boolean isPercent) {
         mIsWidthSet = true;
         mWidth = value;
         mIsWidthPercent = isPercent;
@@ -196,7 +196,7 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
      * @param isPercent <code>true</code> if value is in percent, <code>false</code> if in pixels
      * @return this for chaining
      */
-    public InsetGroup setHeight(int value, boolean isPercent) {
+    public Inset setHeight(int value, boolean isPercent) {
         mIsHeightSet = true;
         mHeight = value;
         mIsHeightPercent = isPercent;
@@ -224,6 +224,11 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
         canvas.restoreToCount(state);
     }
 
+    /**
+     * Update the inset bounds based on provided outer bounds and this layer's state
+     *
+     * @param outerBounds Outer bounds provided to this inset layer to modify
+     */
     protected void recalculateInsetRect(Rect outerBounds) {
         final int parentWidth = outerBounds.width();
         final int parentHeight = outerBounds.height();
@@ -258,63 +263,72 @@ public class InsetGroup extends AbstractSpecLayerGroup<InsetGroup> {
     }
 
     /**
-     * A factory that creates new InsetGroups from config lines like <code>inset no-clip top=24dp width=50%</code>
+     * A default factory that creates new {@link Inset} layers from config lines according to <a
+     * href="https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration#inset">the docs</a>
      */
-    public static class Factory implements RhythmSpecLayerFactory<InsetGroup> {
+    public static class Factory implements RhythmSpecLayerFactory<Inset> {
 
         public static final String LAYER_TYPE = "inset";
+        public static final String ARG_NO_CLIP = "no-clip";
+        public static final String ARG_CLIP_ONLY = "clip-only";
+        public static final String ARG_TOP = "top";
+        public static final String ARG_BOTTOM = "bottom";
+        public static final String ARG_LEFT = "left";
+        public static final String ARG_RIGHT = "right";
+        public static final String ARG_WIDTH = "width";
+        public static final String ARG_HEIGHT = "height";
 
         @Override
-        public InsetGroup getForConfig(ArgumentsBundle argsBundle) {
-            InsetGroup insetGroup = new InsetGroup();
+        public Inset getForArguments(ArgumentsBundle argsBundle) {
+            Inset inset = new Inset();
 
-            if (argsBundle.hasArgument("no-clip")) {
-                insetGroup.mMode = MODE_NO_CLIP;
-            } else if (argsBundle.hasArgument("clip-only")) {
-                insetGroup.mMode = MODE_CLIP_ONLY;
+            if (argsBundle.hasArgument(ARG_NO_CLIP)) {
+                inset.mMode = MODE_NO_CLIP;
+            } else if (argsBundle.hasArgument(ARG_CLIP_ONLY)) {
+                inset.mMode = MODE_CLIP_ONLY;
             } else {
-                insetGroup.mMode = MODE_DEFAULT;
+                inset.mMode = MODE_DEFAULT;
             }
 
-            if (argsBundle.hasArgument("top")) {
-                boolean isPercent = argsBundle.getDimensionUnits("top") == ArgumentsBundle.UNITS_PERCENT;
-                int value = argsBundle.getDimensionPixelOffset("top", 0);
-                insetGroup.setTop(value, isPercent);
+            if (argsBundle.hasArgument(ARG_TOP)) {
+                boolean isPercent = argsBundle.getDimensionUnits(ARG_TOP) == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelOffset(ARG_TOP, 0);
+                inset.setTop(value, isPercent);
             }
-            if (argsBundle.hasArgument("bottom")) {
-                boolean isPercent = argsBundle.getDimensionUnits("bottom") == ArgumentsBundle.UNITS_PERCENT;
-                int value = argsBundle.getDimensionPixelOffset("bottom", 0);
-                insetGroup.setBottom(value, isPercent);
+            if (argsBundle.hasArgument(ARG_BOTTOM)) {
+                boolean isPercent = argsBundle.getDimensionUnits(ARG_BOTTOM) == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelOffset(ARG_BOTTOM, 0);
+                inset.setBottom(value, isPercent);
             }
-            if (argsBundle.hasArgument("left")) {
-                boolean isPercent = argsBundle.getDimensionUnits("left") == ArgumentsBundle.UNITS_PERCENT;
-                int value = argsBundle.getDimensionPixelOffset("left", 0);
-                insetGroup.setLeft(value, isPercent);
+            if (argsBundle.hasArgument(ARG_LEFT)) {
+                boolean isPercent = argsBundle.getDimensionUnits(ARG_LEFT) == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelOffset(ARG_LEFT, 0);
+                inset.setLeft(value, isPercent);
             }
-            if (argsBundle.hasArgument("right")) {
-                boolean isPercent = argsBundle.getDimensionUnits("right") == ArgumentsBundle.UNITS_PERCENT;
-                int value = argsBundle.getDimensionPixelOffset("right", 0);
-                insetGroup.setRight(value, isPercent);
+            if (argsBundle.hasArgument(ARG_RIGHT)) {
+                boolean isPercent = argsBundle.getDimensionUnits(ARG_RIGHT) == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelOffset(ARG_RIGHT, 0);
+                inset.setRight(value, isPercent);
             }
-            if (argsBundle.hasArgument("width")) {
-                boolean isPercent = argsBundle.getDimensionUnits("width") == ArgumentsBundle.UNITS_PERCENT;
-                int value = argsBundle.getDimensionPixelSize("width", 0);
-                insetGroup.setWidth(value, isPercent);
+            if (argsBundle.hasArgument(ARG_WIDTH)) {
+                boolean isPercent = argsBundle.getDimensionUnits(ARG_WIDTH) == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelSize(ARG_WIDTH, 0);
+                inset.setWidth(value, isPercent);
             }
-            if (argsBundle.hasArgument("height")) {
-                boolean isPercent = argsBundle.getDimensionUnits("height") == ArgumentsBundle.UNITS_PERCENT;
-                int value = argsBundle.getDimensionPixelSize("height", 0);
-                insetGroup.setHeight(value, isPercent);
+            if (argsBundle.hasArgument(ARG_HEIGHT)) {
+                boolean isPercent = argsBundle.getDimensionUnits(ARG_HEIGHT) == ArgumentsBundle.UNITS_PERCENT;
+                int value = argsBundle.getDimensionPixelSize(ARG_HEIGHT, 0);
+                inset.setHeight(value, isPercent);
             }
 
-            return insetGroup;
+            return inset;
         }
     }
 
     /**
      * Type definition for inset group type
      */
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.CLASS)
     @IntDef({MODE_DEFAULT, MODE_NO_CLIP, MODE_CLIP_ONLY})
     public @interface Mode {
     }

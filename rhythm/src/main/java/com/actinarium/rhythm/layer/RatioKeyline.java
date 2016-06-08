@@ -20,6 +20,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.support.annotation.ColorInt;
+import android.support.annotation.IntRange;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -37,10 +39,10 @@ import java.util.regex.Pattern;
 
 /**
  * A single horizontal keyline whose distance from the top is calculated from the width of current bounds and given
- * aspect ratio. Displays the label in the bottom right corner of the enclosed rectangle. Experimental at the moment,
- * meaning its behavior, appearance, and parameters may change. As of now, the keyline label is always 12dp high,
- * 24dp wide, has 10dp font that shrinks if not fitting, and is always within the enclosed rectangle, i.e. overdrawing
- * its bottom edge.
+ * aspect ratio. Displays the label in the bottom right corner of the enclosed rectangle. <b>Experimental at the
+ * moment, meaning its behavior, appearance, and parameters may change.</b> As of now, the keyline label is always 12dp
+ * high, 24dp wide, has 10dp font that shrinks if not fitting, and is always within the enclosed rectangle, i.e.
+ * overdrawing its bottom edge.
  *
  * @author Paul Danyliuk
  */
@@ -48,16 +50,21 @@ public class RatioKeyline implements RhythmSpecLayer {
 
     public static final int DEFAULT_FILL_COLOR = 0xB03F51B5;
     public static final int DEFAULT_TEXT_COLOR = 0xC0FFFFFF;
-    public static final int DEFAULT_TEXT_SIZE = 10;   // dp
-    public static final int DEFAULT_THICKNESS = 1;    // dp
 
+    public static final int DEFAULT_THICKNESS = 2;         // px
+
+    // todo: all defaults must be in px, not depending on density
+    public static final int DEFAULT_TEXT_SIZE = 10;        // dp
     protected static final int DEFAULT_LABEL_HEIGHT = 12;  // dp
 
+    @IntRange(from = 0)
     protected int mRatioX;
+    @IntRange(from = 0)
     protected int mRatioY;
+    @IntRange(from = 1)
     protected int mThickness;
 
-    protected String mRatioString;
+    protected String mLabelString;
     protected Paint mBackgroundPaint;
     protected TextPaint mTextPaint;
     protected Rect mTempRect;
@@ -68,10 +75,9 @@ public class RatioKeyline implements RhythmSpecLayer {
     protected int mLabelHeight;
     protected int mLabelSideWidth;
 
-    public RatioKeyline(int ratioX, int ratioY, DisplayMetrics metrics) {
+    public RatioKeyline(@IntRange(from = 0) int ratioX, @IntRange(from = 0) int ratioY, DisplayMetrics metrics) {
         this(metrics);
-        mRatioX = ratioX;
-        mRatioY = ratioY;
+        setRatio(ratioX, ratioY);
         mBackgroundPaint.setColor(DEFAULT_FILL_COLOR);
         mTextPaint.setColor(DEFAULT_TEXT_COLOR);
     }
@@ -97,6 +103,65 @@ public class RatioKeyline implements RhythmSpecLayer {
         mLabelPath.close();
     }
 
+    /**
+     * Set ratio of the box this keyline should define, in form of two terms
+     *
+     * @param ratioX antecedent, horizontal component of the ratio (e.g. 16 in 16:9)
+     * @param ratioY consequent, vertical component of the ratio (e.g. 9 in 16:9)
+     * @return this for chaining
+     */
+    public RatioKeyline setRatio(@IntRange(from = 0) int ratioX, @IntRange(from = 0) int ratioY) {
+        mRatioX = ratioX;
+        mRatioY = ratioY;
+        mLabelString = String.format(Locale.US, "%d:%d", ratioX, ratioY);
+        return this;
+    }
+
+    /**
+     * Set ratio keyline thickness
+     *
+     * @param thickness Ratio keyline thickness, in pixels. At the moment, ratio keyline will be drawn within enclosed
+     *                  bounds, so that regardless of thickness it doesn't cover pixels not within ratio box.
+     * @return this for chaining
+     */
+    public RatioKeyline setThickness(@IntRange(from = 1) int thickness) {
+        mThickness = thickness;
+        return this;
+    }
+
+    /**
+     * Set the color of ratio keyline and label background
+     *
+     * @param color Ratio keyline color, in #AARRGGBB format as usual
+     * @return this for chaining
+     */
+    public RatioKeyline setKeylineColor(@ColorInt int color) {
+        mBackgroundPaint.setColor(color);
+        return this;
+    }
+
+    /**
+     * Set ratio keyline label text color
+     *
+     * @param color Label text color, in #AARRGGBB format as usual
+     * @return this for chaining
+     */
+    public RatioKeyline setTextColor(@ColorInt int color) {
+        mTextPaint.setColor(color);
+        return this;
+    }
+
+    /**
+     * Set arbitrary label to this ratio keyline
+     *
+     * @param labelString Text to display in keyline label
+     * @return this for chaining
+     */
+    public RatioKeyline setLabelString(String labelString) {
+        mLabelString = labelString;
+        return this;
+    }
+
     @Override
     public void draw(Canvas canvas, Rect drawableBounds) {
         final int distanceTop;
@@ -113,13 +178,13 @@ public class RatioKeyline implements RhythmSpecLayer {
         canvas.drawRect(drawableBounds.left, distanceTop - mThickness, drawableBounds.right, distanceTop, mBackgroundPaint);
 
         // Determine keyline label size/bounds
-        StaticLayout layout = new StaticLayout(mRatioString, mTextPaint, Integer.MAX_VALUE, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
+        StaticLayout layout = new StaticLayout(mLabelString, mTextPaint, Integer.MAX_VALUE, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
         int labelTextWidth = (int) (layout.getLineMax(0) + 0.5);
 
         // If text too big, re-measure
         while (labelTextWidth > mLabelRectWidth) {
             mTextPaint.setTextSize(mTextPaint.getTextSize() * 0.8f);
-            layout = new StaticLayout(mRatioString, mTextPaint, Integer.MAX_VALUE, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
+            layout = new StaticLayout(mLabelString, mTextPaint, Integer.MAX_VALUE, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
             labelTextWidth = (int) (layout.getLineMax(0) + 0.5);
         }
 
@@ -139,16 +204,26 @@ public class RatioKeyline implements RhythmSpecLayer {
         canvas.restore();
     }
 
+    /**
+     * A default factory that creates new {@link RatioKeyline} layers from config lines according to <a
+     * href="https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration#ratio-keyline">the docs</a>
+     */
     public static class Factory implements RhythmSpecLayerFactory<RatioKeyline> {
 
         public static final String LAYER_TYPE = "ratio-keyline";
+        public static final String ARG_RATIO = "ratio";
+        public static final String ARG_LABEL = "label";
+        public static final String ARG_THICKNESS = "thickness";
+        public static final String ARG_COLOR = "color";
+        public static final String ARG_TEXT_COLOR = "text-color";
+
         private static Pattern RATIO_VALUE_PATTERN = Pattern.compile("(\\d+):(\\d+)");
 
         @Override
-        public RatioKeyline getForConfig(ArgumentsBundle argsBundle) {
+        public RatioKeyline getForArguments(ArgumentsBundle argsBundle) {
             RatioKeyline keyline = new RatioKeyline(argsBundle.getDisplayMetrics());
 
-            String ratio = argsBundle.getString("ratio");
+            String ratio = argsBundle.getString(ARG_RATIO);
             if (ratio == null) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING,
@@ -166,12 +241,11 @@ public class RatioKeyline implements RhythmSpecLayer {
             }
             keyline.mRatioX = Integer.parseInt(matcher.group(1));
             keyline.mRatioY = Integer.parseInt(matcher.group(2));
-            keyline.mRatioString = String.format(Locale.US, "%d:%d", keyline.mRatioX, keyline.mRatioY);
+            keyline.mLabelString = argsBundle.getString(ARG_LABEL, ratio);
 
-            keyline.mThickness = argsBundle.getDimensionPixelSize("thickness",
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_THICKNESS, argsBundle.getDisplayMetrics()));
-            keyline.mBackgroundPaint.setColor(argsBundle.getColor("color", DEFAULT_FILL_COLOR));
-            keyline.mTextPaint.setColor(argsBundle.getColor("text-color", DEFAULT_TEXT_COLOR));
+            keyline.mThickness = argsBundle.getDimensionPixelSize(ARG_THICKNESS, DEFAULT_THICKNESS);
+            keyline.mBackgroundPaint.setColor(argsBundle.getColor(ARG_COLOR, DEFAULT_FILL_COLOR));
+            keyline.mTextPaint.setColor(argsBundle.getColor(ARG_TEXT_COLOR, DEFAULT_TEXT_COLOR));
 
             return keyline;
         }

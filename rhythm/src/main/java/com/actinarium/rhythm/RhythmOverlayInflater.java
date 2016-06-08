@@ -17,16 +17,15 @@
 package com.actinarium.rhythm;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RawRes;
-import android.util.ArrayMap;
+import android.util.DisplayMetrics;
 import com.actinarium.rhythm.internal.ReaderUtils;
 import com.actinarium.rhythm.layer.Columns;
 import com.actinarium.rhythm.layer.DimensionsLabel;
 import com.actinarium.rhythm.layer.Fill;
 import com.actinarium.rhythm.layer.GridLines;
-import com.actinarium.rhythm.layer.InsetGroup;
+import com.actinarium.rhythm.layer.Inset;
 import com.actinarium.rhythm.layer.Keyline;
 import com.actinarium.rhythm.layer.RatioKeyline;
 
@@ -61,12 +60,12 @@ public class RhythmOverlayInflater {
     /**
      * A regex to search for arguments in configuration string by a following template: key[=value]
      */
-    protected static final Pattern ARGUMENTS_PATTERN = Pattern.compile("([^\\s=]+)(?:=([^\\s]+))?");
+    protected static final Pattern PATTERN_ARGUMENTS = Pattern.compile("([^\\s=]+)(?:=([^\\s]+))?");
 
     /**
      * A regex to validate and parse variables in configuration string by a following template: @variable=value
      */
-    protected static final Pattern VARIABLES_PATTERN = Pattern.compile("(@[\\w]+)=(.*)");
+    protected static final Pattern PATTERN_VARIABLES = Pattern.compile("(@[\\w]+)=(.*)");
 
     /**
      * Used internally to indicate that there's no overlay block started at the moment of evaluating current line
@@ -74,6 +73,7 @@ public class RhythmOverlayInflater {
     private static final int NOT_STARTED = -1;
 
     protected Context mContext;
+    protected DisplayMetrics mDisplayMetrics;
     protected Map<String, RhythmSpecLayerFactory> mFactories;
 
     /**
@@ -88,7 +88,7 @@ public class RhythmOverlayInflater {
      * inflater.registerFactory(Keyline.Factory.LAYER_TYPE, new Keyline.Factory());
      * inflater.registerFactory(RatioKeyline.Factory.LAYER_TYPE, new RatioKeyline.Factory());
      * inflater.registerFactory(Fill.Factory.LAYER_TYPE, new Fill.Factory());
-     * inflater.registerFactory(InsetGroup.Factory.LAYER_TYPE, new InsetGroup.Factory());
+     * inflater.registerFactory(Inset.Factory.LAYER_TYPE, new Inset.Factory());
      * inflater.registerFactory(Columns.Factory.LAYER_TYPE, new Columns.Factory());
      * inflater.registerFactory(DimensionsLabel.Factory.LAYER_TYPE, new DimensionsLabel.Factory());
      * </code></pre>
@@ -105,7 +105,7 @@ public class RhythmOverlayInflater {
         inflater.mFactories.put(Keyline.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new Keyline.Factory()));
         inflater.mFactories.put(RatioKeyline.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new RatioKeyline.Factory()));
         inflater.mFactories.put(Fill.Factory.LAYER_TYPE, new SimpleCacheFactory<>(new Fill.Factory()));
-        inflater.mFactories.put(InsetGroup.Factory.LAYER_TYPE, new InsetGroup.Factory());
+        inflater.mFactories.put(Inset.Factory.LAYER_TYPE, new Inset.Factory());
         inflater.mFactories.put(Columns.Factory.LAYER_TYPE, new Columns.Factory());
         inflater.mFactories.put(DimensionsLabel.Factory.LAYER_TYPE, new DimensionsLabel.Factory());
 
@@ -123,6 +123,7 @@ public class RhythmOverlayInflater {
      */
     public RhythmOverlayInflater(Context context) {
         mContext = context.getApplicationContext();
+        mDisplayMetrics = mContext.getResources().getDisplayMetrics();
         mFactories = new HashMap<>(INITIAL_FACTORIES_CAPACITY);
     }
 
@@ -209,16 +210,15 @@ public class RhythmOverlayInflater {
         // First let's read global variables, which must be placed in the beginning of the file
         for (; i < len; i++) {
             final String line = configStrings.get(i);
+
             if (isEmptyOrComment(line.trim())) {
-                // No-op
-            } else if (line.charAt(0) == '@') {
+                continue;
+            }
+
+            if (line.charAt(0) == '@') {
                 // Variable declaration. Let's check and parse it
-                Matcher matcher = VARIABLES_PATTERN.matcher(line);
-                if (matcher.matches()) {
-                    String name = matcher.group(1);
-                    String value = matcher.group(2);
-                    globalVars.put(name, value);
-                } else {
+                Matcher matcher = PATTERN_VARIABLES.matcher(line);
+                if (!matcher.matches()) {
                     // Oops, bad variable syntax
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
@@ -226,6 +226,12 @@ public class RhythmOverlayInflater {
                             line
                     ).setLineNumber(i);
                 }
+
+                // Otherwise we're fine
+                String name = matcher.group(1);
+                String value = resolveVariableInternal(globalVars, matcher.group(2), i);
+
+                globalVars.put(name, value);
             } else {
                 // Found a non-variable-declaration, non-empty line
                 break;
@@ -243,11 +249,10 @@ public class RhythmOverlayInflater {
                     overlays.add(previousBlock);
                     overlayStart = NOT_STARTED;
                 }
-            } else if (overlayStart == NOT_STARTED) {
-                // It's not an empty line, and the block isn't started - start it at this line then
+            } else if (overlayStart == NOT_STARTED && !isEmptyOrComment(line)) {
+                // It's a title, a var, or a layer, which starts a new block
                 overlayStart = i;
             }
-            // todo: handle comments between overlay blocks
         }
 
         // If we reached the end of the file, and have a block started, inflate it
@@ -337,15 +342,20 @@ public class RhythmOverlayInflater {
         // Read line by line, evaluate line types, parse and nest
         for (int i = 0, lines = configStrings.size(); i < lines; i++) {
             String line = configStrings.get(i);
+
             if (isEmptyOrComment(line.trim())) {
                 // Empty or comment line, no-op (btw there should be no empty lines here if inflating the whole file)
-            } else if (line.charAt(0) == '@') {
+                continue;
+            }
+
+            final int lineNumber = i + offset;
+            if (line.charAt(0) == '@') {
                 // This is a local variable. And all variables must be declared before any overlay lines.
                 if (overlay.size() != 0) {
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_UNEXPECTED_VARIABLE_DECLARATION,
                             "Unexpected variable declaration.\nVariables must be declared before spec layers."
-                    ).setLineNumber(i + offset);
+                    ).setLineNumber(lineNumber);
                 }
 
                 // If it's the first local var, copy the global vars map where we'll be adding/overwriting values
@@ -355,10 +365,10 @@ public class RhythmOverlayInflater {
                 }
 
                 // Let's check and parse
-                Matcher matcher = VARIABLES_PATTERN.matcher(line);
+                Matcher matcher = PATTERN_VARIABLES.matcher(line);
                 if (matcher.matches()) {
                     String name = matcher.group(1);
-                    String value = matcher.group(2);
+                    String value = resolveVariableInternal(localVars, matcher.group(2), lineNumber);
                     localVars.put(name, value);
                 } else {
                     // Oops, bad variable syntax
@@ -366,7 +376,7 @@ public class RhythmOverlayInflater {
                             RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
                             "Malformed variable declaration: \"" + line + "\".\nExpected syntax is @name=value where name may contain only letters, digits, and/or underscores.",
                             line
-                    ).setLineNumber(i + offset);
+                    ).setLineNumber(lineNumber);
                 }
             } else if (line.charAt(0) == '#') {
                 // Looks like a title. A title should be the first non-empty line, and there should be no multiple titles per block
@@ -374,7 +384,7 @@ public class RhythmOverlayInflater {
                     throw new RhythmInflationException(
                             RhythmInflationException.ERROR_UNEXPECTED_TITLE_DECLARATION,
                             "Unexpected overlay title.\nThere can be only one title per overlay, and it must be the first line. Did you forget an empty newline before starting a new overlay?"
-                    ).setLineNumber(i + offset);
+                    ).setLineNumber(lineNumber);
                 }
 
                 // Otherwise OK, we probably have a title
@@ -384,7 +394,7 @@ public class RhythmOverlayInflater {
                 }
             } else {
                 // Otherwise assume the line is a spec layer, try parsing and inflating it as a separate layer
-                LayerConfig config = parseConfig(line, localVars);
+                LayerConfig config = parseConfigInternal(line, localVars, lineNumber);
 
                 // If indent is <= indent of parent layer, then go up the hierarchy. Won't underflow b/c indents[0] is -1
                 while (config.getIndent() <= indents[headIndex]) {
@@ -392,7 +402,7 @@ public class RhythmOverlayInflater {
                     // we could clean up the stacks but there's really no need
                 }
 
-                RhythmSpecLayer thisLayer = inflateLayerInternal(config, i + offset);
+                RhythmSpecLayer thisLayer = inflateLayerInternal(config, lineNumber);
                 parents[headIndex].addLayer(thisLayer);
 
                 // if this is a layer group, add it to the stack
@@ -427,26 +437,16 @@ public class RhythmOverlayInflater {
     }
 
     /**
-     * Inflate an individual layer from raw configuration string
-     *
-     * @param configString configuration string to parse and feed to layer's factory
-     * @return inflated layer
-     */
-    @SuppressWarnings("unchecked")
-    public RhythmSpecLayer inflateLayer(String configString) {
-        return inflateLayerInternal(parseConfig(configString, Collections.EMPTY_MAP), 0);
-    }
-
-    /**
-     * Inflate an individual layer from raw configuration string
+     * Inflate an individual layer from raw configuration string and optional variables
      *
      * @param configString configuration string to parse and feed to layer's factory
      * @param vars         map of @key-&gt;value mappings used to resolve argument references (e.g.
-     *                     <code>@primary=#FF0000</code> to use in <code>color=@primary</code>)
+     *                     <code>@primary=#FF0000</code> to use in <code>color=@primary</code>). Cannot be
+     *                     <code>null</code> &mdash; pass {@link Collections#EMPTY_MAP} if there are no variables.
      * @return inflated layer
      */
     public RhythmSpecLayer inflateLayer(String configString, @NonNull Map<String, String> vars) {
-        return inflateLayerInternal(parseConfig(configString, vars), 0);
+        return inflateLayerInternal(parseConfigInternal(configString, vars, 0), 0);
     }
 
     /**
@@ -467,7 +467,7 @@ public class RhythmOverlayInflater {
             ).setLineNumber(lineNumber);
         }
         try {
-            return factory.getForConfig(config);
+            return factory.getForArguments(config.getArgumentsBundle());
         } catch (RhythmInflationException e) {
             // Set line number and rethrow
             throw e.setLineNumber(lineNumber);
@@ -481,47 +481,67 @@ public class RhythmOverlayInflater {
     }
 
     /**
-     * Parses a line with single layer configuration into an ArgumentsBundle object.
+     * Parses a line with single layer configuration. Resolves referenced variables into values for consistency.
+     * Developers can override this method to perform parsing differently or return a different implementation of {@link
+     * LayerConfig} or enclosed {@link ArgumentsBundle}.
      *
      * @param configString configuration string, indented with spaces if required, starting with layer title and
      *                     containing args or key=value pairs
      * @param vars         map of @key-&gt;value mappings used to resolve argument references (e.g.
      *                     <code>@primary=#FF0000</code> to use in <code>color=@primary</code>)
-     * @return layer config object to feed to {@link RhythmSpecLayerFactory#getForConfig(ArgumentsBundle)}.
+     * @param lineNumber   Line number to report in case of error
+     * @return layer config object with layer configuration and metadata
      */
-    protected LayerConfig parseConfig(String configString, @NonNull Map<String, String> vars) {
-        // Let's just iterate over the first chars to get indent and layer type, and parse the arguments with regex
-        int i = 0;
-        int length = configString.length();
+    protected LayerConfig parseConfigInternal(String configString, @NonNull Map<String, String> vars, int lineNumber) {
+        // We can parse everything using pattern matcher. The first match would be our layer name
+        Matcher matcher = PATTERN_ARGUMENTS.matcher(configString);
 
-        // 1. indent
-        while (i < length && configString.charAt(i) == ' ') {
-            i++;
-        }
-        final int spaces = i;
-
-        // 2. layer class name
-        while (i < length && configString.charAt(i) != ' ') {
-            i++;
-        }
-        final String specLayerType = configString.substring(spaces, i);
-
-        final int anticipatedCapacity = (length - i) / 12 + 1;
-        Map<String, String> arguments;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            arguments = new ArrayMap<>(anticipatedCapacity);
-        } else {
-            arguments = new HashMap<>(anticipatedCapacity);
+        if (!matcher.find()) {
+            // The whole layer line is malformed
+            throw new RhythmInflationException(
+                    RhythmInflationException.ERROR_MALFORMED_LAYER_DECLARATION,
+                    "Malformed spec layer declaration.\nExpected format is <layer_name> <arg1>=<val1> <arg2>=<val2>..."
+            ).setLineNumber(lineNumber);
         }
 
-        Matcher matcher = ARGUMENTS_PATTERN.matcher(configString.substring(i));
+        final String specLayerType = matcher.group();
+        final int spaces = matcher.start();
+        final Map<String, String> arguments = new HashMap<>();
+
         while (matcher.find()) {
             String key = matcher.group(1);
-            String value = matcher.group(2);
+            // Since we're already resolving variables in inflater and not lazily upon reading from arguments,
+            // let's be consistent and do the same for individual args as well.
+            String value = resolveVariableInternal(vars, matcher.group(2), lineNumber);
             arguments.put(key, value);
         }
 
-        return new LayerConfig(specLayerType, spaces, arguments, vars, mContext.getResources().getDisplayMetrics());
+        return new LayerConfig(specLayerType, spaces, new SimpleArgumentsBundle(arguments, mDisplayMetrics));
+    }
+
+    /**
+     * Resolve variable value: if it's a reference to another variable (i.e. starts with '@'), try resolving its value,
+     * otherwise return as is. There's no need to resolve references recursively, as all previously declared variables
+     * already have their values resolved.
+     *
+     * @param vars       Variables map, as resolved at the moment
+     * @param value      Value that's either a reference to resolve or a concrete value
+     * @param lineNumber Line number to report in case of error
+     * @return variable value
+     */
+    protected String resolveVariableInternal(@NonNull Map<String, String> vars, String value, int lineNumber) {
+        if (value != null && value.length() != 0 && value.charAt(0) == '@') {
+            if (vars.containsKey(value)) {
+                value = vars.get(value);
+            } else {
+                throw new RhythmInflationException(
+                        RhythmInflationException.ERROR_VARIABLE_NOT_FOUND,
+                        "Cannot resolve variable " + value,
+                        value
+                ).setLineNumber(lineNumber);
+            }
+        }
+        return value;
     }
 
     /**
@@ -530,7 +550,7 @@ public class RhythmOverlayInflater {
      * @param line line to test, should be pre-trimmed
      * @return true if empty or comment
      */
-    private static boolean isEmptyOrComment(String line) {
+    private boolean isEmptyOrComment(String line) {
         return line.length() == 0 || (line.charAt(0) == '/' && line.length() >= 2 && line.charAt(1) == '/');
     }
 }

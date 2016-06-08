@@ -26,11 +26,11 @@ import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.RhythmInflationException;
 import com.actinarium.rhythm.RhythmSpecLayerFactory;
 import com.actinarium.rhythm.layer.DimensionsLabel;
-import com.actinarium.rhythm.layer.InsetGroup;
+import com.actinarium.rhythm.layer.Inset;
 
 /**
  * An example of a custom spec layer drawing a translucent overlay of specified width and height, gravity and margin,
- * with dimensions label in the center. In fact, due to the introduction of a more universal {@link InsetGroup}, this
+ * with dimensions label in the center. In fact, due to the introduction of a more universal {@link Inset}, this
  * spec layer could be significantly simplified, but all the w/h/gravity/distance parameters are purposefully kept to
  * provide an example of a more complex custom layer with a rather complex {@link Factory}
  *
@@ -56,7 +56,8 @@ public class ImageBox implements RhythmSpecLayer {
         mDistanceY = distanceY;
         mGravity = gravity;
 
-        mDimensionsLabel = new DimensionsLabel(scaleFactor)
+        mDimensionsLabel = new DimensionsLabel()
+                .setScaleFactor(scaleFactor)
                 .setGravity(Gravity.CENTER)
                 .setBackgroundColor(Color.TRANSPARENT)
                 .setTextColor(Color.WHITE);
@@ -77,7 +78,8 @@ public class ImageBox implements RhythmSpecLayer {
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(COLOR);
 
-        mDimensionsLabel = new DimensionsLabel(scaleFactor)
+        mDimensionsLabel = new DimensionsLabel()
+                .setScaleFactor(scaleFactor)
                 .setGravity(Gravity.CENTER)
                 .setBackgroundColor(Color.TRANSPARENT)
                 .setTextColor(Color.WHITE);
@@ -104,7 +106,7 @@ public class ImageBox implements RhythmSpecLayer {
         public static final String LAYER_TYPE = "image-box";
 
         @Override
-        public ImageBox getForConfig(ArgumentsBundle argsBundle) {
+        public ImageBox getForArguments(ArgumentsBundle argsBundle) {
             ImageBox box = new ImageBox(argsBundle.getDisplayMetrics().density);
 
             box.mGravity = argsBundle.getGravity("gravity", Gravity.NO_GRAVITY);

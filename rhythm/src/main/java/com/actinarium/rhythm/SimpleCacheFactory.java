@@ -35,20 +35,21 @@ public class SimpleCacheFactory<T extends RhythmSpecLayer> implements RhythmSpec
     }
 
     /**
-     * Returns layer for this configuration from cache, or creates a new one via decorated factory if not found in cache
+     * Returns layer for this configuration from cache, or creates a new one via decorated factory if not found in
+     * cache
      *
      * @param argsBundle container with arguments for this layer
      * @return layer for this configuration, either new or from cache
      */
     @Override
-    public T getForConfig(ArgumentsBundle argsBundle) {
+    public T getForArguments(ArgumentsBundle argsBundle) {
         T layer = mCache.get(argsBundle);
         if (layer != null) {
             return layer;
         }
 
         // if cache miss, inflate the new one
-        layer = mDecoratedFactory.getForConfig(argsBundle);
+        layer = mDecoratedFactory.getForArguments(argsBundle);
         mCache.put(argsBundle, layer);
         return layer;
     }

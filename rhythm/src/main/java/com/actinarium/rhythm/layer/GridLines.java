@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
+import android.support.annotation.IntRange;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.RhythmInflationException;
@@ -29,7 +30,7 @@ import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 /**
  * A spec layer for horizontal <b>or</b> vertical grid lines (not both at once!), repeating at a fixed step. Horizontal
- * grid can float either to the top or the bottom of the views, whereas vertical grid can float to the left or the
+ * grid can float either to the top or the bottom edge of the views, whereas vertical grid can float to the left or the
  * right. You can (and should) combine multiple grid line layers to form regular grids, or you may use them alone for
  * baseline grids and incremental keylines. <b>Note:</b> RTL properties are not supported, you only have <i>left</i> and
  * <i>right</i> at your disposal.
@@ -43,43 +44,71 @@ public class GridLines implements RhythmSpecLayer {
      */
     public static final int DEFAULT_THICKNESS = 1;       // px
 
+    @IntRange(from = 1)
     protected int mStep;
+    @IntRange(from = 1)
     protected int mThickness = DEFAULT_THICKNESS;
     protected int mLimit = Integer.MAX_VALUE;
 
     protected int mOffset;
     @ArgumentsBundle.EdgeAffinity
-    protected int mGravity;
+    protected int mEdgeAffinity;
     protected Paint mPaint;
 
     /**
      * Create a layer that draws horizontal or vertical grid lines. Unless offset is applied, horizontal lines are
      * always drawn <i>below</i> the delimited pixel row, and vertical lines are always drawn <i>to the right</i> of the
-     * delimited column: e.g. if a child view is fully aligned to the grid on all sides, top and bottom grid lines will
+     * delimited column: e.g. if a child view is fully aligned to the grid on all edges, top and bottom grid lines will
      * overdraw the view, whereas bottom and right grid lines will touch the view.
      *
-     * @param gravity Control grid alignment <b>and</b> orientation. {@link Gravity#TOP} and {@link Gravity#BOTTOM} mean
-     *                horizontal lines, and {@link Gravity#LEFT} and {@link Gravity#RIGHT} mean vertical lines, and the
-     *                difference between those is from what side of the view the steps are counted. A good example where
-     *                this can be useful is having a left-aligned and a right-aligned layer on the left and the right
-     *                half of the view when its width is not an exact multiple of the step.
-     * @param step    Grid step, in pixels
+     * @param edgeAffinity Controls grid alignment <b>and</b> orientation. {@link Gravity#TOP} and {@link
+     *                     Gravity#BOTTOM} mean horizontal lines, and {@link Gravity#LEFT} and {@link Gravity#RIGHT}
+     *                     mean vertical lines, and the difference between those is from what edge of the view the steps
+     *                     are counted. A good example where this can be useful is having a left-aligned and a
+     *                     right-aligned layer on the left and the right half of the view when its width is not an exact
+     *                     multiple of the step.
+     * @param step         Grid step, in pixels
      */
-    public GridLines(@ArgumentsBundle.EdgeAffinity int gravity, int step) {
+    public GridLines(@ArgumentsBundle.EdgeAffinity int edgeAffinity, @IntRange(from = 1) int step) {
+        this();
         mStep = step;
-        mGravity = gravity;
-
-        mPaint = new Paint();
-        mPaint.setStyle(Paint.Style.FILL);
+        mEdgeAffinity = edgeAffinity;
         mPaint.setColor(DEFAULT_GRID_COLOR);
     }
 
     /**
-     * Minimum constructor for the factory
+     * <p>Create a spec layer that displays dimensions label.</p> <p>This is a minimum constructor for the factory
+     * &mdash; only paints and reusable objects are initialized. Developers extending this class are responsible for
+     * setting all fields to proper argument values.</p>
      */
     protected GridLines() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
+    }
+
+    /**
+     * Set the step of grid lines
+     *
+     * @param step Grid step, in pixels
+     * @return this for chaining
+     */
+    public GridLines setStep(@IntRange(from = 1) int step) {
+        mStep = step;
+        return this;
+    }
+
+    /**
+     * Set edge affinity of the grid
+     *
+     * @param edgeAffinity Controls grid alignment <b>and</b> orientation. Use {@link Gravity#TOP} or {@link
+     *                     Gravity#BOTTOM} for horizontal lines counting from top or bottom, and {@link Gravity#LEFT} or
+     *                     {@link Gravity#RIGHT} for vertical lines cointing from left or right edge of the screen
+     *                     respectively.
+     * @return this for chaining
+     */
+    public GridLines setEdgeAffinity(@ArgumentsBundle.EdgeAffinity int edgeAffinity) {
+        mEdgeAffinity = edgeAffinity;
+        return this;
     }
 
     /**
@@ -99,7 +128,7 @@ public class GridLines implements RhythmSpecLayer {
      * @param thickness Grid line thickness, in pixels
      * @return this for chaining
      */
-    public GridLines setThickness(int thickness) {
+    public GridLines setThickness(@IntRange(from = 1) int thickness) {
         mThickness = thickness;
         return this;
     }
@@ -135,28 +164,28 @@ public class GridLines implements RhythmSpecLayer {
     public void draw(Canvas canvas, Rect drawableBounds) {
         // Depending on gravity the orientation, the order of drawing, and the starting point are different
         int line = 0;
-        if (mGravity == Gravity.TOP) {
+        if (mEdgeAffinity == Gravity.TOP) {
             int curY = drawableBounds.top + mOffset;
             while (curY < drawableBounds.bottom && line <= mLimit) {
                 canvas.drawRect(drawableBounds.left, curY, drawableBounds.right, curY + mThickness, mPaint);
                 curY += mStep;
                 line++;
             }
-        } else if (mGravity == Gravity.BOTTOM) {
+        } else if (mEdgeAffinity == Gravity.BOTTOM) {
             int curY = drawableBounds.bottom + mOffset;
             while (curY >= drawableBounds.top && line <= mLimit) {
                 canvas.drawRect(drawableBounds.left, curY, drawableBounds.right, curY + mThickness, mPaint);
                 curY -= mStep;
                 line++;
             }
-        } else if (mGravity == Gravity.LEFT) {
+        } else if (mEdgeAffinity == Gravity.LEFT) {
             int curX = drawableBounds.left + mOffset;
             while (curX < drawableBounds.right && line <= mLimit) {
                 canvas.drawRect(curX, drawableBounds.top, curX + mThickness, drawableBounds.bottom, mPaint);
                 curX += mStep;
                 line++;
             }
-        } else if (mGravity == Gravity.RIGHT) {
+        } else if (mEdgeAffinity == Gravity.RIGHT) {
             int curX = drawableBounds.right + mOffset;
             while (curX >= drawableBounds.left && line <= mLimit) {
                 canvas.drawRect(curX, drawableBounds.top, curX + mThickness, drawableBounds.bottom, mPaint);
@@ -167,27 +196,33 @@ public class GridLines implements RhythmSpecLayer {
     }
 
     /**
-     * A factory that creates new GridLines layers from config lines like <code>grid-lines gravity=left step=4dp
-     * thickness=1px color=#00FFFF</code>
+     * A default factory that creates new {@link GridLines} layers from config lines according to <a
+     * href="https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration#grid-lines">the docs</a>
      */
     public static class Factory implements RhythmSpecLayerFactory<GridLines> {
 
         public static final String LAYER_TYPE = "grid-lines";
+        public static final String ARG_EDGE = "from";
+        public static final String ARG_STEP = "step";
+        public static final String ARG_COLOR = "color";
+        public static final String ARG_THICKNESS = "thickness";
+        public static final String ARG_LIMIT = "limit";
+        public static final String ARG_OFFSET = "offset";
 
         @Override
-        public GridLines getForConfig(ArgumentsBundle argsBundle) {
+        public GridLines getForArguments(ArgumentsBundle argsBundle) {
             GridLines gridLines = new GridLines();
 
-            gridLines.mGravity = argsBundle.getEdgeAffinity("from", Gravity.NO_GRAVITY);
-            if (gridLines.mGravity == Gravity.NO_GRAVITY) {
+            gridLines.mEdgeAffinity = argsBundle.getEdgeAffinity(ARG_EDGE, Gravity.NO_GRAVITY);
+            if (gridLines.mEdgeAffinity == Gravity.NO_GRAVITY) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
                         "Error in grid-lines config: 'from' argument is mandatory and must be either 'left', 'right', 'top', 'bottom'",
-                        LAYER_TYPE, "from", argsBundle.getString("from"), "left|right|top|bottom"
+                        LAYER_TYPE, ARG_EDGE, argsBundle.getString(ARG_EDGE), "left|right|top|bottom"
                 );
             }
 
-            final int step = argsBundle.getDimensionPixelOffset("step", 0);
+            final int step = argsBundle.getDimensionPixelOffset(ARG_STEP, 0);
             if (step <= 0) {
                 throw new RhythmInflationException(
                         RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE,
@@ -197,10 +232,10 @@ public class GridLines implements RhythmSpecLayer {
             }
             gridLines.mStep = step;
 
-            gridLines.mPaint.setColor(argsBundle.getColor("color", DEFAULT_GRID_COLOR));
-            gridLines.mThickness = argsBundle.getDimensionPixelSize("thickness", DEFAULT_THICKNESS);
-            gridLines.setLimit(argsBundle.getInt("limit", Integer.MAX_VALUE));
-            gridLines.mOffset = argsBundle.getDimensionPixelOffset("offset", 0);
+            gridLines.mPaint.setColor(argsBundle.getColor(ARG_COLOR, DEFAULT_GRID_COLOR));
+            gridLines.mThickness = argsBundle.getDimensionPixelSize(ARG_THICKNESS, DEFAULT_THICKNESS);
+            gridLines.setLimit(argsBundle.getInt(ARG_LIMIT, Integer.MAX_VALUE));
+            gridLines.mOffset = argsBundle.getDimensionPixelOffset(ARG_OFFSET, 0);
 
             return gridLines;
         }

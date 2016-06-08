@@ -300,7 +300,7 @@ public class RhythmFrameLayout extends FrameLayout {
     /**
      * Type def annotation for overlay position enum
      */
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.CLASS)
     @IntDef({OVERLAY_POSITION_UNDER_BACKGROUND, OVERLAY_POSITION_UNDER_CONTENT, OVERLAY_POSITION_OVER_CONTENT, OVERLAY_POSITION_OVER_FOREGROUND})
     public @interface OverlayPosition {
     }
