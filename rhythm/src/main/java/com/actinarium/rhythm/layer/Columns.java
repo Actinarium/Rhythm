@@ -115,9 +115,7 @@ public class Columns extends AbstractSpecLayerGroup<Columns> {
             columns.mColumnCount = argsBundle.getInt(ARG_COUNT, 0);
             if (columns.mColumnCount <= 0) {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE,
-                        "Error in columns config: 'count' argument is mandatory and must be greater than 0 (e.g. 'count=4')",
-                        LAYER_TYPE, "count", "count=4"
+                        "Error in columns config: 'count' argument is mandatory and must be greater than 0"
                 );
             }
 

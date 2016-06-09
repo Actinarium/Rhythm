@@ -112,9 +112,7 @@ public class ImageBox implements RhythmSpecLayer {
             box.mGravity = argsBundle.getGravity("gravity", Gravity.NO_GRAVITY);
             if (box.mGravity == Gravity.NO_GRAVITY) {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
-                        "Error when inflating image-box: 'gravity' argument missing or invalid",
-                        LAYER_TYPE, "gravity", argsBundle.getString("gravity"), "Gravity constants"
+                        "Error when inflating image-box: 'gravity' argument missing or invalid"
                 );
             }
 

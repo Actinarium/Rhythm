@@ -221,9 +221,7 @@ public class RhythmOverlayInflater {
                 if (!matcher.matches()) {
                     // Oops, bad variable syntax
                     throw new RhythmInflationException(
-                            RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
-                            "Malformed variable declaration.\nExpected syntax is @name=value where name may contain only letters, digits, and/or underscores.",
-                            line
+                            "Malformed variable declaration.\nExpected syntax is @name=value where name may contain only letters, digits, and/or underscores."
                     ).setLineNumber(i);
                 }
 
@@ -353,7 +351,6 @@ public class RhythmOverlayInflater {
                 // This is a local variable. And all variables must be declared before any overlay lines.
                 if (overlay.size() != 0) {
                     throw new RhythmInflationException(
-                            RhythmInflationException.ERROR_UNEXPECTED_VARIABLE_DECLARATION,
                             "Unexpected variable declaration.\nVariables must be declared before spec layers."
                     ).setLineNumber(lineNumber);
                 }
@@ -373,16 +370,13 @@ public class RhythmOverlayInflater {
                 } else {
                     // Oops, bad variable syntax
                     throw new RhythmInflationException(
-                            RhythmInflationException.ERROR_MALFORMED_VARIABLE_SYNTAX,
-                            "Malformed variable declaration: \"" + line + "\".\nExpected syntax is @name=value where name may contain only letters, digits, and/or underscores.",
-                            line
+                            "Malformed variable declaration: \"" + line + "\".\nExpected syntax is @name=value where name may contain only letters, digits, and/or underscores."
                     ).setLineNumber(lineNumber);
                 }
             } else if (line.charAt(0) == '#') {
                 // Looks like a title. A title should be the first non-empty line, and there should be no multiple titles per block
                 if (overlay.getTitle() != null || hasLocalVars || overlay.size() != 0) {
                     throw new RhythmInflationException(
-                            RhythmInflationException.ERROR_UNEXPECTED_TITLE_DECLARATION,
                             "Unexpected overlay title.\nThere can be only one title per overlay, and it must be the first line. Did you forget an empty newline before starting a new overlay?"
                     ).setLineNumber(lineNumber);
                 }
@@ -428,7 +422,6 @@ public class RhythmOverlayInflater {
         // If there are only variables and nothing else, seems like the user tried to declare global variables between overlay blocks
         if (hasLocalVars && overlay.size() == 0 && overlay.getTitle() == null) {
             throw new RhythmInflationException(
-                    RhythmInflationException.ERROR_UNEXPECTED_VARIABLE_DECLARATION,
                     "Unexpected variable declaration.\nGlobal variables must be declared before all overlay blocks."
             ).setLineNumber(offset);
         }
@@ -461,9 +454,7 @@ public class RhythmOverlayInflater {
         if (factory == null) {
             Object[] knownLayers = mFactories.keySet().toArray();
             throw new RhythmInflationException(
-                    RhythmInflationException.ERROR_UNKNOWN_LAYER_TYPE,
-                    "Unknown layer type \"" + config.getLayerType() + "\".\nAvailable types are: " + Arrays.toString(knownLayers),
-                    config.getLayerType(), knownLayers
+                    "Unknown layer type \"" + config.getLayerType() + "\".\nAvailable types are: " + Arrays.toString(knownLayers)
             ).setLineNumber(lineNumber);
         }
         try {
@@ -474,7 +465,6 @@ public class RhythmOverlayInflater {
         } catch (Exception e) {
             // Catch all other exceptions (e.g. IllegalArgument etc) and wrap'em in RhythmInflationException
             throw new RhythmInflationException(
-                    RhythmInflationException.ERROR_INFLATING_LAYER_GENERIC,
                     "Error inflating layer: " + e.getMessage(), e
             ).setLineNumber(lineNumber);
         }
@@ -499,7 +489,6 @@ public class RhythmOverlayInflater {
         if (!matcher.find()) {
             // The whole layer line is malformed
             throw new RhythmInflationException(
-                    RhythmInflationException.ERROR_MALFORMED_LAYER_DECLARATION,
                     "Malformed spec layer declaration.\nExpected format is <layer_name> <arg1>=<val1> <arg2>=<val2>..."
             ).setLineNumber(lineNumber);
         }
@@ -535,9 +524,7 @@ public class RhythmOverlayInflater {
                 value = vars.get(value);
             } else {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_VARIABLE_NOT_FOUND,
-                        "Cannot resolve variable " + value,
-                        value
+                        "Cannot resolve variable " + value
                 ).setLineNumber(lineNumber);
             }
         }
@@ -552,5 +539,58 @@ public class RhythmOverlayInflater {
      */
     private boolean isEmptyOrComment(String line) {
         return line.length() == 0 || (line.charAt(0) == '/' && line.length() >= 2 && line.charAt(1) == '/');
+    }
+
+    /**
+     * A spec layer descriptor holding arguments and metadata, used internally by {@link RhythmOverlayInflater} to carry
+     * values needed to inflate individual layers and their hierarchies.
+     *
+     * @author Paul Danyliuk
+     */
+    public static class LayerConfig {
+
+        protected String mLayerType;
+        protected int mIndent;
+        protected ArgumentsBundle mArgumentsBundle;
+
+        /**
+         * Create layer config object for layer of given type, with known indent, and with pre-filled arguments bag
+         *
+         * @param layerType       spec layer type, used for appropriate factory lookup
+         * @param indent          number of leading spaces in the config line, used to resolve layer hierarchy
+         * @param argumentsBundle an object describing parsed layer configuration (arguments and values)
+         */
+        public LayerConfig(@NonNull String layerType, int indent, @NonNull ArgumentsBundle argumentsBundle) {
+            mLayerType = layerType;
+            mIndent = indent;
+            mArgumentsBundle = argumentsBundle;
+        }
+
+        /**
+         * Get the name of {@link RhythmSpecLayer spec layer} to inflate with these arguments
+         *
+         * @return spec layer type
+         */
+        public String getLayerType() {
+            return mLayerType;
+        }
+
+        /**
+         * Get the number of spaces this config line was indented with. Used internally to resolve grouping
+         *
+         * @return number of spaces
+         */
+        public int getIndent() {
+            return mIndent;
+        }
+
+        /**
+         * Get the configuration of this layer presented by an {@link ArgumentsBundle} object
+         *
+         * @return layer configuration bundle
+         */
+        public ArgumentsBundle getArgumentsBundle() {
+            return mArgumentsBundle;
+        }
     }
 }

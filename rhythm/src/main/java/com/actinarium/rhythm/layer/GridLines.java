@@ -216,18 +216,14 @@ public class GridLines implements RhythmSpecLayer {
             gridLines.mEdgeAffinity = argsBundle.getEdgeAffinity(ARG_EDGE, Gravity.NO_GRAVITY);
             if (gridLines.mEdgeAffinity == Gravity.NO_GRAVITY) {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
-                        "Error in grid-lines config: 'from' argument is mandatory and must be either 'left', 'right', 'top', 'bottom'",
-                        LAYER_TYPE, ARG_EDGE, argsBundle.getString(ARG_EDGE), "left|right|top|bottom"
+                        "Error in grid-lines config: 'from' argument is mandatory and must be either 'left', 'right', 'top', 'bottom'"
                 );
             }
 
             final int step = argsBundle.getDimensionPixelOffset(ARG_STEP, 0);
             if (step <= 0) {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE,
-                        "Error in grid-lines config: 'step' argument is mandatory and must be greater than 0 (e.g. 'step=8dp')",
-                        LAYER_TYPE, "step", "step=8dp"
+                        "Error in grid-lines config: 'step' argument is mandatory and must be greater than 0"
                 );
             }
             gridLines.mStep = step;

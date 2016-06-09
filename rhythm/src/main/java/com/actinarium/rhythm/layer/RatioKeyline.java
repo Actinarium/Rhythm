@@ -226,17 +226,13 @@ public class RatioKeyline implements RhythmSpecLayer {
             String ratio = argsBundle.getString(ARG_RATIO);
             if (ratio == null) {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_ARGUMENT_MISSING,
-                        "Error when inflating ratio-keyline: 'ratio' argument is missing",
-                        LAYER_TYPE, "ratio", "{int}:{int}"
+                        "Error when inflating ratio-keyline: 'ratio' argument is missing"
                 );
             }
             Matcher matcher = RATIO_VALUE_PATTERN.matcher(ratio);
             if (!matcher.matches()) {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_EXPECTED_TYPE,
-                        "Error when inflating ratio-keyline: 'ratio' argument is invalid, expected \"x:y\" pattern",
-                        LAYER_TYPE, "ratio", "{int}:{int}", "ratio=16:9"
+                        "Error when inflating ratio-keyline: 'ratio' argument is invalid, expected \"x:y\" pattern"
                 );
             }
             keyline.mRatioX = Integer.parseInt(matcher.group(1));

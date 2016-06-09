@@ -189,17 +189,13 @@ public class Keyline implements RhythmSpecLayer {
             keyline.mEdgeAffinity = argsBundle.getEdgeAffinity(ARG_EDGE, Gravity.NO_GRAVITY);
             if (keyline.mEdgeAffinity == Gravity.NO_GRAVITY) {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_ONE_OF,
-                        "Error in keyline config: 'from' argument is mandatory and must be either 'left', 'right', 'top', 'bottom'",
-                        LAYER_TYPE, ARG_EDGE, argsBundle.getString(ARG_EDGE), "left|right|top|bottom"
+                        "Error in keyline config: 'from' argument is mandatory and must be either 'left', 'right', 'top', 'bottom'"
                 );
             }
 
             if (!argsBundle.hasArgument(ARG_DISTANCE)) {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_EXPECTED_TYPE,
-                        "Error in keyline config: 'distance' argument is mandatory and must be a dimension value (e.g. 'distance=16dp')",
-                        LAYER_TYPE, "distance", "{dimen}", "distance=16dp"
+                        "Error in keyline config: 'distance' argument is mandatory and must be a dimension value (e.g. 'distance=16dp')"
                 );
             }
             keyline.mDistance = argsBundle.getDimensionPixelOffset(ARG_DISTANCE, 0);

@@ -83,9 +83,7 @@ public class LayoutBounds implements RhythmSpecLayer {
             layoutBounds.mCrosshairSize = argsBundle.getDimensionPixelOffset("crosshair-size", 0);
             if (layoutBounds.mCrosshairSize <= 0) {
                 throw new RhythmInflationException(
-                        RhythmInflationException.ERROR_ARGUMENT_MISSING_OR_NOT_POSITIVE,
-                        "Error when inflating layout-bounds: crosshair-size is <= 0 or invalid",
-                        LAYER_TYPE, "crosshair-size", "crosshair-size=16dp"
+                        "Error when inflating layout-bounds: crosshair-size is <= 0 or invalid"
                 );
             }
 
