@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.view.Gravity;
 import com.actinarium.rhythm.RhythmSpecLayer;
@@ -44,8 +45,8 @@ public class GridLines implements RhythmSpecLayer {
      */
     public static final int DEFAULT_THICKNESS = 1;       // px
 
-    @IntRange(from = 1)
-    protected int mStep;
+    @FloatRange(from = 0f, fromInclusive = false)
+    protected float mStep;
     @IntRange(from = 1)
     protected int mThickness = DEFAULT_THICKNESS;
     protected int mLimit = Integer.MAX_VALUE;
@@ -67,9 +68,10 @@ public class GridLines implements RhythmSpecLayer {
      *                     are counted. A good example where this can be useful is having a left-aligned and a
      *                     right-aligned layer on the left and the right half of the view when its width is not an exact
      *                     multiple of the step.
-     * @param step         Grid step, in pixels
+     * @param step         Grid step, in pixels. Allows for float values to properly accommodate devices with non-round
+     *                     dip-to-pixel ratio (1.5x on hdpi, 2.5x on Nexus 5X etc)
      */
-    public GridLines(@ArgumentsBundle.EdgeAffinity int edgeAffinity, @IntRange(from = 1) int step) {
+    public GridLines(@ArgumentsBundle.EdgeAffinity int edgeAffinity, @FloatRange(from = 0f, fromInclusive = false) float step) {
         this();
         mStep = step;
         mEdgeAffinity = edgeAffinity;
@@ -89,10 +91,11 @@ public class GridLines implements RhythmSpecLayer {
     /**
      * Set the step of grid lines
      *
-     * @param step Grid step, in pixels
+     * @param step Grid step, in pixels. Allows for float values to properly accommodate devices with non-round
+     *             dip-to-pixel ratio (1.5x on hdpi, 2.5x on Nexus 5X etc)
      * @return this for chaining
      */
-    public GridLines setStep(@IntRange(from = 1) int step) {
+    public GridLines setStep(@FloatRange(from = 0f, fromInclusive = false) float step) {
         mStep = step;
         return this;
     }
@@ -163,34 +166,41 @@ public class GridLines implements RhythmSpecLayer {
     @Override
     public void draw(Canvas canvas, Rect drawableBounds) {
         // Depending on gravity the orientation, the order of drawing, and the starting point are different
-        int line = 0;
         if (mEdgeAffinity == Gravity.TOP) {
-            int curY = drawableBounds.top + mOffset;
-            while (curY < drawableBounds.bottom && line <= mLimit) {
-                canvas.drawRect(drawableBounds.left, curY, drawableBounds.right, curY + mThickness, mPaint);
-                curY += mStep;
-                line++;
+            final float top = drawableBounds.top + mOffset + 0.5f;
+            for (int i = 0; i <= mLimit; i++) {
+                int y = (int) (top + mStep * i);
+                if (y >= drawableBounds.bottom) {
+                    return;
+                }
+                canvas.drawRect(drawableBounds.left, y, drawableBounds.right, y + mThickness, mPaint);
             }
         } else if (mEdgeAffinity == Gravity.BOTTOM) {
-            int curY = drawableBounds.bottom + mOffset;
-            while (curY >= drawableBounds.top && line <= mLimit) {
-                canvas.drawRect(drawableBounds.left, curY, drawableBounds.right, curY + mThickness, mPaint);
-                curY -= mStep;
-                line++;
+            final float bottom = drawableBounds.bottom + mOffset + 0.5f;
+            for (int i = 0; i <= mLimit; i++) {
+                int y = (int) (bottom - mStep * i);
+                if (y < drawableBounds.top) {
+                    return;
+                }
+                canvas.drawRect(drawableBounds.left, y, drawableBounds.right, y + mThickness, mPaint);
             }
         } else if (mEdgeAffinity == Gravity.LEFT) {
-            int curX = drawableBounds.left + mOffset;
-            while (curX < drawableBounds.right && line <= mLimit) {
-                canvas.drawRect(curX, drawableBounds.top, curX + mThickness, drawableBounds.bottom, mPaint);
-                curX += mStep;
-                line++;
+            final float left = drawableBounds.left + mOffset + 0.5f;
+            for (int i = 0; i <= mLimit; i++) {
+                int x = (int) (left + mStep * i);
+                if (x >= drawableBounds.right) {
+                    return;
+                }
+                canvas.drawRect(x, drawableBounds.top, x + mThickness, drawableBounds.bottom, mPaint);
             }
         } else if (mEdgeAffinity == Gravity.RIGHT) {
-            int curX = drawableBounds.right + mOffset;
-            while (curX >= drawableBounds.left && line <= mLimit) {
-                canvas.drawRect(curX, drawableBounds.top, curX + mThickness, drawableBounds.bottom, mPaint);
-                curX -= mStep;
-                line++;
+            final float right = drawableBounds.right + mOffset + 0.5f;
+            for (int i = 0; i <= mLimit; i++) {
+                int x = (int) (right - mStep * i);
+                if (x < drawableBounds.left) {
+                    return;
+                }
+                canvas.drawRect(x, drawableBounds.top, x + mThickness, drawableBounds.bottom, mPaint);
             }
         }
     }
@@ -220,7 +230,7 @@ public class GridLines implements RhythmSpecLayer {
                 );
             }
 
-            final int step = argsBundle.getDimensionPixelOffset(ARG_STEP, 0);
+            final float step = argsBundle.getDimensionPixelExact(ARG_STEP, 0f);
             if (step <= 0) {
                 throw new RhythmInflationException(
                         "Error in grid-lines config: 'step' argument is mandatory and must be greater than 0"
