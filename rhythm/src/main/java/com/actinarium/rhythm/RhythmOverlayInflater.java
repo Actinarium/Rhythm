@@ -532,12 +532,13 @@ public class RhythmOverlayInflater {
     }
 
     /**
-     * Determines whether the line is empty or a comment one (starts with <code>//</code>) and thus should be ignored.
+     * Utility method that determines whether the line is empty or a comment one (starts with <code>//</code>) and thus
+     * should be ignored.
      *
      * @param line line to test, should be pre-trimmed
      * @return true if empty or comment
      */
-    private boolean isEmptyOrComment(String line) {
+    public static boolean isEmptyOrComment(String line) {
         return line.length() == 0 || (line.charAt(0) == '/' && line.length() >= 2 && line.charAt(1) == '/');
     }
 

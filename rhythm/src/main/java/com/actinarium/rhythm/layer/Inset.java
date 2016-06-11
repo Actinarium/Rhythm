@@ -328,7 +328,7 @@ public class Inset extends AbstractSpecLayerGroup<Inset> {
     /**
      * Type definition for inset group type
      */
-    @Retention(RetentionPolicy.CLASS)
+    @Retention(RetentionPolicy.SOURCE)
     @IntDef({MODE_DEFAULT, MODE_NO_CLIP, MODE_CLIP_ONLY})
     public @interface Mode {
     }

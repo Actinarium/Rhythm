@@ -200,7 +200,7 @@ public interface ArgumentsBundle {
     /**
      * Type definition for dimension argument units
      */
-    @Retention(RetentionPolicy.CLASS)
+    @Retention(RetentionPolicy.SOURCE)
     @IntDef({UNITS_NULL, UNITS_NUMBER, UNITS_PERCENT, UNITS_PX, UNITS_DP, UNITS_SP, UNITS_MM, UNITS_PT, UNITS_IN})
     public @interface DimensionUnits {
     }
@@ -209,7 +209,7 @@ public interface ArgumentsBundle {
      * Type definition for screen edge that a keyline or pattern must be attached to. Used by some layers
      */
     @SuppressLint("RtlHardcoded")
-    @Retention(RetentionPolicy.CLASS)
+    @Retention(RetentionPolicy.SOURCE)
     @IntDef({Gravity.TOP, Gravity.BOTTOM, Gravity.LEFT, Gravity.RIGHT, Gravity.NO_GRAVITY})
     @interface EdgeAffinity {
     }
