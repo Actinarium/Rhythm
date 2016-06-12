@@ -64,9 +64,9 @@ public class RhythmSandbox {
 
     private static final String DEFAULT_SANDBOX_CONFIG =
             "@margin=16dp\n" +
-            "@grid_color=#800091EA\n" +
-            "grid-lines step=8dp from=left color=@grid_color\n" +
-            "grid-lines step=4dp from=top color=@grid_color\n" +
+            "@grid_lines_color=#800091EA\n" +
+            "grid-lines step=8dp from=left\n" +
+            "grid-lines step=4dp from=top\n" +
             "inset left=0dp width=@margin\n" +
             " fill\n" +
             "inset right=0dp width=@margin\n" +

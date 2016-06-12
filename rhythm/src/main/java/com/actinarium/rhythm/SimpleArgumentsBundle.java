@@ -118,11 +118,11 @@ public class SimpleArgumentsBundle implements ArgumentsBundle {
 
     @Override
     public boolean getBoolean(String key, boolean defaultValue) {
-        if (mArguments.containsKey(key)) {
-            String rawValue = resolveArgument(key);
-            return rawValue == null || Boolean.parseBoolean(rawValue);
+        String rawValue = resolveArgument(key);
+        if (rawValue != null) {
+            return Boolean.parseBoolean(rawValue);
         } else {
-            return defaultValue;
+            return mArguments.containsKey(key) || defaultValue;
         }
     }
 

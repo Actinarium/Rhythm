@@ -10,14 +10,21 @@
 @a=20
 // at this point @a=20, @b=10
 
-// Distances
+// For example, these values are reused throughout the config,
+// so it makes sense to declare them as global variables.
+// Also it would allow to easily change them from one place
 @margin=16dp
 @avatar=56dp
 @content=72dp
-
-// Color variables
-@fill=#400091EA
 @secondary=#800091EA
+
+// Rhythm supports "magic variables", which allow to specify layer defaults.
+// Magic variables must be named @{layer_type}_{arg_name}
+// and explicitly enabled for a RhythmOverlayInflater instance.
+// They work with custom layers as well.
+@fill_color=#400091EA
+@keyline_thickness=2px
+@layout_bounds_crosshair_size=16dp
 
 // --------- OVERLAY BLOCKS ---------
 // Separated by an empty line
@@ -71,6 +78,7 @@ keyline distance=@content from=left
 @count=4
 @half_gutter=4dp
 @margin_minus_half_gutter=12dp
+// Magic variables can too be defined locally and override globals
 @keyline_thickness=0.6dp
 // --------------------------------------------------------------------
 inset left=@margin_minus_half_gutter right=@margin_minus_half_gutter
@@ -85,8 +93,8 @@ inset left=@margin_minus_half_gutter right=@margin_minus_half_gutter
       fill
     inset right=0 width=@half_gutter
       fill
-    keyline distance=@half_gutter from=left  thickness=@keyline_thickness
-    keyline distance=@half_gutter from=right thickness=@keyline_thickness
+    keyline distance=@half_gutter from=left
+    keyline distance=@half_gutter from=right
 inset left=0 width=@margin_minus_half_gutter
   fill
 inset right=0 width=@margin_minus_half_gutter
@@ -121,5 +129,5 @@ keyline distance=@card_margin from=right
 image-box gravity=top|right width=80dp height=80dp distance-x=@card_margin distance-y=@card_margin
 
 # Text view size & bounds
-layout-bounds crosshair-size=16dp
+layout-bounds
 dimensions-label gravity=bottom|right text-size=12dp

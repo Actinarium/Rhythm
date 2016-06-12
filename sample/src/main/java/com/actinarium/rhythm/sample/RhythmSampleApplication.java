@@ -50,7 +50,17 @@ public class RhythmSampleApplication extends Application implements RhythmContro
     public void onCreate() {
         super.onCreate();
 
-        // Initialize this application's Rhythm control. That's for the notification
+        // Initialize inflater that we'll use to inflate overlays from declarative (human-readable) config
+        mRhythmOverlayInflater = RhythmOverlayInflater.createDefault(this).setMagicVariablesEnabled(true);
+
+        // Register the factories for our custom layers so that we can inflate them from text config
+        mRhythmOverlayInflater.registerFactory(ImageBox.Factory.LAYER_TYPE, new ImageBox.Factory());
+        mRhythmOverlayInflater.registerFactory(LayoutBounds.Factory.LAYER_TYPE, new LayoutBounds.Factory());
+
+        // Inflate everything from /res/raw/overlay_config.
+        List<RhythmOverlay> overlays = mRhythmOverlayInflater.inflate(R.raw.overlay_config);
+
+        // Initialize this application's Rhythm control. That's for the notification.
         mRhythmControl = new RhythmControl(this);
 
         // Create the groups - that's to control their overlays separately
@@ -59,16 +69,6 @@ public class RhythmSampleApplication extends Application implements RhythmContro
         RhythmGroup contentBgGroup = mRhythmControl.makeGroup("All content background");             // index = 0
         RhythmGroup cardOverlayGroup = mRhythmControl.makeGroup("Intermission card");                // index = 1
         RhythmGroup textOverlayGroup = mRhythmControl.makeGroup("All text labels");                  // index = 2
-
-        // Initialize inflater that we'll use to inflate overlays from declarative (human-readable) config
-        mRhythmOverlayInflater = RhythmOverlayInflater.createDefault(this);
-
-        // Register the factories for our custom layers so that we can inflate them from text config
-        mRhythmOverlayInflater.registerFactory(ImageBox.Factory.LAYER_TYPE, new ImageBox.Factory());
-        mRhythmOverlayInflater.registerFactory(LayoutBounds.Factory.LAYER_TYPE, new LayoutBounds.Factory());
-
-        // Inflate everything from /res/raw/overlay_config.
-        List<RhythmOverlay> overlays = mRhythmOverlayInflater.inflate(R.raw.overlay_config);
 
         // Overlays 0..4 are for content bg group
         contentBgGroup.addOverlays(overlays.subList(0, 5));

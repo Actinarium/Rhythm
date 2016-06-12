@@ -75,6 +75,7 @@ public class RhythmOverlayInflater {
     protected Context mContext;
     protected DisplayMetrics mDisplayMetrics;
     protected Map<String, RhythmSpecLayerFactory> mFactories;
+    protected boolean mAreMagicVariablesEnabled = false;
 
     /**
      * <p>Create a new instance of default overlay inflater. It comes pre-configured to inflate all bundled {@link
@@ -125,6 +126,22 @@ public class RhythmOverlayInflater {
         mContext = context.getApplicationContext();
         mDisplayMetrics = mContext.getResources().getDisplayMetrics();
         mFactories = new HashMap<>(INITIAL_FACTORIES_CAPACITY);
+    }
+
+    /**
+     * <p>Enable or disable &ldquo;magic variables&rdquo; support in this inflater instance. Enabling this will allow to
+     * specify default arguments for spec layers by defining global and local variables named with the following
+     * pattern: <code>@{layer_name}_{arg_name}</code>, where dashes are replaced with underscores.</p>
+     * <p><b>Warning:</b>&ldquo;magic variables&rdquo; is an experimental feature and therefore disabled by default.
+     * Normally it shouldn't have significant impact on performance, yet it's advised to only enable it if using magic
+     * variables is really desirable over explicitly setting values to spec layers individually.</p>
+     *
+     * @param enabled true to enable magic variables support, false to disable it.
+     * @return this for chaining
+     */
+    public RhythmOverlayInflater setMagicVariablesEnabled(boolean enabled) {
+        mAreMagicVariablesEnabled = enabled;
+        return this;
     }
 
     /**
@@ -505,7 +522,12 @@ public class RhythmOverlayInflater {
             arguments.put(key, value);
         }
 
-        return new LayerConfig(specLayerType, spaces, new SimpleArgumentsBundle(arguments, mDisplayMetrics));
+        // Experimental magic variables support integrated here:
+        ArgumentsBundle argumentsBundle = mAreMagicVariablesEnabled ?
+                new MagicVariablesArgumentsBundle(arguments, vars, specLayerType, mDisplayMetrics) :
+                new SimpleArgumentsBundle(arguments, mDisplayMetrics);
+
+        return new LayerConfig(specLayerType, spaces, argumentsBundle);
     }
 
     /**
