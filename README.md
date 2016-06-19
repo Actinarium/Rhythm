@@ -1,4 +1,30 @@
-# Rhythm [![Download](https://api.bintray.com/packages/actinarium/maven/rhythm/images/download.svg)](https://bintray.com/actinarium/maven/rhythm/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rhythm-green.svg?style=flat)](https://android-arsenal.com/details/1/2664)
+# Rhythm [![Download from Bintray](https://api.bintray.com/packages/actinarium/maven/rhythm/images/download.svg)](https://bintray.com/actinarium/maven/rhythm/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rhythm-green.svg?style=flat)](https://android-arsenal.com/details/1/2664) [![License: Apache 2.0](https://img.shields.io/github/license/actinarium/rhythm.svg?maxAge=864000)][license]
+
+Rhythm is a design overlay engine for Android.
+
+With Rhythm you can easily render grids, keylines, and other [Material Design][mdspec] cues within your app, helping you to build perfect layouts.
+Define overlay configurations using [simple expression language][wiki-config], and Rhythm will convert them into Drawables¹, which you can then set as view backgrounds, foregrounds etc:
+
+![Simple Rhythm overlay example](http://actinarium.github.io/Rhythm/assets/rhythm-hero-small.png)
+
+You can also extend Rhythm with custom renderers.
+
+## [New!] Material Cue
+
+**Material Cue** is a standalone keyline app built on Rhythm.
+If you need to verify your layouts but don’t want the trouble of setting up another library in your project, Material Cue is perfect for you.
+
+<a href='https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="48" /></a>
+
+Learn about the [differences between Rhythm and Material Cue](https://github.com/Actinarium/Rhythm/wiki/Comparison-of-Rhythm-and-Material-Cue) and which of them you should use.
+
+
+**Doc changes in progress**
+
+
+
+
+---
 
 Rhythm is a small library for Android that draws grids and guides over views, making it easier to fine tune
 your layouts according to the [principles][mdspec] of beautiful, balanced, _rhythmic_ design.
@@ -8,8 +34,6 @@ If you are passionate about carefully crafted layouts and aspiring to #BuildBett
 **Attention!** The library has been updated recently, and the new version comes with significant API changes.
 The documentation will be updated soon, meanwhile if you’re ready to embrace the new functionality, such as
 **declarative configuration** and inset groups, use the sample as a reference.
-
-![Rhythm][heroimg]
 
 **Key features:**
 
@@ -186,10 +210,10 @@ The full license text is [here][license].
 Android, Google Play and the Google Play logo are trademarks of Google Inc.
 
 ---
-¹ — Controlling overlays on the go is available for Android 4.1+ only, since it relies on action buttons
-in the notification. This will be addressed in v1.0. The drawing itself works fine.
+¹ — Said so for simplicity. In fact, Rhythm inflates overlay config into [RhythmOverlay](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmOverlay.html) objects, which then can be injected into one or many [RhythmDrawables](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmDrawable.html), which are, yeah, Drawables.
 
-[mdspec]: http://www.google.com/design/spec/layout/metrics-keylines.html
+[mdspec]: https://material.google.com/layout/metrics-keylines.html
+[wiki-config]: https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration
 [bintray]: https://bintray.com/actinarium/maven/rhythm
 [license]: https://raw.githubusercontent.com/Actinarium/Rhythm/master/LICENSE
 [apk]: https://raw.githubusercontent.com/Actinarium/Rhythm/master/sample/sample-release.apk
@@ -199,5 +223,3 @@ in the notification. This will be addressed in v1.0. The drawing itself works fi
 [gplus]: https://plus.google.com/u/0/+PaulDanyliuk/posts
 [twitter]: https://twitter.com/actinarium
 [steam]: http://steamcommunity.com/id/actine/wishlist
-
-[heroimg]: https://github.com/Actinarium/Rhythm/blob/master/images/rhythm-v0.9.png
