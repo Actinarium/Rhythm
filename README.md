@@ -1,86 +1,108 @@
-# Rhythm [![Download from Bintray](https://api.bintray.com/packages/actinarium/maven/rhythm/images/download.svg)](https://bintray.com/actinarium/maven/rhythm/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rhythm-green.svg?style=flat)](https://android-arsenal.com/details/1/2664) [![License: Apache 2.0](https://img.shields.io/github/license/actinarium/rhythm.svg?maxAge=864000)][license]
+# Rhythm [![Download from Bintray](https://api.bintray.com/packages/actinarium/maven/rhythm/images/download.svg)](https://bintray.com/actinarium/maven/rhythm/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rhythm-green.svg?maxAge=864000)](https://android-arsenal.com/details/1/2664) [![API](https://img.shields.io/badge/API-8%2B-brightgreen.svg?maxAge=864000)](https://android-arsenal.com/api?level=8) [![License: Apache 2.0](https://img.shields.io/github/license/actinarium/rhythm.svg?maxAge=864000)][license]
 
 Rhythm is a design overlay engine for Android.
 
-With Rhythm you can easily render grids, keylines, and other [Material Design][mdspec] cues within your app, helping you to build perfect layouts.
+With Rhythm you can easily render grids, keylines, other [Material Design][mdspec] cues and even custom elements within your app, helping you to build perfect layouts.
 Define overlay configurations using [simple expression language][wiki-config], and Rhythm will convert them into Drawables¹, which you can then set as view backgrounds, foregrounds etc:
 
 ![Simple Rhythm overlay example](http://actinarium.github.io/Rhythm/assets/rhythm-hero-small.png)
 
-You can also extend Rhythm with custom renderers.
-
 ## [New!] Material Cue
 
 **Material Cue** is a standalone keyline app built on Rhythm.
-If you need to verify your layouts but don’t want the trouble of setting up another library in your project, Material Cue is perfect for you.
+If you need to verify your layout but don’t want the trouble of setting up another library in your project, Material Cue is perfect for you.
 
-<a href='https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="48" /></a>
+Give it a try →<a href='https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="72" /></a>
 
-Learn about the [differences between Rhythm and Material Cue](https://github.com/Actinarium/Rhythm/wiki/Comparison-of-Rhythm-and-Material-Cue) and which of them you should use.
+Learn more about the [differences between Rhythm and Material Cue](https://github.com/Actinarium/Rhythm/wiki/Comparison-of-Rhythm-and-Material-Cue).
+
+## Unstable API Disclaimer
+
+Until Rhythm hits version 1.0, its public API is not finalized yet. This means **anything can still change** in a backwards incompatible fashion.
+You should consider this when depending on Rhythm 0.* in your projects, especially if you’re planning to extend Rhythm or actively use its Java API.
+Make sure you can allocate the time to study the new docs and update your code, otherwise consider staying with the older version.
+
+You can use Rhythm to inflate [configuration][wiki-config] into `RhythmOverlay` objects with fair confidence though: its syntax is guaranteed not to break with the future versions of Rhythm.
+
+### Migrating to 0.9.6
+
+The biggest change in 0.9.6 is that **Rhythm has been split in two separate libraries** (see the next paragraph).
+Additionally, the whole package structure has been refactored — make sure you fix your imports.
+
+## Quick setup
+
+Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
+* **Rhythm Core** — contains core rendering framework for turning [human readable config][wiki-config] into Drawable objects¹. You then manage those Drawables yourself.
+* **Rhythm Control** — provides a mechanism to assign many overlays to many views and switch them on the go using the Rhythm Control notification.
+
+**Tip:** Get inspired by the [sample app][playstore] and then explore its [source][samplesrc].
+
+### Rhythm Core
+
+1. Add Gradle dependency:
+   ```
+   compile 'com.actinarium.rhythm:rhythm:0.9.6'
+   ```
+
+2. Create a raw file in your app’s `/src/res/raw` folder, e.g. `/src/res/raw/overlays`, like this:
+
+   ```
+   # Standard 8dp grid
+   grid-lines step=8dp from=top
+   grid-lines step=8dp from=left
+
+   # Typography grid w/keylines
+   grid-lines step=4dp from=top
+   keyline distance=16dp from=left
+   keyline distance=16dp from=right
+   keyline distance=72dp from=left
+   ```
+
+   Overlays are separated by empty newline. Lines starting with `#` are optional overlay titles. There can also be comments and variables.
+
+   > Take a look at the [sample config file][sampleconfig] for a more complex and documented example. For full docs see [the wiki][wiki-config].
+
+3. In your code, inflate this file into a list of overlay objects, wrap them with [RhythmDrawables](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmDrawable.html), and assign to views as required:
+
+   ```java
+   // Create a new pre-configured inflater instance
+   RhythmOverlayInflater inflater = RhythmOverlayInflater.createDefault(this);
+
+   // Inflate the config
+   List<RhythmOverlay> overlays = inflater.inflate(R.raw.overlays);
+
+   // Inject the typography overlay (2nd in list) into a RhythmDrawable
+   Drawable overlayDrawable = new RhythmDrawable(overlays.get(1));
+
+   // And assign it to the view
+   view.setBackground(overlayDrawable);
+
+   // Later you can replace the overlay in that drawable
+   ((RhythmDrawable) view.getBackground()).setOverlay(overlays.get(0));
+
+   // Or disable it
+   ((RhythmDrawable) view.getBackground()).setOverlay(null);
+   ```
+
+### Rhythm Control
+
+// todo
 
 
-**Doc changes in progress**
+## Other resources
 
-
+[Wiki][wiki] | [Javadoc Core][javadoc-core] | [Javadoc Control][javadoc-control]
 
 
 ---
 
-Rhythm is a small library for Android that draws grids and guides over views, making it easier to fine tune
-your layouts according to the [principles][mdspec] of beautiful, balanced, _rhythmic_ design.
 
-If you are passionate about carefully crafted layouts and aspiring to #BuildBetterApps, add Rhythm into your toolchain.
+# Old docs — rewriting in progress
 
-**Attention!** The library has been updated recently, and the new version comes with significant API changes.
-The documentation will be updated soon, meanwhile if you’re ready to embrace the new functionality, such as
-**declarative configuration** and inset groups, use the sample as a reference.
-
-**Key features:**
-
-* Superior flexibility.  
-  Highly customizable grids and guides, possibility to draw your own overlays, and more!  
-  Make as many different overlays and assign them to as many views as you need.
-* Saving lots of time.  
-  Define your overlays once and control everything via the Quick Control notification¹ without leaving your current screen or having to recompile.
-* Adaptable.  
-  Inject Rhythm into your existing views with a single line of code without changing view hierarchy, or wrap layouts
-  with `RhythmFrameLayout` for finer control.
-  Furthermore, Rhythm is built on Drawables, which you can obtain and use in any way imaginable.  
-* Suitable for dialogs and scrolling content.
-* Built with performance in mind.
-* Code thoroughly documented.
-* API 8+¹.
-* Crafted by a design-minded developer, for design-minded developers.
-* Open source, open for forks, pull requests, and suggestions.
-
-Sample application available: [APK][apk] or: <a href="https://play.google.com/store/apps/details?id=com.actinarium.rhythm.sample&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height="48" /></a>
-
-**Important note:** this is a pre-release version of Rhythm. Things may break and APIs may change.
-See [Plans for the future](#plans-for-the-future) for more info.
 
 ## Setup
 
-The most definitive guide so far is the [sample source][samplesrc], particularly the configuration [here][appsrc].
-While a better guide is being prepared, enjoy thoroughly documented code.
-
-### Get Rhythm
-
-The easiest way to include Rhythm is to add a dependency in your `build.gradle` file:
-
-```
-compile 'com.actinarium.rhythm:rhythm:0.9'
-```
-
-The library is available via [Bintray][bintray]. If there’s a problem resolving it, check if you have jCenter added as your
-Maven repository.
-
-### Quick start
-
 To set up Rhythm in an intended way—that is, with Quick Control notification, do the following in your `Application` class.
-
-**Note:** ~~While currently overlays are configured imperatively like this (i.e. with lots of code),
-it is already [planned](#plans-for-the-future) to add declarative configs (e.g. with JSON or such) in v1.0.~~
-declarative configs are available as of v0.9.5.
 
 ```java
 // Implement RhythmControl.Host - otherwise Rhythm components won't be able to access Rhythm control
@@ -174,23 +196,6 @@ Voilà, now you’ll be able to control the overlay of connected layouts via the
 
 For advanced use refer to [the source][samplesrc] and Javadocs for now.
 
-## Plans for the future
-
-This is a pre-release version of Rhythm, meaning the API is not finalized yet.
-However, the ETA for v1.0 is Nov–Dec 2015, so feel free to use this version until then (but update with caution).
-
-Here are another changes planned for v1.0:
-
-1. Fix encountered critical issues. Since the library is not targeted for production builds, the goal is to have it
-   function properly under intended use without spending effort on corner cases.
-2. Add a Rhythm control activity, so that it’s possible to cycle through groups and overlays for pre-4.1 devices.
-3. Pre-define the most commonly used overlay configurations (e.g. 8dp grid, baseline grid) so that they are available
-   for developers out of the box.
-4. Add more spec layers like ratio keylines, 9-grids, arbitrary clipping etc.
-5. Consider adding a possibility to declare Rhythm configuration in external file (JSON, XML, Yaml or alike).
-6. Make exhaustive documentation, depending on demand.
-7. Make a better sample.
-
 ## A personal appeal
 
 If you already feel that this library is a godsend that will save you lots of time, please consider adding me on
@@ -203,23 +208,23 @@ Also I’ll be offering in-app donations and pay-what-you-want features in my up
 
 ## License
 
-The library is licensed under Apache 2.0 License, meaning that you can freely use it in any of your projects.
-
-The full license text is [here][license].
+The library is licensed under [Apache 2.0 License][license], meaning that you can freely use it in any of your projects.
 
 Android, Google Play and the Google Play logo are trademarks of Google Inc.
 
 ---
-¹ — Said so for simplicity. In fact, Rhythm inflates overlay config into [RhythmOverlay](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmOverlay.html) objects, which then can be injected into one or many [RhythmDrawables](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmDrawable.html), which are, yeah, Drawables.
+¹ — Said so for simplicity. In fact, Rhythm inflates overlay config into [RhythmOverlay](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmOverlay.html) objects, which then can be injected into one or many [RhythmDrawables](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmDrawable.html), which are, yeah, Drawables. Since it's not 1.0 yet, this may also change.
 
 [mdspec]: https://material.google.com/layout/metrics-keylines.html
+[wiki]: https://github.com/Actinarium/Rhythm/wiki
 [wiki-config]: https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration
 [bintray]: https://bintray.com/actinarium/maven/rhythm
 [license]: https://raw.githubusercontent.com/Actinarium/Rhythm/master/LICENSE
-[apk]: https://raw.githubusercontent.com/Actinarium/Rhythm/master/sample/sample-release.apk
 [playstore]: https://play.google.com/store/apps/details?id=com.actinarium.rhythm.sample
 [samplesrc]: https://github.com/Actinarium/Rhythm/tree/master/sample
-[appsrc]: https://github.com/Actinarium/Rhythm/blob/master/sample/src/main/java/com/actinarium/rhythm/sample/RhythmSampleApplication.java
+[sampleconfig]: https://github.com/Actinarium/Rhythm/blob/master/sample/src/main/res/raw/overlay_config
+[javadoc-core]: http://actinarium.github.io/Rhythm/javadoc/rhythm
+[javadoc-control]: http://actinarium.github.io/Rhythm/javadoc/rhythm-control
 [gplus]: https://plus.google.com/u/0/+PaulDanyliuk/posts
 [twitter]: https://twitter.com/actinarium
 [steam]: http://steamcommunity.com/id/actine/wishlist
