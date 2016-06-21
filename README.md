@@ -3,7 +3,7 @@
 Rhythm is a design overlay engine for Android.
 
 With Rhythm you can easily render grids, keylines, other [Material Design][mdspec] cues and even custom elements within your app, helping you to build perfect layouts.
-Define overlay configurations using [simple expression language][wiki-config], and Rhythm will convert them into Drawables¹, which you can then set as view backgrounds, foregrounds etc:
+Define overlay configurations using [simple expression language][wiki-config], and Rhythm will convert them into Drawables¹, which you can then set as view backgrounds, foregrounds, draw to bitmaps etc:
 
 ![Simple Rhythm overlay example](http://actinarium.github.io/Rhythm/assets/rhythm-hero-small.png)
 
@@ -12,11 +12,12 @@ Define overlay configurations using [simple expression language][wiki-config], a
 **Material Cue** is a standalone keyline app built on Rhythm.
 If you need to verify your layout but don’t want the trouble of setting up another library in your project, Material Cue is perfect for you.
 
-Give it a try →<a href='https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="72" /></a>
+Give it a try:  
+<a href='https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="72" /></a>
 
 Learn more about the [differences between Rhythm and Material Cue](https://github.com/Actinarium/Rhythm/wiki/Comparison-of-Rhythm-and-Material-Cue).
 
-## Unstable API Disclaimer
+## Unstable API disclaimer
 
 Until Rhythm hits version 1.0, its public API is not finalized yet. This means **anything can still change** in a backwards incompatible fashion.
 You should consider this when depending on Rhythm 0.* in your projects, especially if you’re planning to extend Rhythm or actively use its Java API.
@@ -44,7 +45,7 @@ Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
    compile 'com.actinarium.rhythm:rhythm:0.9.6'
    ```
 
-2. Create a raw file in your app’s `/src/res/raw` folder, e.g. `/src/res/raw/overlays`, like this:
+2. Create a raw file in your app’s `/src/res/raw` folder, e.g. `/src/res/raw/overlays`, with content like this:
 
    ```
    # Standard 8dp grid
@@ -66,7 +67,7 @@ Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
 
    ```java
    // Create a new pre-configured inflater instance
-   RhythmOverlayInflater inflater = RhythmOverlayInflater.createDefault(this);
+   RhythmOverlayInflater inflater = RhythmOverlayInflater.createDefault(context);
 
    // Inflate the config
    List<RhythmOverlay> overlays = inflater.inflate(R.raw.overlays);
@@ -76,11 +77,15 @@ Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
 
    // And assign it to the view
    view.setBackground(overlayDrawable);
+   ```
 
-   // Later you can replace the overlay in that drawable
+4. Later you can replace the overlay in that drawable:
+   ```
    ((RhythmDrawable) view.getBackground()).setOverlay(overlays.get(0));
-
-   // Or disable it
+   ```
+   
+   or disable it:
+   ```
    ((RhythmDrawable) view.getBackground()).setOverlay(null);
    ```
 

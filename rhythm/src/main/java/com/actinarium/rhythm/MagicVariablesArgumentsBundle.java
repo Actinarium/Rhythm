@@ -57,6 +57,14 @@ public class MagicVariablesArgumentsBundle extends SimpleArgumentsBundle {
     }
 
     /**
+     * {@inheritDoc} If the argument is not declared explicitly, will look up if a matching magic variable is present.
+     */
+    @Override
+    public boolean hasArgument(String key) {
+        return mArguments.containsKey(key) || mVariables.containsKey(mLayerNamePrefix + key.replace('-', '_'));
+    }
+
+    /**
      * Resolves argument value from the bundle. If the argument is not present in this bundle's arguments map, tries to
      * fall back to a variable with a magic name of <code>@{layer_name}_{arg_name}</code> (concatenated layer and
      * argument names with dashes replaced by underscores).
