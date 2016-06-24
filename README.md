@@ -203,13 +203,28 @@ For advanced use refer to [the source][samplesrc] and Javadocs for now.
 
 ## A personal appeal
 
-If you already feel that this library is a godsend that will save you lots of time, please consider adding me on
-[Google+][gplus] and/or [Twitter][twitter] to be the first to know about my upcoming projects and apps.
-I’m about to publish a standalone app that’s similar to Rhythm but is even easier to use, and you will make me
-very happy if you try it out.
+If you like what I’m doing, please consider supporting my efforts.
 
-If you’re really generous and want to reward my work, you can gift me something from my [wishlist on Steam][steam].
-Also I’ll be offering in-app donations and pay-what-you-want features in my upcoming apps.
+I quit my full-time job so that I could focus on building useful, time-saving libraries and apps.
+I’ve already [made](#) [a][aligned] [few][persistence], and I have more in mind, including free and open-source apps, an ultimate charting library for Android, tutorials and samples, and more.
+But as much as I’d love to give it all away for free, I also need to make a living.
+
+Without your support, in a few months I’ll have to return to workforce, meaning I won’t be able to work on my projects anymore.
+
+Here’s what you can do to help:
+
+* **Check out [Material Cue][mcue]**, a keyline app I built with Rhythm.
+* **Buy a perpetual premium unlock for Material Cue** with one of pay-what-you-want options.  
+  At the moment all of its features are available for free, but I'm planning to add some paid functionality for greater convenience.
+* **Gift me a game from my [wishlist on Steam][steam]** to cheer me up.  
+  It’s Steam Summer Sale now, a perfect time to buy games on discount!
+* **Spread the word:** tell your fellow developers about Rhythm, Material Cue, and my other projects.
+* **Add me on [Google+][gplus] and/or [Twitter][twitter]** to be the first to know about my upcoming projects and apps.
+* I’m also looking into other donation options: Paypal, Google Wallet, Flattr, Gratipay, Patreon — tell me what’s better.
+* If you or your company are interested in recurring sponsoring my development efforts, please  contact me directly at [actinate@gmail.com](mailto:actinate@gmail.com).
+* Need a hand with making your app more Material? Contact me to discuss freelance or contractor options.
+
+Any bit counts, and whatever you choose to do, thank you a lot! 
 
 ## License
 
@@ -220,6 +235,9 @@ Android, Google Play and the Google Play logo are trademarks of Google Inc.
 ---
 ¹ — Said so for simplicity. In fact, Rhythm inflates overlay config into [RhythmOverlay](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmOverlay.html) objects, which then can be injected into one or many [RhythmDrawables](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmDrawable.html), which are, yeah, Drawables. Since it's not 1.0 yet, this may also change.
 
+[mcue]: https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme-support
+[aligned]: https://github.com/Actinarium/Aligned
+[persistence]: https://plus.google.com/u/0/communities/104144545680241581851
 [mdspec]: https://material.google.com/layout/metrics-keylines.html
 [wiki]: https://github.com/Actinarium/Rhythm/wiki
 [wiki-config]: https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration
