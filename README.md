@@ -95,7 +95,7 @@ Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
 > This module is discontinued in favor of [Material Cue][mcue] app and will not receive new functionality.
 
 If you want to switch overlays for the views in your app at runtime, you can setup Rhythm Control.
-This module allows to make **groups** with many views and overlays attached to them, and then separately control which overlay is displayed in which group.
+This module allows to define groups with many views and overlays attached to them, and then separately control which overlay is displayed over all views in a particular group.
 This can be done with a Rhythm Control notification², where you can cycle through the groups (1 › 2 › 3 › … › last › 1) and current group’s overlays (1 › 2 › 3 › … › last › no overlay › 1):
 
 ![Rhythm Control notification](http://actinarium.github.io/Rhythm/assets/rhythm-control-small.png)
@@ -138,9 +138,9 @@ This can be done with a Rhythm Control notification², where you can cycle throu
    List<RhythmOverlay> overlays = inflater.inflate(R.raw.overlays);
    
    // Create the groups. Each group will be given an index starting from 0
-   RhythmGroup mainGroup = mRhythmContron.makeGroup("A group with index 0");
-   RhythmGroup secondaryGroup = mRhythmContron.makeGroup("Another group with index 1");
-   RhythmGroup anotherGroup = mRhythmContron.makeGroup("Group with index 2");
+   RhythmGroup mainGroup = mRhythmControl.makeGroup("A group with index 0");
+   RhythmGroup secondaryGroup = mRhythmControl.makeGroup("Another group with index 1");
+   RhythmGroup anotherGroup = mRhythmControl.makeGroup("Group with index 2");
    
    // Assign overlays to groups
    mainGroup.addOverlay(overlays.get(0));               // add only one
@@ -170,7 +170,7 @@ This can be done with a Rhythm Control notification², where you can cycle throu
      rhythmControl.getGroup(1).decorateForeground(card1, frame2, card3 /*, ... */);
      ```
      
-   * Wrap pieces of your layouts with `RhythmFrameLayout` optionally connected to appropriate groups:
+   * Wrap pieces of your layouts with `RhythmFrameLayout` connected to appropriate groups:
      
      ```xml
      <com.actinarium.rhythm.control.RhythmFrameLayout
@@ -188,8 +188,7 @@ This can be done with a Rhythm Control notification², where you can cycle throu
 **Protip:** you can use `RhythmFrameLayout` on its own, without setting up Rhythm control or groups. Omit the `app:rhythmGroup` attribute or set it to `app:rhythmGroup="noGroup"`, and set overlays to it programmatically:
 
 ```java
-// By default, RhythmFrameLayout doesn't have a RhythmDrawable object,
-// so inject a new one
+// By default, RhythmFrameLayout doesn't have a RhythmDrawable object, so inject a new one
 rhythmFrameLayout.setRhythmDrawable(new RhythmDrawable(rhythmOverlay));
 
 // After that you can change overlays in that drawable
