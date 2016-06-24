@@ -44,6 +44,7 @@ Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
    ```
    compile 'com.actinarium.rhythm:rhythm:0.9.6'
    ```
+   For alternative setup (JAR, Maven) see [Bintray page][bintray].
 
 2. Create a raw file in your app’s `/src/res/raw` folder, e.g. `/src/res/raw/overlays`, with content like this:
 
@@ -68,7 +69,7 @@ Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
    ```java
    // Create a new pre-configured inflater instance
    RhythmOverlayInflater inflater = RhythmOverlayInflater.createDefault(context);
-
+   
    // Inflate the config
    List<RhythmOverlay> overlays = inflater.inflate(R.raw.overlays);
 
@@ -91,115 +92,115 @@ Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
 
 ### Rhythm Control
 
-// todo
+> This module is discontinued in favor of [Material Cue][mcue] app and will not receive new functionality.
 
+If you want to switch overlays for the views in your app at runtime, you can setup Rhythm Control.
+This module allows to make **groups** with many views and overlays attached to them, and then separately control which overlay is displayed in which group.
+This can be done with a Rhythm Control notification², where you can cycle through the groups (1 › 2 › 3 › … › last › 1) and current group’s overlays (1 › 2 › 3 › … › last › no overlay › 1):
 
-## Other resources
+![Rhythm Control notification](http://actinarium.github.io/Rhythm/assets/rhythm-control-small.png)
 
-[Wiki][wiki] | [Javadoc Core][javadoc-core] | [Javadoc Control][javadoc-control]
+1. Set up Rhythm Core: add a dependency and compose a configuration sheet.
 
+2. Add another dependency for Rhythm Control:
+   ```
+   compile 'com.actinarium.rhythm:rhythm-control:0.9.6'
+   ```
+   For alternative setup (JAR, Maven) see [Bintray page][bintray].
+   
+3. Implement `RhythmControl.Host` in your Application class (create one if it doesn’t exist yet):
+   
+   ```java
+   public class MyApplication extends Application implements RhythmControl.Host {
+       
+       private RhythmControl mRhythmControl;
+   
+       @Override
+       public void onCreate() {
+           super.onCreate();           
+           mRhythmControl = new RhythmControl(this);    
+           
+           /* Rest of OnCreate() code */           
+       }
+   
+       @Override
+       public RhythmControl getRhythmControl() {
+           return mRhythmControl;
+       }
+   }
+   ```
+   
+4. In your `Application.onCreate()` method set up Rhythm groups:
+   
+   ```java
+   // Create an inflater and inflate overlays from your configuration sheet
+   RhythmOverlayInflater inflater = RhythmOverlayInflater.createDefault(this);
+   List<RhythmOverlay> overlays = inflater.inflate(R.raw.overlays);
+   
+   // Create the groups. Each group will be given an index starting from 0
+   RhythmGroup mainGroup = mRhythmContron.makeGroup("A group with index 0");
+   RhythmGroup secondaryGroup = mRhythmContron.makeGroup("Another group with index 1");
+   RhythmGroup anotherGroup = mRhythmContron.makeGroup("Group with index 2");
+   
+   // Assign overlays to groups
+   mainGroup.addOverlay(overlays.get(0));               // add only one
+   secondaryGroup.addOverlays(overlays);                // add all
+   anotherGroup.addOverlays(overlays.subList(0, 2));    // add first two
+   
+   // Finally, display the notification with notification ID unique across your app
+   // (to avoid conflicts with other notifications)
+   mRhythmControl.showQuickControl(RHYTHM_NOTIFICATION_ID);
+   ```
 
----
-
-
-# Old docs — rewriting in progress
-
-
-## Setup
-
-To set up Rhythm in an intended way—that is, with Quick Control notification, do the following in your `Application` class.
+5. Finally, integrate Rhythm groups into your layouts.   
+   There are two ways to do this:
+   
+   * Decorate existing views programmatically, e.g. in your `Activity.onCreate()` methods:
+     
+     ```java
+     // Retrieve Rhythm Control from application class:
+     RhythmControl rhythmControl = ((RhythmControl.Host) getApplication()).getRhythmControl();
+     
+     // Decorate backgrounds of given views (draws overlay over existing background but under content)
+     // Works with any views
+     rhythmControl.getGroup(0).decorate(view1, view2, view3 /*, ... */);
+     
+     // Decorate foregrounds of given views - will draw overlay over content
+     // Works with FrameLayouts and its subclasses (e.g. CardView) only
+     rhythmControl.getGroup(1).decorateForeground(card1, frame2, card3 /*, ... */);
+     ```
+     
+   * Wrap pieces of your layouts with `RhythmFrameLayout` optionally connected to appropriate groups:
+     
+     ```xml
+     <com.actinarium.rhythm.control.RhythmFrameLayout
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             app:rhythmGroup="0"
+             app:overlayPosition="overContent">
+         
+         <LinearLayout ... />
+         
+     </com.actinarium.rhythm.control.RhythmFrameLayout>
+     ```
+     
+**Protip:** you can use `RhythmFrameLayout` on its own, without setting up Rhythm control or groups. Omit the `app:rhythmGroup` attribute or set it to `app:rhythmGroup="noGroup"`, and set overlays to it programmatically:
 
 ```java
-// Implement RhythmControl.Host - otherwise Rhythm components won't be able to access Rhythm control
-public class MyApplication extends Application implements RhythmControl.Host {
+// By default, RhythmFrameLayout doesn't have a RhythmDrawable object,
+// so inject a new one
+rhythmFrameLayout.setRhythmDrawable(new RhythmDrawable(rhythmOverlay));
 
-    // Rhythm control is a "singleton" through which the notification, RhythmicFrameLayouts and the overlays communicate
-    private RhythmControl mRhythmControl;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        // Retrieve device scale factor (density) and pre-calculate some common dip values
-        final float density = getResources().getDisplayMetrics().density;
-        final int i8dp = (int) (8 * density);
-        final int i4dp = i8dp / 2;
-        final int i16dp = i8dp * 2;
-        final int i72dp = i8dp * 9;
-
-        // Initialize this application's Rhythm control
-        mRhythmControl = new RhythmControl(this);
-
-        // Make at least one group for this control
-        // Groups set the same overlay to all attached views independently from other groups
-        RhythmGroup activityGroup = mRhythmControl.makeGroup("Activity top-level");             // assigned index = 0
-        RhythmGroup cardOverlaysGroup = mRhythmControl.makeGroup("Card overlays");              // assigned index = 1
-
-        // Make a simple 8dp grid overlay and add it to card overlays group
-        RhythmOverlay standardGrid = new RhythmOverlay("Standard grid")
-                .addLayer(new GridLines(Gravity.TOP, i8dp))
-                .addLayer(new GridLines(Gravity.LEFT, i8dp))
-                .addToGroup(cardOverlaysGroup);
-
-        // Make the same 8dp grid, but add standard Material keylines on top. Attach to activity group
-        RhythmOverlay standardWithKeylines = new RhythmOverlay("Standard w/ keylines")
-                .addLayersFrom(standardGrid)                                           // include standard grid
-                .addLayer(new Guide(Gravity.LEFT, i16dp))                              // 16 dp from the left
-                .addLayer(new Guide(Gravity.RIGHT, i16dp))                             // 16 dp from the right
-                .addLayer(new Guide(Gravity.LEFT, i72dp));                             // 72 dp from the left
-                .addToGroup(activityGroup);
-
-        // Make a simple 4dp baseline grid and also add to activity group
-        new RhythmOverlay("Baseline grid w/keylines")
-                .addLayer(new GridLines(Gravity.TOP, i4dp).color(GridLines.DEFAULT_BASELINE_COLOR))
-                .addToGroup(activityGroup);
-
-        // ...mix and match other overlays...
-
-        // In the end, display the notification with a notification ID, which must be unique across your app
-        mRhythmControl.showQuickControl(42);
-    }
-
-    @Override
-    public RhythmControl getRhythmControl() {
-        return mRhythmControl;
-    }
-}
+// After that you can change overlays in that drawable
+rhythmFrameLayout.getRhythmDrawable().setOverlay(anotherOverlay);
 ```
 
-Now you can wrap your views with `RhythmicFrameLayout`s connected to different groups:
+### Further reading
 
-```xml
-<!-- This one will be connected to group with index 0, which is "Activity top-level", and draw the grid over content -->
-<com.actinarium.rhythm.widget.RhythmicFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:rhythmGroup="0"
-        app:overlayPosition="overContent">
-
-    <LinearLayout ... />
-
-</com.actinarium.rhythm.widget.RhythmicFrameLayout>
-```
-
-Or you can decorate existing views from the code without altering your layouts.
-This approach is not as flexible, and visual feedback on touch/focus/etc on decorated views might break, but this is the
-friendliest way towards having development-only integration.
-
-```java
-// Somewhere in your onCreate() methods:
-RhythmControl rhythmControl = ((RhythmControl.Host) getApplication()).getRhythmControl();
-
-// Decorate backgrounds of given views (any views) - will draw overlay over background but under view's content
-rhythmControl.getGroup(0).decorate(view1, view2, view3,...);
-
-// Decorate foregrounds of given views (FrameLayouts only!) - will draw overlay over content
-rhythmControl.getGroup(1).decorateForeground(card1, frame2, card3,...);
-```
-
-Voilà, now you’ll be able to control the overlay of connected layouts via the notification.
-
-For advanced use refer to [the source][samplesrc] and Javadocs for now.
+* [Documentation (wiki)][wiki]
+* [Rhythm Core javadoc][javadoc-core]
+* [Rhythm Control javadoc][javadoc-control]
 
 ## A personal appeal
 
@@ -213,7 +214,7 @@ Without your support, in a few months I’ll have to return to workforce, meanin
 
 Here’s what you can do to help:
 
-* **Check out [Material Cue][mcue]**, a keyline app I built with Rhythm.
+* **Check out [Material Cue][mcue-support]**, a keyline app I built with Rhythm.
 * **Buy a perpetual premium unlock for Material Cue** with one of pay-what-you-want options.  
   At the moment all of its features are available for free, but I'm planning to add some paid functionality for greater convenience.
 * **Gift me a game from my [wishlist on Steam][steam]** to cheer me up.  
@@ -235,7 +236,10 @@ Android, Google Play and the Google Play logo are trademarks of Google Inc.
 ---
 ¹ — Said so for simplicity. In fact, Rhythm inflates overlay config into [RhythmOverlay](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmOverlay.html) objects, which then can be injected into one or many [RhythmDrawables](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmDrawable.html), which are, yeah, Drawables. Since it's not 1.0 yet, this may also change.
 
-[mcue]: https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme-support
+² — Rhythm Control notification is pretty useless on pre-4.1 (API 15 and below) because of lack of notification actions. The groups and `RhythmFrameLayouts` can still be controlled programmatically though.
+
+[mcue]: https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme
+[mcue-support]: https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme-support
 [aligned]: https://github.com/Actinarium/Aligned
 [persistence]: https://plus.google.com/u/0/communities/104144545680241581851
 [mdspec]: https://material.google.com/layout/metrics-keylines.html
