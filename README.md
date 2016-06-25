@@ -221,14 +221,30 @@ Here’s what you can do to help:
 * **Spread the word:** tell your fellow developers about Rhythm, Material Cue, and my other projects.
 * **Add me on [Google+][gplus] and/or [Twitter][twitter]** to be the first to know about my upcoming projects and apps.
 * I’m also looking into other donation options: Paypal, Google Wallet, Flattr, Gratipay, Patreon — tell me what’s better.
-* If you or your company are interested in recurring sponsoring my development efforts, please  contact me directly at [actinate@gmail.com](mailto:actinate@gmail.com).
-* Need a hand with making your app more Material? Contact me to discuss freelance or contractor options.
+* If you or your company are interested in sponsoring my development efforts, please  contact me directly at [actinate@gmail.com](mailto:actinate@gmail.com).
+* Need a hand with making your app more Material? I guess I could allocate some time to freelance work — contact me to discuss the options.
 
 Any bit counts, and whatever you choose to do, thank you a lot! 
 
 ## License
 
 The library is licensed under [Apache 2.0 License][license], meaning that you can freely use it in any of your projects.
+
+```
+Copyright (C) 2016 Actinarium
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
 
 Android, Google Play and the Google Play logo are trademarks of Google Inc.
 
