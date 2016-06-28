@@ -34,6 +34,7 @@ import com.actinarium.rhythm.RhythmDrawable;
 import com.actinarium.rhythm.RhythmOverlay;
 import com.actinarium.rhythm.RhythmOverlayInflater;
 import com.actinarium.rhythm.control.RhythmFrameLayout;
+import com.actinarium.rhythm.layer.Columns;
 import com.actinarium.rhythm.layer.DimensionsLabel;
 import com.actinarium.rhythm.layer.Fill;
 import com.actinarium.rhythm.layer.GridLines;
@@ -54,17 +55,18 @@ public class RhythmSandbox {
     String[] ALL_CONFIG_WORDS = {
             Keyline.Factory.LAYER_TYPE, GridLines.Factory.LAYER_TYPE, Fill.Factory.LAYER_TYPE,
             Inset.Factory.LAYER_TYPE, RatioKeyline.Factory.LAYER_TYPE, DimensionsLabel.Factory.LAYER_TYPE,
+            Columns.Factory.LAYER_TYPE,
             "outside", "no-clip", "clip-only",
-            "from=", "distance=", "step=", "ratio=", "gravity=",
+            "from=", "distance=", "step=", "ratio=", "gravity=", "count=",
             "top", "bottom", "left", "right",
             "top=", "bottom=", "left=", "right=", "width=", "height=",
-            "color=", "color=#",
+            "color=", "color=#", "text=",
             "limit=", "offset=", "thickness=", "text-color=", "text-size="
     };
 
     private static final String DEFAULT_SANDBOX_CONFIG =
             "@margin=16dp\n" +
-            "@grid_lines_color=#800091EA\n" +
+            "@keyline_thickness=1dp\n" +
             "grid-lines step=8dp from=left\n" +
             "grid-lines step=4dp from=top\n" +
             "inset left=0dp width=@margin\n" +
@@ -171,7 +173,6 @@ public class RhythmSandbox {
         // Heads up: line-by-line validation was removed because of increased complexity after 0.9.5.
         // Thing is, when inflating a raw overlay config file the validation is not really that helpful,
         // therefore not implementing it as a core feature.
-        // todo: bring line-by-line validation back eventually
         try {
             mOverlayInflater.inflateOverlay(overlayConfig);
         } catch (Exception e) {

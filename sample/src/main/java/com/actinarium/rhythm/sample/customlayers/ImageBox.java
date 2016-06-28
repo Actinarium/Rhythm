@@ -60,7 +60,8 @@ public class ImageBox implements RhythmSpecLayer {
                 .setScaleFactor(scaleFactor)
                 .setGravity(Gravity.CENTER)
                 .setBackgroundColor(Color.TRANSPARENT)
-                .setTextColor(Color.WHITE);
+                .setTextColor(Color.WHITE)
+                .setTextSize(scaleFactor * DimensionsLabel.DEFAULT_TEXT_SIZE);
 
         mTemp = new Rect();
 
@@ -82,7 +83,8 @@ public class ImageBox implements RhythmSpecLayer {
                 .setScaleFactor(scaleFactor)
                 .setGravity(Gravity.CENTER)
                 .setBackgroundColor(Color.TRANSPARENT)
-                .setTextColor(Color.WHITE);
+                .setTextColor(Color.WHITE)
+                .setTextSize(scaleFactor * DimensionsLabel.DEFAULT_TEXT_SIZE);
     }
 
     @Override

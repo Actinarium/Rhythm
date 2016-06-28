@@ -38,8 +38,7 @@ import com.actinarium.rhythm.RhythmSpecLayerFactory;
  */
 public class GridLines implements RhythmSpecLayer {
 
-    public static final int DEFAULT_GRID_COLOR = 0x60F50057;
-    public static final int DEFAULT_BASELINE_COLOR = 0x800091EA;
+    public static final int DEFAULT_GRID_COLOR = 0x800091EA;
     /**
      * Default grid line thickness (1px)
      */

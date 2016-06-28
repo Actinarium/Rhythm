@@ -16,14 +16,13 @@
 @margin=16dp
 @avatar=56dp
 @content=72dp
-@secondary=#800091EA
 
 // Rhythm supports "magic variables", which allow to specify layer defaults.
 // Magic variables must be named @{layer_type}_{arg_name}
 // and explicitly enabled for a RhythmOverlayInflater instance.
 // They work with custom layers as well.
 @fill_color=#400091EA
-@keyline_thickness=2px
+@keyline_thickness=1dp
 @layout_bounds_crosshair_size=16dp
 
 // --------- OVERLAY BLOCKS ---------
@@ -37,7 +36,7 @@ grid-lines step=@step from=top
 grid-lines step=@step from=left
 
 # Typography grid w/keylines
-grid-lines step=4dp from=top color=@secondary
+grid-lines step=4dp from=top
 keyline distance=@margin from=left
 keyline distance=@margin from=right
 keyline distance=@content from=left
@@ -67,7 +66,7 @@ keyline distance=@avatar from=left outside
 grid-lines step=8dp from=top
 grid-lines step=8dp from=left
 inset left=@content right=@margin
-  grid-lines step=8dp from=top offset=4dp color=@secondary
+  grid-lines step=8dp from=top offset=4dp color=@fill_color
 keyline distance=@margin from=left
 keyline distance=@margin from=right
 keyline distance=@content from=left
@@ -110,7 +109,7 @@ inset right=96dp bottom=56dp
   inset width=@card_margin
     fill
   inset left=@card_margin top=24dp
-    grid-lines step=4dp from=top
+    grid-lines step=4dp from=top color=@action_margin_color
   keyline distance=24dp from=top
 inset right=0 width=96dp bottom=56dp
   inset height=@card_margin right=@card_margin
@@ -119,6 +118,8 @@ inset right=0 width=96dp bottom=56dp
     fill
   keyline distance=16dp from=top
 inset bottom=0 height=56dp
+  // Drawing margins with keylines instead of insets/fills for flatter hierarchy.
+  // We don't mind overlapping fills here because that's how it's drawn in the spec.
   keyline distance=0 from=top    thickness=@action_margin_width outside color=@action_margin_color
   keyline distance=0 from=left   thickness=@action_margin_width outside color=@action_margin_color
   keyline distance=0 from=right  thickness=@action_margin_width outside color=@action_margin_color

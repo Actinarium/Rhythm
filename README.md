@@ -28,7 +28,11 @@ You can use Rhythm to inflate [configuration][wiki-config] into `RhythmOverlay` 
 ### Migrating to 0.9.6
 
 The biggest change in 0.9.6 is that **Rhythm has been split in two separate libraries** (see the next paragraph).
-Additionally, the whole package structure has been refactored — make sure you fix your imports.
+
+Given the opportunity, the whole package structure has been refactored for flatter and simpler hierarchy — make sure you fix your imports.
+
+Additionally, a few of default layer settings have been changed (e.g. default grid color and keyline thickness).
+However, with the new [magic variables](https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration#magic-variables) mechanism you can define your own defaults in a centralized way.
 
 ## Quick setup
 

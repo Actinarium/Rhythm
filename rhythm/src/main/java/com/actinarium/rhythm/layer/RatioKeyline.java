@@ -22,15 +22,16 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
+import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
-import com.actinarium.rhythm.RhythmSpecLayer;
-import com.actinarium.rhythm.RhythmInflationException;
 import com.actinarium.rhythm.ArgumentsBundle;
+import com.actinarium.rhythm.RhythmInflationException;
+import com.actinarium.rhythm.RhythmSpecLayer;
 import com.actinarium.rhythm.RhythmSpecLayerFactory;
 
 import java.util.Locale;
@@ -64,7 +65,7 @@ public class RatioKeyline implements RhythmSpecLayer {
     @IntRange(from = 1)
     protected int mThickness;
 
-    protected String mLabelString;
+    protected String mText;
     protected Paint mBackgroundPaint;
     protected TextPaint mTextPaint;
     protected Rect mTempRect;
@@ -77,7 +78,8 @@ public class RatioKeyline implements RhythmSpecLayer {
 
     public RatioKeyline(@IntRange(from = 0) int ratioX, @IntRange(from = 0) int ratioY, DisplayMetrics metrics) {
         this(metrics);
-        setRatio(ratioX, ratioY);
+        mRatioX = ratioX;
+        mRatioY = ratioY;
         mBackgroundPaint.setColor(DEFAULT_FILL_COLOR);
         mTextPaint.setColor(DEFAULT_TEXT_COLOR);
     }
@@ -113,7 +115,17 @@ public class RatioKeyline implements RhythmSpecLayer {
     public RatioKeyline setRatio(@IntRange(from = 0) int ratioX, @IntRange(from = 0) int ratioY) {
         mRatioX = ratioX;
         mRatioY = ratioY;
-        mLabelString = String.format(Locale.US, "%d:%d", ratioX, ratioY);
+        return this;
+    }
+
+    /**
+     * Set arbitrary label text to this ratio keyline. Defaults to displaying ratio.
+     *
+     * @param text Text to display in keyline label. Set null to reset the label to display ratio.
+     * @return this for chaining
+     */
+    public RatioKeyline setText(@Nullable String text) {
+        mText = text;
         return this;
     }
 
@@ -151,17 +163,6 @@ public class RatioKeyline implements RhythmSpecLayer {
         return this;
     }
 
-    /**
-     * Set arbitrary label to this ratio keyline
-     *
-     * @param labelString Text to display in keyline label
-     * @return this for chaining
-     */
-    public RatioKeyline setLabelString(String labelString) {
-        mLabelString = labelString;
-        return this;
-    }
-
     @Override
     public void draw(Canvas canvas, Rect drawableBounds) {
         final int distanceTop;
@@ -177,14 +178,19 @@ public class RatioKeyline implements RhythmSpecLayer {
         // Draw keyline
         canvas.drawRect(drawableBounds.left, distanceTop - mThickness, drawableBounds.right, distanceTop, mBackgroundPaint);
 
+        // If no special text is set, display ratio
+        if (mText == null) {
+            mText = String.format(Locale.getDefault(), "%d:%d", mRatioX, mRatioY);
+        }
+
         // Determine keyline label size/bounds
-        StaticLayout layout = new StaticLayout(mLabelString, mTextPaint, Integer.MAX_VALUE, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
+        StaticLayout layout = new StaticLayout(mText, mTextPaint, Integer.MAX_VALUE, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
         int labelTextWidth = (int) (layout.getLineMax(0) + 0.5);
 
         // If text too big, re-measure
         while (labelTextWidth > mLabelRectWidth) {
             mTextPaint.setTextSize(mTextPaint.getTextSize() * 0.8f);
-            layout = new StaticLayout(mLabelString, mTextPaint, Integer.MAX_VALUE, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
+            layout = new StaticLayout(mText, mTextPaint, Integer.MAX_VALUE, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
             labelTextWidth = (int) (layout.getLineMax(0) + 0.5);
         }
 
@@ -212,7 +218,7 @@ public class RatioKeyline implements RhythmSpecLayer {
 
         public static final String LAYER_TYPE = "ratio-keyline";
         public static final String ARG_RATIO = "ratio";
-        public static final String ARG_LABEL = "label";
+        public static final String ARG_TEXT = "text";
         public static final String ARG_THICKNESS = "thickness";
         public static final String ARG_COLOR = "color";
         public static final String ARG_TEXT_COLOR = "text-color";
@@ -237,7 +243,7 @@ public class RatioKeyline implements RhythmSpecLayer {
             }
             keyline.mRatioX = Integer.parseInt(matcher.group(1));
             keyline.mRatioY = Integer.parseInt(matcher.group(2));
-            keyline.mLabelString = argsBundle.getString(ARG_LABEL, ratio);
+            keyline.mText = argsBundle.getString(ARG_TEXT, ratio);
 
             keyline.mThickness = argsBundle.getDimensionPixelSize(ARG_THICKNESS, DEFAULT_THICKNESS);
             keyline.mBackgroundPaint.setColor(argsBundle.getColor(ARG_COLOR, DEFAULT_FILL_COLOR));
