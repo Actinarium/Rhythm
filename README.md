@@ -14,6 +14,8 @@ Unfortunately the development of this library is discontinued. Such decision was
 
 Rhythm code will remain as is. All new features will go directly into Material Cue.
 
+If you're interested in revival of this library, ping me.
+
 ## Material Cue
 
 **Material Cue** is a standalone keyline app built on Rhythm.
@@ -30,7 +32,7 @@ Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
 * **Rhythm Core** — contains core rendering framework for turning [human readable config][wiki-config] into Drawable objects¹. You then manage those Drawables yourself.
 * **Rhythm Control** — provides a mechanism to assign many overlays to many views and switch them on the go using the Rhythm Control notification.
 
-**Tip:** Get inspired by the [sample app][playstore] and then explore its [source][samplesrc].
+**Tip:** Look at the [sample app][samplesrc].
 
 ### Rhythm Core
 
@@ -61,16 +63,9 @@ Starting with 0.9.6, Rhythm is packaged as two separate artifacts:
 3. In your code, inflate this file into a list of overlay objects, wrap them with [RhythmDrawables](http://actinarium.github.io/Rhythm/javadoc/rhythm/com/actinarium/rhythm/RhythmDrawable.html), and assign to views as required:
 
    ```java
-   // Create a new pre-configured inflater instance
    RhythmOverlayInflater inflater = RhythmOverlayInflater.createDefault(context);
-   
-   // Inflate the config
    List<RhythmOverlay> overlays = inflater.inflate(R.raw.overlays);
-
-   // Inject the typography overlay (2nd in list) into a RhythmDrawable
    Drawable overlayDrawable = new RhythmDrawable(overlays.get(1));
-
-   // And assign it to the view
    view.setBackground(overlayDrawable);
    ```
 
@@ -208,17 +203,13 @@ Without your support, in a few months I’ll have to return to workforce, meanin
 Here’s what you can do to help:
 
 * **Check out [Material Cue][mcue-support]**, a keyline app I built with Rhythm.
-* **Buy a perpetual premium unlock for Material Cue** with one of pay-what-you-want options.  
-  At the moment all of its features are available for free, but I'm planning to add some paid functionality for greater convenience.
-* **Gift me a game from my [wishlist on Steam][steam]** to cheer me up.  
-  It’s Steam Summer Sale now, a perfect time to buy games on discount!
+* **Gift me a game from my [wishlist on Steam][steam]** to cheer me up.
 * **Spread the word:** tell your fellow developers about Rhythm, Material Cue, and my other projects.
 * **Add me on [Google+][gplus] and/or [Twitter][twitter]** to be the first to know about my upcoming projects and apps.
-* I’m also looking into other donation options: Paypal, Google Wallet, Flattr, Gratipay, Patreon — tell me what’s better.
-* If you or your company are interested in sponsoring my development efforts, please  contact me directly at [actinate@gmail.com](mailto:actinate@gmail.com).
+* If you or your company are interested in sponsoring my development efforts, please contact me directly at [actinate@gmail.com](mailto:actinate@gmail.com), and we could arrange something.
 * Need a hand with making your app more Material? I guess I could allocate some time to freelance work — contact me to discuss the options.
 
-Any bit counts, and whatever you choose to do, thank you a lot! 
+Thank you!
 
 ## License
 
