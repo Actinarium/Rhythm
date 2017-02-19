@@ -1,4 +1,5 @@
-# Rhythm [![Download from Bintray](https://api.bintray.com/packages/actinarium/maven/rhythm/images/download.svg)](https://bintray.com/actinarium/maven/rhythm/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rhythm-green.svg?maxAge=864000)](https://android-arsenal.com/details/1/2664) [![API](https://img.shields.io/badge/API-8%2B-brightgreen.svg?maxAge=864000)](https://android-arsenal.com/api?level=8) [![License: Apache 2.0](https://img.shields.io/github/license/actinarium/rhythm.svg?maxAge=864000)][license]
+# Rhythm  
+[![Discontinued](https://img.shields.io/badge/status-discontinued-red.svg)](#discontinued-library) [![Download from Bintray](https://api.bintray.com/packages/actinarium/maven/rhythm/images/download.svg)](https://bintray.com/actinarium/maven/rhythm/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Rhythm-green.svg?maxAge=864000)](https://android-arsenal.com/details/1/2664) [![API](https://img.shields.io/badge/API-8%2B-brightgreen.svg?maxAge=864000)](https://android-arsenal.com/api?level=8) [![License: Apache 2.0](https://img.shields.io/github/license/actinarium/rhythm.svg?maxAge=864000)][license]
 
 Rhythm is a design overlay engine for Android.
 
@@ -7,7 +8,13 @@ Define overlay configurations using [simple expression language][wiki-config], a
 
 ![Simple Rhythm overlay example](http://actinarium.github.io/Rhythm/assets/rhythm-hero-small.png)
 
-## [New!] Material Cue
+## Discontinued library
+
+Unfortunately the development of this library is discontinued. Such decision was made based on its usefulness vs maintenance effort. The library had insignificant if not zero downloads; it's only actively used in my own Material Cue app, and it's been getting harder and harder to mantain these two separately. Let us say, it served its purpose well as an interim step to get Material Cue done.
+
+Rhythm code will remain as is. All new features will go directly into Material Cue.
+
+## Material Cue
 
 **Material Cue** is a standalone keyline app built on Rhythm.
 If you need to verify your layout but don’t want the trouble of setting up another library in your project, Material Cue is perfect for you.
@@ -16,23 +23,6 @@ Give it a try:
 <a href='https://play.google.com/store/apps/details?id=com.actinarium.materialcue&referrer=utm_source%3Dgh-rhythm%26utm_medium%3Dreferral%26utm_term%3Drhythm-readme'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="72" /></a>
 
 Learn more about the [differences between Rhythm and Material Cue](https://github.com/Actinarium/Rhythm/wiki/Comparison-of-Rhythm-and-Material-Cue).
-
-## Unstable API disclaimer
-
-Until Rhythm hits version 1.0, its public API is not finalized yet. This means **anything can still change** in a backwards incompatible fashion.
-You should consider this when depending on Rhythm 0.* in your projects, especially if you’re planning to extend Rhythm or actively use its Java API.
-Make sure you can allocate the time to study the new docs and update your code, otherwise consider staying with the older version.
-
-You can use Rhythm to inflate [configuration][wiki-config] into `RhythmOverlay` objects with fair confidence though: its syntax is guaranteed not to break with the future versions of Rhythm.
-
-### Migrating to 0.9.6
-
-The biggest change in 0.9.6 is that **Rhythm has been split in two separate libraries** (see the next paragraph).
-
-Given the opportunity, the whole package structure has been refactored for flatter and simpler hierarchy — make sure you fix your imports.
-
-Additionally, a few of default layer settings have been changed (e.g. default grid color and keyline thickness).
-However, with the new [magic variables](https://github.com/Actinarium/Rhythm/wiki/Declarative-configuration#magic-variables) mechanism you can define your own defaults in a centralized way.
 
 ## Quick setup
 
